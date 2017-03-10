@@ -1,9 +1,26 @@
 package com.cyanelix.railwatch.domain;
 
-import com.thalesgroup.rtti._2016_02_16.ldb.types.ServiceItem;
+import java.time.LocalTime;
+import java.util.Optional;
 
 public class TrainTime {
-	public TrainTime(ServiceItem trainService) {
-		
+	private final LocalTime scheduledDepartureTime;
+	private final LocalTime expectedDepartureTime;
+
+	private TrainTime(LocalTime scheduledDepartureTime, LocalTime expectedDepartureTime) {
+		this.scheduledDepartureTime = scheduledDepartureTime;
+		this.expectedDepartureTime = expectedDepartureTime;
+	}
+
+	public static TrainTime of(LocalTime scheduledDepartureTime, Optional<LocalTime> expectedDepartureTime) {
+		return new TrainTime(scheduledDepartureTime, expectedDepartureTime.orElse(scheduledDepartureTime));
+	}
+
+	public LocalTime getScheduledDepartureTime() {
+		return scheduledDepartureTime;
+	}
+
+	public LocalTime getExpectedDepartureTime() {
+		return expectedDepartureTime;
 	}
 }

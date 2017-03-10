@@ -1,6 +1,6 @@
 package com.cyanelix.railwatch.client.service;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
@@ -23,23 +23,23 @@ import com.thalesgroup.rtti._2016_02_16.ldb.GetBoardRequestParams;
 public class TrainTimesServiceTest {
 	@Mock
 	private DarwinClient mockDarwinClient;
-	
+
 	@InjectMocks
 	private TrainTimesService trainTimesService;
-	
+
 	@Test
 	public void testLookupTrainTimes() {
 		// Given...
-		Station fromStation = new Station("FOO");
-		Station toStation = new Station("BAR");
-		
+		Station fromStation = Station.of("FOO");
+		Station toStation = Station.of("BAR");
+
 		ArgumentCaptor<DeparturesBoardRequest> departuresRequestCaptor = ArgumentCaptor.forClass(DeparturesBoardRequest.class);
 
 		given(mockDarwinClient.sendAndReceive(departuresRequestCaptor.capture(), any())).willReturn(Collections.emptyList());
-		
+
 		// When...
 		trainTimesService.lookupTrainTimes(fromStation, toStation);
-		
+
 		// Then...
 		DeparturesBoardRequest departuresBoardRequest = departuresRequestCaptor.getValue();
 		GetBoardRequestParams requestParams = departuresBoardRequest.getSoapRequest().getValue();
