@@ -32,6 +32,7 @@ public class DepartureBoardConverterTest {
 		assertThat(trainTimes, hasSize(1));
 		assertThat(trainTimes.get(0).getScheduledDepartureTime(), is(LocalTime.of(15, 0)));
 		assertThat(trainTimes.get(0).getExpectedDepartureTime(), is(LocalTime.of(15, 0)));
+		assertThat(trainTimes.get(0).getMessage(), is("On time"));
 	}
 
 	@Test
@@ -49,6 +50,7 @@ public class DepartureBoardConverterTest {
 		assertThat(trainTimes, hasSize(1));
 		assertThat(trainTimes.get(0).getScheduledDepartureTime(), is(LocalTime.of(15, 0)));
 		assertThat(trainTimes.get(0).getExpectedDepartureTime(), is(LocalTime.of(15, 25)));
+		assertThat(trainTimes.get(0).getMessage(), is(""));
 	}
 
 	@Test
@@ -69,6 +71,24 @@ public class DepartureBoardConverterTest {
 		assertThat(trainTimes.get(0).getExpectedDepartureTime(), is(LocalTime.of(15, 25)));
 		assertThat(trainTimes.get(1).getScheduledDepartureTime(), is(LocalTime.of(15, 0)));
 		assertThat(trainTimes.get(1).getExpectedDepartureTime(), is(LocalTime.of(15, 0)));
+	}
+
+	@Test
+	public void singleTrain_cancelled_convertsSuccessfully() {
+		// Given...
+		ServiceItem serviceItem = createServiceItemForTimes("15:00", "Cancelled");
+		StationBoardResponseType response = createStationBoardResponseType(serviceItem);
+
+		DepartureBoardConverter converter = new DepartureBoardConverter();
+
+		// When...
+		List<TrainTime> trainTimes = converter.convert(response);
+
+		// Then...
+		assertThat(trainTimes, hasSize(1));
+		assertThat(trainTimes.get(0).getScheduledDepartureTime(), is(LocalTime.of(15, 0)));
+		assertThat(trainTimes.get(0).getExpectedDepartureTime(), is(LocalTime.of(15, 0)));
+		assertThat(trainTimes.get(0).getMessage(), is("Cancelled"));
 	}
 
 	private ServiceItem createServiceItemForTimes(String std, String etd) {

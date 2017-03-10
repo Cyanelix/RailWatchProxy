@@ -7,7 +7,6 @@ import static org.mockito.BDDMockito.given;
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,7 +37,7 @@ public class DeparturesControllerTest {
 		ArgumentCaptor<Station> toCaptor = ArgumentCaptor.forClass(Station.class);
 
 		given(mockTrainTimesService.lookupTrainTimes(fromCaptor.capture(), toCaptor.capture()))
-				.willReturn(Collections.singletonList(TrainTime.of(LocalTime.MIDNIGHT, Optional.of(LocalTime.NOON))));
+				.willReturn(Collections.singletonList(TrainTime.of(LocalTime.MIDNIGHT, LocalTime.NOON)));
 
 		// When...
 		List<TrainTime> trainTimes = departuresController.get(fromStation, toStation);

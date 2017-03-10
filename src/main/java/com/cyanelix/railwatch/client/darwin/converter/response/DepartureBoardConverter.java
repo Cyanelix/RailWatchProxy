@@ -1,8 +1,8 @@
 package com.cyanelix.railwatch.client.darwin.converter.response;
 
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.core.convert.converter.Converter;
@@ -19,15 +19,11 @@ public class DepartureBoardConverter implements Converter<StationBoardResponseTy
 	}
 
 	private TrainTime convertServiceItemToTrainTime(ServiceItem serviceItem) {
-		Optional<LocalTime> expectedDepartureTime;
-
 		String etd = serviceItem.getEtd();
-		if ("On time".equals(etd)) {
-			expectedDepartureTime = Optional.empty();
-		} else {
-			expectedDepartureTime = Optional.of(LocalTime.parse(etd));
+		try {
+			return TrainTime.of(LocalTime.parse(serviceItem.getStd()), LocalTime.parse(etd));
+		} catch (DateTimeParseException ex) {
+			return TrainTime.of(LocalTime.parse(serviceItem.getStd()), etd);
 		}
-
-		return TrainTime.of(LocalTime.parse(serviceItem.getStd()), expectedDepartureTime);
 	}
 }
