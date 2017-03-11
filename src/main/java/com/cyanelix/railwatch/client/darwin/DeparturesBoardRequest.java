@@ -9,7 +9,7 @@ import com.thalesgroup.rtti._2016_02_16.ldb.GetBoardRequestParams;
 public class DeparturesBoardRequest extends DarwinRequest<JAXBElement<GetBoardRequestParams>> {
 	private final Station fromStation;
 	private final Station toStation;
-	
+
 	public DeparturesBoardRequest(Station fromStation, Station toStation) {
 		this.fromStation = fromStation;
 		this.toStation = toStation;
@@ -24,5 +24,4 @@ public class DeparturesBoardRequest extends DarwinRequest<JAXBElement<GetBoardRe
 
 		return objectFactory.createGetDepartureBoardRequest(getBoardRequestParams);
 	}
-
 }

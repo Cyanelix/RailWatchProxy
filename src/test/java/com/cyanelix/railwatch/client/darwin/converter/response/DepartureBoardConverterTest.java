@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.junit.Test;
@@ -31,8 +32,8 @@ public class DepartureBoardConverterTest {
 		// Then...
 		assertThat(trainTimes, hasSize(1));
 		assertThat(trainTimes.get(0).getScheduledDepartureTime(), is(LocalTime.of(15, 0)));
-		assertThat(trainTimes.get(0).getExpectedDepartureTime(), is(LocalTime.of(15, 0)));
-		assertThat(trainTimes.get(0).getMessage(), is("On time"));
+		assertThat(trainTimes.get(0).getExpectedDepartureTime().get(), is(LocalTime.of(15, 0)));
+		assertThat(trainTimes.get(0).getMessage(), is(""));
 	}
 
 	@Test
@@ -49,7 +50,7 @@ public class DepartureBoardConverterTest {
 		// Then...
 		assertThat(trainTimes, hasSize(1));
 		assertThat(trainTimes.get(0).getScheduledDepartureTime(), is(LocalTime.of(15, 0)));
-		assertThat(trainTimes.get(0).getExpectedDepartureTime(), is(LocalTime.of(15, 25)));
+		assertThat(trainTimes.get(0).getExpectedDepartureTime().get(), is(LocalTime.of(15, 25)));
 		assertThat(trainTimes.get(0).getMessage(), is(""));
 	}
 
@@ -68,9 +69,9 @@ public class DepartureBoardConverterTest {
 		// Then...
 		assertThat(trainTimes, hasSize(2));
 		assertThat(trainTimes.get(0).getScheduledDepartureTime(), is(LocalTime.of(15, 0)));
-		assertThat(trainTimes.get(0).getExpectedDepartureTime(), is(LocalTime.of(15, 25)));
+		assertThat(trainTimes.get(0).getExpectedDepartureTime().get(), is(LocalTime.of(15, 25)));
 		assertThat(trainTimes.get(1).getScheduledDepartureTime(), is(LocalTime.of(15, 0)));
-		assertThat(trainTimes.get(1).getExpectedDepartureTime(), is(LocalTime.of(15, 0)));
+		assertThat(trainTimes.get(1).getExpectedDepartureTime().get(), is(LocalTime.of(15, 0)));
 	}
 
 	@Test
@@ -87,7 +88,7 @@ public class DepartureBoardConverterTest {
 		// Then...
 		assertThat(trainTimes, hasSize(1));
 		assertThat(trainTimes.get(0).getScheduledDepartureTime(), is(LocalTime.of(15, 0)));
-		assertThat(trainTimes.get(0).getExpectedDepartureTime(), is(LocalTime.of(15, 0)));
+		assertThat(trainTimes.get(0).getExpectedDepartureTime(), is(Optional.empty()));
 		assertThat(trainTimes.get(0).getMessage(), is("Cancelled"));
 	}
 
