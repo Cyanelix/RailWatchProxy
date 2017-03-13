@@ -15,7 +15,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>1.4.1.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
 	<properties>
@@ -31,6 +31,11 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jdk8</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
@@ -42,6 +47,9 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<executable>true</executable>
+				</configuration>
 			</plugin>
 			<!-- tag::wsdl[] -->
 			<plugin>
@@ -57,9 +65,9 @@
 				</executions>
 				<configuration>
 					<schemaLanguage>WSDL</schemaLanguage>
- 					<schemas>
+					<schemas>
 						<schema>
- 							<url>https://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=2016-02-16</url>
+							<url>https://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=2016-02-16</url>
 						</schema>
 						<schema>
 							<url>https://lite.realtime.nationalrail.co.uk/OpenLDBWS/rtti_2016-02-16_ldb.wsdl</url>
@@ -67,18 +75,11 @@
 						<schema>
 							<url>https://lite.realtime.nationalrail.co.uk/OpenLDBWS/darwin_token_types_2013-11-28.wsdl</url>
 						</schema>
-						<!--<schema>
-							<url>https://lite.realtime.nationalrail.co.uk/OpenLDBWS/rtti_2012-01-13_ldb.wsdl</url>
-						</schema>
-						<schema>
-							<url>https://lite.realtime.nationalrail.co.uk/OpenLDBWS/rtti_2007-10-10_ldb_common_types.xsd</url>
-						</schema>
-						<schema>
-							<url>https://lite.realtime.nationalrail.co.uk/OpenLDBWS/rtti_2015-11-27_ldb_common_types.xsd</url>
-						</schema>
-						<schema>
-							<url>https://lite.realtime.nationalrail.co.uk/OpenLDBWS/rtti_2016-02-16_ldb_types.xsd</url>
-						</schema>-->
+						<!--<schema> <url>https://lite.realtime.nationalrail.co.uk/OpenLDBWS/rtti_2012-01-13_ldb.wsdl</url> 
+							</schema> <schema> <url>https://lite.realtime.nationalrail.co.uk/OpenLDBWS/rtti_2007-10-10_ldb_common_types.xsd</url> 
+							</schema> <schema> <url>https://lite.realtime.nationalrail.co.uk/OpenLDBWS/rtti_2015-11-27_ldb_common_types.xsd</url> 
+							</schema> <schema> <url>https://lite.realtime.nationalrail.co.uk/OpenLDBWS/rtti_2016-02-16_ldb_types.xsd</url> 
+							</schema> -->
 					</schemas>
 				</configuration>
 			</plugin>
