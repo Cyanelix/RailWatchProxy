@@ -18,7 +18,7 @@ public class DepartureBoardConverter implements Converter<StationBoardResponseTy
     @Override
     public List<TrainTime> convert(StationBoardResponseType response) {
         return response.getGetStationBoardResult().getTrainServices().getService().stream()
-                .map(serviceItem -> convertServiceItemToTrainTime(serviceItem)).collect(Collectors.toList());
+                .map(this::convertServiceItemToTrainTime).collect(Collectors.toList());
     }
 
     private TrainTime convertServiceItemToTrainTime(ServiceItem serviceItem) {
