@@ -22,32 +22,32 @@ import com.cyanelix.railwatch.domain.TrainTime;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DeparturesControllerTest {
-	@Mock
-	private TrainTimesService mockTrainTimesService;
+    @Mock
+    private TrainTimesService mockTrainTimesService;
 
-	@InjectMocks
-	private DeparturesController departuresController;
+    @InjectMocks
+    private DeparturesController departuresController;
 
-	@Test
-	public void givenTwoStationsWithETD_whenRequested_getTimes() {
-		// Given...
-		String fromStation = "FOO";
-		String toStation = "BAR";
+    @Test
+    public void givenTwoStationsWithETD_whenRequested_getTimes() {
+        // Given...
+        String fromStation = "FOO";
+        String toStation = "BAR";
 
-		ArgumentCaptor<Station> fromCaptor = ArgumentCaptor.forClass(Station.class);
-		ArgumentCaptor<Station> toCaptor = ArgumentCaptor.forClass(Station.class);
+        ArgumentCaptor<Station> fromCaptor = ArgumentCaptor.forClass(Station.class);
+        ArgumentCaptor<Station> toCaptor = ArgumentCaptor.forClass(Station.class);
 
-		given(mockTrainTimesService.lookupTrainTimes(fromCaptor.capture(), toCaptor.capture()))
-				.willReturn(Collections.singletonList(TrainTime.of(LocalTime.MIDNIGHT, Optional.of(LocalTime.NOON), "")));
+        given(mockTrainTimesService.lookupTrainTimes(fromCaptor.capture(), toCaptor.capture())).willReturn(
+                Collections.singletonList(TrainTime.of(LocalTime.MIDNIGHT, Optional.of(LocalTime.NOON), "")));
 
-		// When...
-		List<TrainTime> trainTimes = departuresController.get(fromStation, toStation);
+        // When...
+        List<TrainTime> trainTimes = departuresController.get(fromStation, toStation);
 
-		// Then...
-		assertThat(fromCaptor.getValue().getStationCode(), is(fromStation));
-		assertThat(toCaptor.getValue().getStationCode(), is(toStation));
-		assertThat(trainTimes.size(), is(1));
-		assertThat(trainTimes.get(0).getScheduledDepartureTime(), is(LocalTime.MIDNIGHT));
-		assertThat(trainTimes.get(0).getExpectedDepartureTime().get(), is(LocalTime.NOON));
-	}
+        // Then...
+        assertThat(fromCaptor.getValue().getStationCode(), is(fromStation));
+        assertThat(toCaptor.getValue().getStationCode(), is(toStation));
+        assertThat(trainTimes.size(), is(1));
+        assertThat(trainTimes.get(0).getScheduledDepartureTime(), is(LocalTime.MIDNIGHT));
+        assertThat(trainTimes.get(0).getExpectedDepartureTime().get(), is(LocalTime.NOON));
+    }
 }

@@ -20,22 +20,22 @@ import com.thalesgroup.rtti._2016_02_16.ldb.StationBoardResponseType;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class DarwinClientIT {
-	@Autowired
-	private DarwinClient darwinClient;
+    @Autowired
+    private DarwinClient darwinClient;
 
-	@Test
-	public void getKYNtoBRIDepartureBoard() {
-		// Given...
-		Station fromStation = Station.of("KYN");
-		Station toStation = Station.of("BRI");
-		DeparturesBoardRequest request = new DeparturesBoardRequest(fromStation, toStation);
+    @Test
+    public void getKYNtoBRIDepartureBoard() {
+        // Given...
+        Station fromStation = Station.of("KYN");
+        Station toStation = Station.of("BRI");
+        DeparturesBoardRequest request = new DeparturesBoardRequest(fromStation, toStation);
 
-		DarwinActionType<StationBoardResponseType, List<TrainTime>> getDepartureBoard = DarwinActionType.GET_DEPARTURE_BOARD;
+        DarwinActionType<StationBoardResponseType, List<TrainTime>> getDepartureBoard = DarwinActionType.GET_DEPARTURE_BOARD;
 
-		// When...
-		List<TrainTime> trainTimes = darwinClient.sendAndReceive(request, getDepartureBoard);
+        // When...
+        List<TrainTime> trainTimes = darwinClient.sendAndReceive(request, getDepartureBoard);
 
-		// Then...
-		assertThat(trainTimes, is(not(empty())));
-	}
+        // Then...
+        assertThat(trainTimes, is(not(empty())));
+    }
 }

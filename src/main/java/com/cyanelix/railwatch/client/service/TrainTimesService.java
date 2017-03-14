@@ -13,11 +13,11 @@ import com.cyanelix.railwatch.domain.TrainTime;
 
 @Service
 public class TrainTimesService {
-	@Autowired
-	private DarwinClient darwinClient;
-	
-	public List<TrainTime> lookupTrainTimes(Station fromStation, Station toStation) {
-		DeparturesBoardRequest departuresBoardRequest = new DeparturesBoardRequest(fromStation, toStation);
-		return darwinClient.sendAndReceive(departuresBoardRequest, DarwinActionType.GET_DEPARTURE_BOARD);
-	}
+    @Autowired
+    private DarwinClient darwinClient;
+
+    public List<TrainTime> lookupTrainTimes(Station fromStation, Station toStation) {
+        DeparturesBoardRequest departuresBoardRequest = new DeparturesBoardRequest(fromStation, toStation);
+        return darwinClient.sendAndReceive(departuresBoardRequest, DarwinActionType.GET_DEPARTURE_BOARD);
+    }
 }

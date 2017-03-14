@@ -21,29 +21,31 @@ import com.thalesgroup.rtti._2016_02_16.ldb.GetBoardRequestParams;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TrainTimesServiceTest {
-	@Mock
-	private DarwinClient mockDarwinClient;
+    @Mock
+    private DarwinClient mockDarwinClient;
 
-	@InjectMocks
-	private TrainTimesService trainTimesService;
+    @InjectMocks
+    private TrainTimesService trainTimesService;
 
-	@Test
-	public void testLookupTrainTimes() {
-		// Given...
-		Station fromStation = Station.of("FOO");
-		Station toStation = Station.of("BAR");
+    @Test
+    public void testLookupTrainTimes() {
+        // Given...
+        Station fromStation = Station.of("FOO");
+        Station toStation = Station.of("BAR");
 
-		ArgumentCaptor<DeparturesBoardRequest> departuresRequestCaptor = ArgumentCaptor.forClass(DeparturesBoardRequest.class);
+        ArgumentCaptor<DeparturesBoardRequest> departuresRequestCaptor = ArgumentCaptor
+                .forClass(DeparturesBoardRequest.class);
 
-		given(mockDarwinClient.sendAndReceive(departuresRequestCaptor.capture(), any())).willReturn(Collections.emptyList());
+        given(mockDarwinClient.sendAndReceive(departuresRequestCaptor.capture(), any()))
+                .willReturn(Collections.emptyList());
 
-		// When...
-		trainTimesService.lookupTrainTimes(fromStation, toStation);
+        // When...
+        trainTimesService.lookupTrainTimes(fromStation, toStation);
 
-		// Then...
-		DeparturesBoardRequest departuresBoardRequest = departuresRequestCaptor.getValue();
-		GetBoardRequestParams requestParams = departuresBoardRequest.getSoapRequest().getValue();
-		assertThat(requestParams.getCrs(), is(fromStation.getStationCode()));
-		assertThat(requestParams.getFilterCrs(), is(toStation.getStationCode()));
-	}
+        // Then...
+        DeparturesBoardRequest departuresBoardRequest = departuresRequestCaptor.getValue();
+        GetBoardRequestParams requestParams = departuresBoardRequest.getSoapRequest().getValue();
+        assertThat(requestParams.getCrs(), is(fromStation.getStationCode()));
+        assertThat(requestParams.getFilterCrs(), is(toStation.getStationCode()));
+    }
 }

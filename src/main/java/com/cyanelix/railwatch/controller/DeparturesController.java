@@ -13,11 +13,11 @@ import com.cyanelix.railwatch.domain.TrainTime;
 
 @RestController
 public class DeparturesController {
-	@Autowired
-	private TrainTimesService trainTimesService;
+    @Autowired
+    private TrainTimesService trainTimesService;
 
-	@RequestMapping("/departures")
-	public List<TrainTime> get(@RequestParam("from") String fromStation, @RequestParam("to") String toStation) {
-		return trainTimesService.lookupTrainTimes(Station.of(fromStation), Station.of(toStation));
-	}
+    @RequestMapping("/departures")
+    public List<TrainTime> get(@RequestParam("from") String fromStation, @RequestParam("to") String toStation) {
+        return trainTimesService.lookupTrainTimes(Station.of(fromStation), Station.of(toStation));
+    }
 }
