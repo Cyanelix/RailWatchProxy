@@ -96,7 +96,7 @@
       </plugin>
 
       <!-- Get JaCoCo to compute integration test coverage. -->
-      <plugin>
+<!--       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <configuration>
@@ -104,8 +104,8 @@
           <includes>
             <include>com/comoyo/**</include>
           </includes>
-          <destFile>${project.build.directory}/jacoco-integration.exec</destFile> <!-- agent -->
-          <dataFile>${project.build.directory}/jacoco-integration.exec</dataFile> <!-- report -->
+          <destFile>${project.build.directory}/jacoco-integration.exec</destFile> agent
+          <dataFile>${project.build.directory}/jacoco-integration.exec</dataFile> report
         </configuration>
         <executions>
           <execution>
@@ -116,6 +116,6 @@
           </execution>
         </executions>
       </plugin>
-    </plugins>
+ -->    </plugins>
   </build>
 </project>
