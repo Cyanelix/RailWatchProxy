@@ -1,5 +1,6 @@
 package com.cyanelix.railwatch;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
@@ -8,6 +9,9 @@ import com.cyanelix.railwatch.client.darwin.DarwinClient;
 
 @Configuration
 public class DarwinSoapConfiguration {
+    @Value("${darwin.access.token}")
+    private String accessToken;
+
     @Bean
     public Jaxb2Marshaller marshaller() {
         Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
@@ -21,7 +25,7 @@ public class DarwinSoapConfiguration {
 
     @Bean
     public DarwinClient darwinClient(Jaxb2Marshaller marshaller) {
-        DarwinClient client = new DarwinClient();
+        DarwinClient client = new DarwinClient(accessToken);
         client.setDefaultUri("https://lite.realtime.nationalrail.co.uk/OpenLDBWS/ldb9.asmx");
         client.setMarshaller(marshaller);
         client.setUnmarshaller(marshaller);

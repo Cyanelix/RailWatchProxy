@@ -15,18 +15,18 @@ import com.thalesgroup.rtti._2013_11_28.token.types.AccessToken;
 
 public class AccessTokenWebServiceMessageCallback extends SoapActionCallback {
     private final Marshaller marshaller;
+    private final AccessToken accessToken;
 
-    public AccessTokenWebServiceMessageCallback(String soapAction, Marshaller marshaller) {
+    public AccessTokenWebServiceMessageCallback(String soapAction, Marshaller marshaller, String token) {
         super(soapAction);
         this.marshaller = marshaller;
+        this.accessToken = new AccessToken();
+        this.accessToken.setTokenValue(token);
     }
 
     @Override
     public void doWithMessage(WebServiceMessage message) throws IOException {
         super.doWithMessage(message);
-
-        AccessToken accessToken = new AccessToken();
-        accessToken.setTokenValue("886912ae-4e59-4326-9745-8c9e43642e1f");
 
         SoapMessage soapMessage = (SoapMessage) message;
         SoapHeader soapHeader = soapMessage.getSoapHeader();
@@ -37,7 +37,7 @@ public class AccessTokenWebServiceMessageCallback extends SoapActionCallback {
         marshaller.marshal(createAccessToken, soapHeader.getResult());
 
         soapHeader.addHeaderElement(new QName("http://thalesgroup.com/RTTI/2013-11-28/Token/types", "AccessToken"))
-                .setText("886912ae-4e59-4326-9745-8c9e43642e1f");
+                .setText(accessToken.getTokenValue());
     }
 
 }
