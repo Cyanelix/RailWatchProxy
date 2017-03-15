@@ -39,5 +39,4 @@ public class AccessTokenWebServiceMessageCallback extends SoapActionCallback {
         soapHeader.addHeaderElement(new QName("http://thalesgroup.com/RTTI/2013-11-28/Token/types", "AccessToken"))
                 .setText(accessToken.getTokenValue());
     }
-
 }
