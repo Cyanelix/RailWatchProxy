@@ -6,10 +6,10 @@ import java.util.Optional;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class TrainTime {
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private final LocalTime scheduledDepartureTime;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private final Optional<LocalTime> expectedDepartureTime;
 
     private final String message;

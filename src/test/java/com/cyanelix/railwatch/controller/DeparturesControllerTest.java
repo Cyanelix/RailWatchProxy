@@ -1,8 +1,9 @@
 package com.cyanelix.railwatch.controller;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalTime;
 import java.util.Collections;
@@ -11,43 +12,33 @@ import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
 
 import com.cyanelix.railwatch.client.service.TrainTimesService;
 import com.cyanelix.railwatch.domain.Station;
 import com.cyanelix.railwatch.domain.TrainTime;
 
-@RunWith(MockitoJUnitRunner.class)
+@WebMvcTest(DeparturesController.class)
+@RunWith(SpringRunner.class)
 public class DeparturesControllerTest {
-    @Mock
+    @MockBean
     private TrainTimesService mockTrainTimesService;
 
-    @InjectMocks
-    private DeparturesController departuresController;
+    @Autowired
+    private MockMvc mockMvc;
 
     @Test
-    public void givenTwoStationsWithETD_whenRequested_getTimes() {
-        // Given...
-        String fromStation = "FOO";
-        String toStation = "BAR";
+    public void oneOnTimeServiceReturned_success() throws Exception {
+        List<TrainTime> singleTime = Collections
+                .singletonList(TrainTime.of(LocalTime.of(10, 0), Optional.of(LocalTime.of(10, 0)), ""));
+        given(mockTrainTimesService.lookupTrainTimes(Station.of("AAA"), Station.of("BBB"))).willReturn(singleTime);
 
-        ArgumentCaptor<Station> fromCaptor = ArgumentCaptor.forClass(Station.class);
-        ArgumentCaptor<Station> toCaptor = ArgumentCaptor.forClass(Station.class);
-
-        given(mockTrainTimesService.lookupTrainTimes(fromCaptor.capture(), toCaptor.capture())).willReturn(
-                Collections.singletonList(TrainTime.of(LocalTime.MIDNIGHT, Optional.of(LocalTime.NOON), "")));
-
-        // When...
-        List<TrainTime> trainTimes = departuresController.get(fromStation, toStation);
-
-        // Then...
-        assertThat(fromCaptor.getValue().getStationCode(), is(fromStation));
-        assertThat(toCaptor.getValue().getStationCode(), is(toStation));
-        assertThat(trainTimes.size(), is(1));
-        assertThat(trainTimes.get(0).getScheduledDepartureTime(), is(LocalTime.MIDNIGHT));
-        assertThat(trainTimes.get(0).getExpectedDepartureTime().get(), is(LocalTime.NOON));
+        mockMvc.perform(get("/departures?from=AAA&to=BBB"))
+            .andExpect(status().isOk())
+            .andExpect(content().json("[{'scheduledDepartureTime':'10:00', 'expectedDepartureTime':'10:00', 'message':''}]"));
     }
 }
