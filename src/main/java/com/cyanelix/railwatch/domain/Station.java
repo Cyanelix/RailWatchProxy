@@ -1,6 +1,6 @@
 package com.cyanelix.railwatch.domain;
 
-public class Station {
+public final class Station {
     private final String stationCode;
 
     private Station(String stationCode) {
