@@ -2,6 +2,7 @@ package com.cyanelix.railwatch.client.darwin.converter.response;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -11,14 +12,21 @@ import org.springframework.core.convert.converter.Converter;
 import com.cyanelix.railwatch.domain.TrainTime;
 import com.thalesgroup.rtti._2016_02_16.ldb.StationBoardResponseType;
 import com.thalesgroup.rtti._2016_02_16.ldb.types.ServiceItem;
+import com.thalesgroup.rtti._2016_02_16.ldb.types.StationBoard;
 
 public class DepartureBoardConverter implements Converter<StationBoardResponseType, List<TrainTime>> {
     private static final String ON_TIME_ETD = "On time";
 
     @Override
     public List<TrainTime> convert(StationBoardResponseType response) {
-        return response.getGetStationBoardResult().getTrainServices().getService().stream()
-                .map(this::convertServiceItemToTrainTime).collect(Collectors.toList());
+        StationBoard stationBoard = response.getGetStationBoardResult();
+
+        if (stationBoard.getTrainServices() == null) {
+            return Collections.emptyList();
+        } else {
+            return stationBoard.getTrainServices().getService().stream().map(this::convertServiceItemToTrainTime)
+                    .collect(Collectors.toList());
+        }
     }
 
     private TrainTime convertServiceItemToTrainTime(ServiceItem serviceItem) {

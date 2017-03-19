@@ -92,6 +92,22 @@ public class DepartureBoardConverterTest {
         assertThat(trainTimes.get(0).getMessage(), is("Cancelled"));
     }
 
+    @Test
+    public void noTrains_returnsEmptyList() {
+        // Given...
+        StationBoard stationBoard = new StationBoard();
+        StationBoardResponseType response = new StationBoardResponseType();
+        response.setGetStationBoardResult(stationBoard);
+
+        DepartureBoardConverter converter = new DepartureBoardConverter();
+
+        // When...
+        List<TrainTime> trainTimes = converter.convert(response);
+
+        // Then...
+        assertThat(trainTimes, hasSize(0));
+    }
+
     private ServiceItem createServiceItemForTimes(String std, String etd) {
         ServiceItem service = new ServiceItem();
         service.setStd(std);
