@@ -1,10 +1,10 @@
-package com.cyanelix.railwatch.client.darwin;
+package com.cyanelix.railwatch.darwin.client;
 
 import java.util.List;
 
 import org.springframework.core.convert.converter.Converter;
 
-import com.cyanelix.railwatch.client.darwin.converter.response.DepartureBoardConverter;
+import com.cyanelix.railwatch.darwin.converter.DepartureBoardConverter;
 import com.cyanelix.railwatch.domain.TrainTime;
 import com.thalesgroup.rtti._2016_02_16.ldb.StationBoardResponseType;
 

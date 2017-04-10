@@ -1,4 +1,4 @@
-package com.cyanelix.railwatch.client.darwin;
+package com.cyanelix.railwatch.darwin.client;
 
 import com.thalesgroup.rtti._2016_02_16.ldb.ObjectFactory;
 

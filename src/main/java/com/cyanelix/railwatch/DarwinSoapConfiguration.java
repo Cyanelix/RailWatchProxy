@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
-import com.cyanelix.railwatch.client.darwin.DarwinClient;
+import com.cyanelix.railwatch.darwin.client.DarwinClient;
 
 @Configuration
 public class DarwinSoapConfiguration {

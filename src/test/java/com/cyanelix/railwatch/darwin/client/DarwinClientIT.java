@@ -1,4 +1,4 @@
-package com.cyanelix.railwatch.client.darwin;
+package com.cyanelix.railwatch.darwin.client;
 
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;

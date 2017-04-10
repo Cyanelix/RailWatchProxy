@@ -1,4 +1,4 @@
-package com.cyanelix.railwatch.client.service;
+package com.cyanelix.railwatch.service;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -14,8 +14,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.cyanelix.railwatch.client.darwin.DarwinClient;
-import com.cyanelix.railwatch.client.darwin.DeparturesBoardRequest;
+import com.cyanelix.railwatch.darwin.client.DarwinClient;
+import com.cyanelix.railwatch.darwin.client.DeparturesBoardRequest;
 import com.cyanelix.railwatch.domain.Station;
 import com.thalesgroup.rtti._2016_02_16.ldb.GetBoardRequestParams;
 

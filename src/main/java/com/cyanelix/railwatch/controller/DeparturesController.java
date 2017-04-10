@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cyanelix.railwatch.client.service.TrainTimesService;
 import com.cyanelix.railwatch.domain.Station;
 import com.cyanelix.railwatch.domain.TrainTime;
+import com.cyanelix.railwatch.service.TrainTimesService;
 
 @RestController
 public class DeparturesController {

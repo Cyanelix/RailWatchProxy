@@ -1,4 +1,4 @@
-package com.cyanelix.railwatch.client.darwin.converter.response;
+package com.cyanelix.railwatch.darwin.converter;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;

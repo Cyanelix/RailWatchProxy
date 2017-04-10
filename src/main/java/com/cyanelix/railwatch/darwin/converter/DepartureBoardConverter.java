@@ -1,4 +1,4 @@
-package com.cyanelix.railwatch.client.darwin.converter.response;
+package com.cyanelix.railwatch.darwin.converter;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;

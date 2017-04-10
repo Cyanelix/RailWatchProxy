@@ -18,9 +18,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.cyanelix.railwatch.client.service.TrainTimesService;
 import com.cyanelix.railwatch.domain.Station;
 import com.cyanelix.railwatch.domain.TrainTime;
+import com.cyanelix.railwatch.service.TrainTimesService;
 
 @WebMvcTest(DeparturesController.class)
 @RunWith(SpringRunner.class)

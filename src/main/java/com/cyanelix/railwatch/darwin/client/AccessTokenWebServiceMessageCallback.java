@@ -1,4 +1,4 @@
-package com.cyanelix.railwatch.client.darwin;
+package com.cyanelix.railwatch.darwin.client;
 
 import java.io.IOException;
 
