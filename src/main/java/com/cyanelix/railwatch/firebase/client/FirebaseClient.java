@@ -4,13 +4,15 @@ import com.cyanelix.railwatch.firebase.client.entity.NotificationRequest;
 import com.cyanelix.railwatch.firebase.client.entity.NotificationResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collections;
 
 @Component
 public class FirebaseClient {
@@ -27,10 +29,14 @@ public class FirebaseClient {
     }
 
     public boolean sendNotification(NotificationRequest notificationRequest) {
-        RequestEntity<NotificationRequest> requestEntity = new RequestEntity(notificationRequest, httpHeaders, HttpMethod.POST, baseUrl);
+        RequestEntity<NotificationRequest> requestEntity = new RequestEntity<>(notificationRequest, httpHeaders, HttpMethod.POST, baseUrl);
 
         ResponseEntity<NotificationResponse> notificationResponse = restTemplate.exchange(requestEntity, NotificationResponse.class);
 
+        return isSuccess(notificationResponse);
+    }
+
+    private boolean isSuccess(ResponseEntity<NotificationResponse> notificationResponse) {
         return notificationResponse.getStatusCode().is2xxSuccessful()
                 && notificationResponse.getBody().getSuccess() == 1;
     }
