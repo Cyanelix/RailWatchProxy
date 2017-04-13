@@ -39,4 +39,11 @@ public final class Station {
             return false;
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "Station{" +
+                "stationCode='" + stationCode + '\'' +
+                '}';
+    }
 }
