@@ -3,8 +3,6 @@ package com.cyanelix.railwatch.service;
 import com.cyanelix.railwatch.domain.Schedule;
 import com.cyanelix.railwatch.domain.Station;
 import com.cyanelix.railwatch.domain.TrainTime;
-import com.cyanelix.railwatch.firebase.client.FirebaseClient;
-import com.cyanelix.railwatch.firebase.client.entity.NotificationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
