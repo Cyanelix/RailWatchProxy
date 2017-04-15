@@ -7,7 +7,7 @@ public class Schedule {
     private LocalTime endTime;
     private Station fromStation;
     private Station toStation;
-    private String notificationTarget;
+    private NotificationTarget notificationTarget;
 
     public LocalTime getStartTime() {
         return startTime;
@@ -45,11 +45,11 @@ public class Schedule {
         return startTime.isBefore(testTime) && endTime.isAfter(testTime);
     }
 
-    public String getNotificationTarget() {
+    public NotificationTarget getNotificationTarget() {
         return notificationTarget;
     }
 
-    public void setNotificationTarget(String notificationTarget) {
+    public void setNotificationTarget(NotificationTarget notificationTarget) {
         this.notificationTarget = notificationTarget;
     }
 }

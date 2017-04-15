@@ -1,5 +1,6 @@
 package com.cyanelix.railwatch.firebase.client;
 
+import com.cyanelix.railwatch.domain.NotificationTarget;
 import com.cyanelix.railwatch.firebase.client.entity.NotificationRequest;
 import com.cyanelix.railwatch.firebase.client.entity.NotificationResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -37,7 +38,7 @@ public class FirebaseClientTest {
     @Test
     public void sendValidNotification_getSuccessResponse() throws JsonProcessingException {
         // Given...
-        NotificationRequest request = new NotificationRequest("key", "title", "body");
+        NotificationRequest request = new NotificationRequest(NotificationTarget.of("key"), "title", "body");
 
         NotificationResponse response = new NotificationResponse();
         response.setSuccess(1);

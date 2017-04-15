@@ -1,5 +1,6 @@
 package com.cyanelix.railwatch.dto;
 
+import com.cyanelix.railwatch.domain.NotificationTarget;
 import com.cyanelix.railwatch.domain.Schedule;
 import com.cyanelix.railwatch.domain.Station;
 
@@ -20,7 +21,7 @@ public class ScheduleDTO {
         endTime = schedule.getEndTime().format(TIME_FORMATTER);
         fromStation = schedule.getFromStation().getStationCode();
         toStation = schedule.getToStation().getStationCode();
-        notificationTarget = schedule.getNotificationTarget();
+        notificationTarget = schedule.getNotificationTarget().getTargetAddress();
     }
 
     public ScheduleDTO() {
@@ -33,7 +34,7 @@ public class ScheduleDTO {
         schedule.setEndTime(LocalTime.parse(endTime));
         schedule.setFromStation(Station.of(fromStation));
         schedule.setToStation(Station.of(toStation));
-        schedule.setNotificationTarget(notificationTarget);
+        schedule.setNotificationTarget(NotificationTarget.of(notificationTarget));
         return schedule;
     }
 

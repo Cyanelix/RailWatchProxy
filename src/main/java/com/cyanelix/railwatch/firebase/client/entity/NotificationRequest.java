@@ -1,12 +1,14 @@
 package com.cyanelix.railwatch.firebase.client.entity;
 
+import com.cyanelix.railwatch.domain.NotificationTarget;
+
 public class NotificationRequest {
     private final String to;
     private final Notification notification;
     private final String priority;
 
-    public NotificationRequest(String to, String title, String body) {
-        this.to = to;
+    public NotificationRequest(NotificationTarget to, String title, String body) {
+        this.to = to.getTargetAddress();
         this.notification = new Notification(title, body);
         priority = "high";
     }

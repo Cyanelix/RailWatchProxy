@@ -1,5 +1,6 @@
 package com.cyanelix.railwatch.firebase.client;
 
+import com.cyanelix.railwatch.domain.NotificationTarget;
 import com.cyanelix.railwatch.firebase.client.entity.NotificationRequest;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -21,7 +22,7 @@ public class FirebaseClientIT {
     @Ignore("This is really just an exploratory test, and sends a real notification to a real token, which will cease to be valid in due course.")
     public void testSendNotification() {
         // Given...
-        NotificationRequest request = new NotificationRequest("evfu1JfGw9c:APA91bGF6KmGoSyi7nkte9UYpMLL3Q2JJMWJVVwjJMzy7UbZP42WLPYAj__M0y3LRAZFlmavaGVSpMLfcQ8wIQJhD1_OdbfEI7zBCZBSw8GFaJ5EB4CPipyTVMFZt92ZcsKGGp2VYr3m",
+        NotificationRequest request = new NotificationRequest(NotificationTarget.of("evfu1JfGw9c:APA91bGF6KmGoSyi7nkte9UYpMLL3Q2JJMWJVVwjJMzy7UbZP42WLPYAj__M0y3LRAZFlmavaGVSpMLfcQ8wIQJhD1_OdbfEI7zBCZBSw8GFaJ5EB4CPipyTVMFZt92ZcsKGGp2VYr3m"),
                 "Title", "Body");
 
         // When...

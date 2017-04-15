@@ -1,5 +1,6 @@
 package com.cyanelix.railwatch.service;
 
+import com.cyanelix.railwatch.domain.NotificationTarget;
 import com.cyanelix.railwatch.domain.Schedule;
 import com.cyanelix.railwatch.domain.Station;
 import com.cyanelix.railwatch.domain.TrainTime;
@@ -32,7 +33,7 @@ public class NotificationServiceTest {
     @Test
     public void singleTrainTime_sendNotification() {
         // Given...
-        Schedule schedule = createSchedule(Station.of("FOO"), Station.of("BAR"), "notification-to");
+        Schedule schedule = createSchedule(Station.of("FOO"), Station.of("BAR"), NotificationTarget.of("notification-to"));
         List<TrainTime> trainTimes = Collections.singletonList(TrainTime.of(LocalTime.NOON, Optional.empty(), ""));
 
         // When...
@@ -48,7 +49,7 @@ public class NotificationServiceTest {
         assertThat(notificationRequest.getNotification().getBody(), is("FOO -> BAR @ 12:00"));
     }
 
-    private Schedule createSchedule(Station fromStation, Station toStation, String notificationTarget) {
+    private Schedule createSchedule(Station fromStation, Station toStation, NotificationTarget notificationTarget) {
         Schedule schedule = new Schedule();
         schedule.setFromStation(fromStation);
         schedule.setToStation(toStation);
