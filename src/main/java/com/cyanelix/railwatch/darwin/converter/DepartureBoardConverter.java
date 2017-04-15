@@ -35,18 +35,18 @@ public class DepartureBoardConverter implements Converter<StationBoardResponseTy
         String etd = serviceItem.getEtd();
 
         String message = "";
-        LocalTime expectedDepatureTime = null;
+        LocalTime expectedDepartureTime = null;
 
         if (ON_TIME_ETD.equals(etd)) {
-            expectedDepatureTime = scheduledDepatureTime;
+            expectedDepartureTime = scheduledDepatureTime;
         } else {
             try {
-                expectedDepatureTime = LocalTime.parse(etd);
+                expectedDepartureTime = LocalTime.parse(etd);
             } catch (DateTimeParseException ex) {
                 message = etd;
             }
         }
 
-        return TrainTime.of(scheduledDepatureTime, Optional.ofNullable(expectedDepatureTime), message);
+        return TrainTime.of(scheduledDepatureTime, Optional.ofNullable(expectedDepartureTime), message);
     }
 }
