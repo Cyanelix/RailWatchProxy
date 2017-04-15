@@ -1,7 +1,6 @@
 package com.cyanelix.railwatch.service;
 
 import com.cyanelix.railwatch.domain.Schedule;
-import com.cyanelix.railwatch.domain.Station;
 import com.cyanelix.railwatch.domain.TrainTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,7 +42,7 @@ public class ScheduleService {
     }
 
     private void lookupAndNotifyTrainTimes(Schedule schedule) {
-        List<TrainTime> trainTimes = trainTimesService.lookupTrainTimes(Station.of(schedule.getFromStation()), Station.of(schedule.getToStation()));
+        List<TrainTime> trainTimes = trainTimesService.lookupTrainTimes(schedule.getFromStation(), schedule.getToStation());
         notificationService.sendNotification(schedule, trainTimes);
     }
 }

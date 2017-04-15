@@ -43,7 +43,7 @@ public class ScheduleServiceTest {
     @Test
     public void createSingleScheduleActiveNow_checkTimes_routeLookedUp() {
         // Given...
-        createSchedule(LocalTime.MIN, LocalTime.MAX, "FOO", "BAR");
+        createSchedule(LocalTime.MIN, LocalTime.MAX, Station.of("FOO"), Station.of("BAR"));
 
         // When...
         scheduleService.checkTimes();
@@ -56,8 +56,8 @@ public class ScheduleServiceTest {
     @Test
     public void createOneActiveOneInactiveSchedule_checkTimes_onlyActiveRouteLookedUp() {
         // Given...
-        createSchedule(LocalTime.of(10, 0), LocalTime.of(11, 0), "ABC", "DEF");
-        createSchedule(LocalTime.of(9, 0), LocalTime.of(10, 0), "YYY", "ZZZ");
+        createSchedule(LocalTime.of(10, 0), LocalTime.of(11, 0), Station.of("ABC"), Station.of("DEF"));
+        createSchedule(LocalTime.of(9, 0), LocalTime.of(10, 0), Station.of("YYY"), Station.of("ZZZ"));
 
         // When...
         scheduleService.checkTimes();
@@ -67,7 +67,7 @@ public class ScheduleServiceTest {
         verify(mockTrainTimesService, never()).lookupTrainTimes(Station.of("YYY"), Station.of("ZZZ"));
     }
 
-    private void createSchedule(LocalTime min, LocalTime max, String fromStation, String toStation) {
+    private void createSchedule(LocalTime min, LocalTime max, Station fromStation, Station toStation) {
         Schedule schedule = new Schedule();
         schedule.setStartTime(min);
         schedule.setEndTime(max);

@@ -1,16 +1,15 @@
 package com.cyanelix.railwatch.controller;
 
-import java.util.List;
-
-import com.cyanelix.railwatch.domain.Schedule;
+import com.cyanelix.railwatch.domain.Station;
+import com.cyanelix.railwatch.domain.TrainTime;
+import com.cyanelix.railwatch.dto.ScheduleDTO;
 import com.cyanelix.railwatch.service.ScheduleService;
+import com.cyanelix.railwatch.service.TrainTimesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import com.cyanelix.railwatch.domain.Station;
-import com.cyanelix.railwatch.domain.TrainTime;
-import com.cyanelix.railwatch.service.TrainTimesService;
+import java.util.List;
 
 @RestController
 @RequestMapping("departures")
@@ -32,8 +31,8 @@ public class DeparturesController {
 
     @RequestMapping(value = "schedule", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.CREATED)
-    public void put(@RequestBody Schedule schedule) {
-        scheduleService.createSchedule(schedule);
+    public void put(@RequestBody ScheduleDTO scheduleDTO) {
+        scheduleService.createSchedule(scheduleDTO.toSchedule());
         scheduleService.checkTimes();
     }
 }

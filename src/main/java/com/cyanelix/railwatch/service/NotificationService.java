@@ -27,7 +27,7 @@ public class NotificationService {
 
     private String buildNotificationMessage(Schedule schedule, List<TrainTime> trainTimes) {
         return trainTimes.parallelStream()
-                .map(trainTime -> String.format("%s -> %s @ %s", schedule.getFromStation(), schedule.getToStation(), trainTime.toString()))
+                .map(trainTime -> String.format("%s -> %s @ %s", schedule.getFromStation().getStationCode(), schedule.getToStation().getStationCode(), trainTime.toString()))
                 .collect(Collectors.joining("\n"));
     }
 }

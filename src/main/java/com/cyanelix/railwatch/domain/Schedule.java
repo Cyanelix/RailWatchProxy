@@ -1,18 +1,12 @@
 package com.cyanelix.railwatch.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import java.time.LocalTime;
 
 public class Schedule {
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private LocalTime startTime;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private LocalTime endTime;
-
-    private String fromStation;
-    private String toStation;
+    private Station fromStation;
+    private Station toStation;
     private String notificationTarget;
 
     public LocalTime getStartTime() {
@@ -31,19 +25,19 @@ public class Schedule {
         this.endTime = endTime;
     }
 
-    public String getToStation() {
+    public Station getToStation() {
         return toStation;
     }
 
-    public void setToStation(String toStation) {
+    public void setToStation(Station toStation) {
         this.toStation = toStation;
     }
 
-    public String getFromStation() {
+    public Station getFromStation() {
         return fromStation;
     }
 
-    public void setFromStation(String fromStation) {
+    public void setFromStation(Station fromStation) {
         this.fromStation = fromStation;
     }
 
