@@ -30,8 +30,8 @@ public class ScheduleDTO {
 
     public Schedule toSchedule() {
         Schedule schedule = new Schedule();
-        schedule.setStartTime(LocalTime.parse(startTime));
-        schedule.setEndTime(LocalTime.parse(endTime));
+        schedule.setStartTime(LocalTime.parse(startTime, TIME_FORMATTER));
+        schedule.setEndTime(LocalTime.parse(endTime, TIME_FORMATTER));
         schedule.setFromStation(Station.of(fromStation));
         schedule.setToStation(Station.of(toStation));
         schedule.setNotificationTarget(NotificationTarget.of(notificationTarget));
