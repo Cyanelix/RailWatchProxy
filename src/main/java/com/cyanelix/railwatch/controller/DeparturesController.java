@@ -34,5 +34,6 @@ public class DeparturesController {
     @ResponseStatus(HttpStatus.CREATED)
     public void put(@RequestBody Schedule schedule) {
         scheduleService.createSchedule(schedule);
+        scheduleService.checkTimes();
     }
 }
