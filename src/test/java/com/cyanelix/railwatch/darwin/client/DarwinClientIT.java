@@ -1,8 +1,6 @@
 package com.cyanelix.railwatch.darwin.client;
 
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 import java.util.List;
@@ -36,6 +34,6 @@ public class DarwinClientIT {
         List<TrainTime> trainTimes = darwinClient.sendAndReceive(request, getDepartureBoard);
 
         // Then...
-        assertThat(trainTimes, is(not(empty())));
+        assertThat(trainTimes, is(not(nullValue())));
     }
 }
