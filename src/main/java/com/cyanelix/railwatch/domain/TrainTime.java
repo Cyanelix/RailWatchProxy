@@ -3,8 +3,6 @@ package com.cyanelix.railwatch.domain;
 import java.time.LocalTime;
 import java.util.Optional;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 public class TrainTime {
     private final LocalTime scheduledDepartureTime;
     private final Optional<LocalTime> expectedDepartureTime;
