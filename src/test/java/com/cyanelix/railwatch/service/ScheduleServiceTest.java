@@ -16,6 +16,7 @@ import java.time.Instant;
 import java.time.LocalTime;
 import java.time.ZoneId;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
@@ -33,6 +34,9 @@ public class ScheduleServiceTest {
     @MockBean
     private TrainTimesService mockTrainTimesService;
 
+    @MockBean
+    private NotificationService notificationService;
+
     @Autowired
     private ScheduleService scheduleService;
 
@@ -46,6 +50,7 @@ public class ScheduleServiceTest {
 
         // Then...
         verify(mockTrainTimesService).lookupTrainTimes(Station.of("FOO"), Station.of("BAR"));
+        verify(notificationService).sendNotification(any(), any());
     }
 
     @Test

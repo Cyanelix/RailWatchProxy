@@ -36,4 +36,16 @@ public class TrainTime {
     public String getMessage() {
         return message;
     }
+
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder(scheduledDepartureTime.toString());
+
+        if (expectedDepartureTime.isPresent()) {
+            stringBuilder.append(" -> " + expectedDepartureTime);
+        } else {
+            stringBuilder.append(message);
+        }
+
+        return stringBuilder.toString();
+    }
 }

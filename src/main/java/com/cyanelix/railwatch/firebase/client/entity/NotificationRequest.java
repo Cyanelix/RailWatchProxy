@@ -23,7 +23,7 @@ public class NotificationRequest {
         return notification;
     }
 
-    private class Notification {
+    public class Notification {
         private final String title;
         private final String body;
 
