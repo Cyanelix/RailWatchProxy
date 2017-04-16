@@ -1,7 +1,9 @@
 package com.cyanelix.railwatch.service;
 
+import com.cyanelix.railwatch.domain.NotificationTarget;
 import com.cyanelix.railwatch.domain.Schedule;
 import com.cyanelix.railwatch.domain.Station;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,12 @@ public class ScheduleServiceTest {
     @Autowired
     private ScheduleService scheduleService;
 
+    @Before
+    public void setup() {
+        // TODO: Temporary workaround to empty this list; longer-term this will be properly persisted in a real datastore.
+        scheduleService.createdSchedules.clear();
+    }
+
     @Test
     public void createSingleScheduleActiveNow_checkTimes_routeLookedUp() {
         // Given...
@@ -74,4 +82,19 @@ public class ScheduleServiceTest {
         verify(mockNotificationService, never()).sendNotification(eq(inactiveSchedule), any());
     }
 
+    @Test
+    public void createDuplicateSchedule_checkTimes_onlyOneExists() {
+        // Given...
+        Schedule schedule1 = Schedule.of(LocalTime.MIN, LocalTime.MAX, Station.of("FOO"), Station.of("BAR"), NotificationTarget.of("notification-to"));
+        Schedule schedule2 = Schedule.of(LocalTime.MIN, LocalTime.MAX, Station.of("FOO"), Station.of("BAR"), NotificationTarget.of("notification-to"));
+        scheduleService.createSchedule(schedule1);
+        scheduleService.createSchedule(schedule2);
+
+        // When..
+        scheduleService.checkTimes();
+
+        // Then...
+        verify(mockTrainTimesService, times(1)).lookupTrainTimes(Station.of("FOO"), Station.of("BAR"));
+        verify(mockNotificationService, times(1)).sendNotification(eq(schedule1), any());
+    }
 }

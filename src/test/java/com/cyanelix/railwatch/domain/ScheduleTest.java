@@ -2,6 +2,7 @@ package com.cyanelix.railwatch.domain;
 
 import com.cyanelix.railwatch.service.NotificationService;
 import com.cyanelix.railwatch.service.TrainTimesService;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -78,5 +79,10 @@ public class ScheduleTest {
         // Then...
         verify(mockTrainTimesService).lookupTrainTimes(from, to);
         verify(mockNotificationService).sendNotification(schedule, trainTimes);
+    }
+
+    @Test
+    public void equalsContract() {
+        EqualsVerifier.forClass(Schedule.class).verify();
     }
 }

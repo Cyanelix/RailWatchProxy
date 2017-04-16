@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.Clock;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Stream;
 
 @Service
@@ -18,7 +18,7 @@ public class ScheduleService {
 
     private final Clock clock;
 
-    private static final List<Schedule> createdSchedules = new ArrayList<>();
+    protected static final Set<Schedule> createdSchedules = new HashSet<>();
 
     @Autowired
     public ScheduleService(TrainTimesService trainTimesService, NotificationService notificationService, Clock clock) {

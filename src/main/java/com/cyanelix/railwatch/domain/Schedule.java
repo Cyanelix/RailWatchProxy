@@ -5,6 +5,7 @@ import com.cyanelix.railwatch.service.TrainTimesService;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Objects;
 
 public final class Schedule {
     private final LocalTime startTime;
@@ -23,6 +24,23 @@ public final class Schedule {
 
     public static Schedule of(LocalTime startTime, LocalTime endTime, Station fromStation, Station toStation, NotificationTarget notificationTarget) {
         return new Schedule(startTime, endTime, fromStation, toStation, notificationTarget);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Schedule schedule = (Schedule) o;
+        return Objects.equals(startTime, schedule.startTime) &&
+                Objects.equals(endTime, schedule.endTime) &&
+                Objects.equals(fromStation, schedule.fromStation) &&
+                Objects.equals(toStation, schedule.toStation) &&
+                Objects.equals(notificationTarget, schedule.notificationTarget);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(startTime, endTime, fromStation, toStation, notificationTarget);
     }
 
     public LocalTime getStartTime() {
