@@ -29,8 +29,12 @@ public class ScheduleDTO {
     }
 
     public Schedule toSchedule() {
-        Schedule schedule = Schedule.of(LocalTime.parse(startTime, TIME_FORMATTER), LocalTime.parse(endTime, TIME_FORMATTER), Station.of(fromStation), Station.of(toStation), NotificationTarget.of(notificationTarget));
-        return schedule;
+        return Schedule.of(
+                LocalTime.parse(startTime, TIME_FORMATTER),
+                LocalTime.parse(endTime, TIME_FORMATTER),
+                Station.of(fromStation),
+                Station.of(toStation),
+                NotificationTarget.of(notificationTarget));
     }
 
     public String getStartTime() {
