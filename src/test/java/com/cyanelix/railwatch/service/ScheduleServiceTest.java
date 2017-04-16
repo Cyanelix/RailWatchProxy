@@ -1,7 +1,6 @@
 package com.cyanelix.railwatch.service;
 
 import com.cyanelix.railwatch.domain.Schedule;
-import com.cyanelix.railwatch.domain.Station;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +12,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.Clock;
 import java.time.Instant;
-import java.time.LocalTime;
 import java.time.ZoneId;
 
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -35,7 +33,7 @@ public class ScheduleServiceTest {
     private TrainTimesService mockTrainTimesService;
 
     @MockBean
-    private NotificationService notificationService;
+    private NotificationService mockNotificationService;
 
     @Autowired
     private ScheduleService scheduleService;
@@ -43,36 +41,33 @@ public class ScheduleServiceTest {
     @Test
     public void createSingleScheduleActiveNow_checkTimes_routeLookedUp() {
         // Given...
-        createSchedule(LocalTime.MIN, LocalTime.MAX, Station.of("FOO"), Station.of("BAR"));
+        Schedule activeSchedule = createSchedule(true);
 
         // When...
         scheduleService.checkTimes();
 
         // Then...
-        verify(mockTrainTimesService).lookupTrainTimes(Station.of("FOO"), Station.of("BAR"));
-        verify(notificationService).sendNotification(any(), any());
+        verify(activeSchedule).lookupAndNotifyTrainTimes(mockTrainTimesService, mockNotificationService);
     }
 
     @Test
     public void createOneActiveOneInactiveSchedule_checkTimes_onlyActiveRouteLookedUp() {
         // Given...
-        createSchedule(LocalTime.of(10, 0), LocalTime.of(11, 0), Station.of("ABC"), Station.of("DEF"));
-        createSchedule(LocalTime.of(9, 0), LocalTime.of(10, 0), Station.of("YYY"), Station.of("ZZZ"));
+        Schedule activeSchedule = createSchedule(true);
+        Schedule inactiveSchedule = createSchedule(false);
 
         // When...
         scheduleService.checkTimes();
 
         // Then...
-        verify(mockTrainTimesService).lookupTrainTimes(Station.of("ABC"), Station.of("DEF"));
-        verify(mockTrainTimesService, never()).lookupTrainTimes(Station.of("YYY"), Station.of("ZZZ"));
+        verify(activeSchedule).lookupAndNotifyTrainTimes(mockTrainTimesService, mockNotificationService);
+        verify(inactiveSchedule, never()).lookupAndNotifyTrainTimes(mockTrainTimesService, mockNotificationService);
     }
 
-    private void createSchedule(LocalTime min, LocalTime max, Station fromStation, Station toStation) {
-        Schedule schedule = new Schedule();
-        schedule.setStartTime(min);
-        schedule.setEndTime(max);
-        schedule.setFromStation(fromStation);
-        schedule.setToStation(toStation);
+    private Schedule createSchedule(boolean isActive) {
+        Schedule schedule = mock(Schedule.class);
+        given(schedule.isActive(any())).willReturn(isActive);
         scheduleService.createSchedule(schedule);
+        return schedule;
     }
 }

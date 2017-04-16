@@ -1,7 +1,6 @@
 package com.cyanelix.railwatch.service;
 
 import com.cyanelix.railwatch.domain.Schedule;
-import com.cyanelix.railwatch.domain.TrainTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,16 +32,12 @@ public class ScheduleService {
     }
 
     public void checkTimes() {
-        getActiveSchedules().forEach(this::lookupAndNotifyTrainTimes);
+        getActiveSchedules()
+                .forEach(schedule -> schedule.lookupAndNotifyTrainTimes(trainTimesService, notificationService));
     }
 
     private Stream<Schedule> getActiveSchedules() {
         return createdSchedules.parallelStream()
                 .filter(schedule -> schedule.isActive(LocalTime.now(clock)));
-    }
-
-    private void lookupAndNotifyTrainTimes(Schedule schedule) {
-        List<TrainTime> trainTimes = trainTimesService.lookupTrainTimes(schedule.getFromStation(), schedule.getToStation());
-        notificationService.sendNotification(schedule, trainTimes);
     }
 }

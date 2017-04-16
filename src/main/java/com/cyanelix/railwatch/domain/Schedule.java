@@ -1,6 +1,10 @@
 package com.cyanelix.railwatch.domain;
 
+import com.cyanelix.railwatch.service.NotificationService;
+import com.cyanelix.railwatch.service.TrainTimesService;
+
 import java.time.LocalTime;
+import java.util.List;
 
 public class Schedule {
     private LocalTime startTime;
@@ -51,5 +55,10 @@ public class Schedule {
 
     public void setNotificationTarget(NotificationTarget notificationTarget) {
         this.notificationTarget = notificationTarget;
+    }
+
+    public void lookupAndNotifyTrainTimes(TrainTimesService trainTimesService, NotificationService notificationService) {
+        List<TrainTime> trainTimes = trainTimesService.lookupTrainTimes(fromStation, toStation);
+        notificationService.sendNotification(this, trainTimes);
     }
 }
