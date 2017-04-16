@@ -33,7 +33,7 @@ public class NotificationServiceTest {
     @Test
     public void singleTrainTime_sendNotification() {
         // Given...
-        Schedule schedule = createSchedule(Station.of("FOO"), Station.of("BAR"), NotificationTarget.of("notification-to"));
+        Schedule schedule = Schedule.of(null, null, Station.of("FOO"), Station.of("BAR"), NotificationTarget.of("notification-to"));
         List<TrainTime> trainTimes = Collections.singletonList(TrainTime.of(LocalTime.NOON, Optional.empty(), ""));
 
         // When...
@@ -49,11 +49,4 @@ public class NotificationServiceTest {
         assertThat(notificationRequest.getNotification().getBody(), is("FOO -> BAR @ 12:00"));
     }
 
-    private Schedule createSchedule(Station fromStation, Station toStation, NotificationTarget notificationTarget) {
-        Schedule schedule = new Schedule();
-        schedule.setFromStation(fromStation);
-        schedule.setToStation(toStation);
-        schedule.setNotificationTarget(notificationTarget);
-        return schedule;
-    }
 }

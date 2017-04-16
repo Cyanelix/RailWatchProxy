@@ -6,43 +6,39 @@ import com.cyanelix.railwatch.service.TrainTimesService;
 import java.time.LocalTime;
 import java.util.List;
 
-public class Schedule {
-    private LocalTime startTime;
-    private LocalTime endTime;
-    private Station fromStation;
-    private Station toStation;
-    private NotificationTarget notificationTarget;
+public final class Schedule {
+    private final LocalTime startTime;
+    private final LocalTime endTime;
+    private final Station fromStation;
+    private final Station toStation;
+    private final NotificationTarget notificationTarget;
+
+    private Schedule(LocalTime startTime, LocalTime endTime, Station fromStation, Station toStation, NotificationTarget notificationTarget) {
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.fromStation = fromStation;
+        this.toStation = toStation;
+        this.notificationTarget = notificationTarget;
+    }
+
+    public static Schedule of(LocalTime startTime, LocalTime endTime, Station fromStation, Station toStation, NotificationTarget notificationTarget) {
+        return new Schedule(startTime, endTime, fromStation, toStation, notificationTarget);
+    }
 
     public LocalTime getStartTime() {
         return startTime;
-    }
-
-    public void setStartTime(LocalTime startTime) {
-        this.startTime = startTime;
     }
 
     public LocalTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(LocalTime endTime) {
-        this.endTime = endTime;
-    }
-
     public Station getToStation() {
         return toStation;
     }
 
-    public void setToStation(Station toStation) {
-        this.toStation = toStation;
-    }
-
     public Station getFromStation() {
         return fromStation;
-    }
-
-    public void setFromStation(Station fromStation) {
-        this.fromStation = fromStation;
     }
 
     public boolean isActive(LocalTime testTime) {
@@ -51,10 +47,6 @@ public class Schedule {
 
     public NotificationTarget getNotificationTarget() {
         return notificationTarget;
-    }
-
-    public void setNotificationTarget(NotificationTarget notificationTarget) {
-        this.notificationTarget = notificationTarget;
     }
 
     public void lookupAndNotifyTrainTimes(TrainTimesService trainTimesService, NotificationService notificationService) {

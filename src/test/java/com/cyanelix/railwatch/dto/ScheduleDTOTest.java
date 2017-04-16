@@ -35,12 +35,7 @@ public class ScheduleDTOTest {
     @Test
     public void dto_ScheduleConstructor() {
         // Given...
-        Schedule schedule = new Schedule();
-        schedule.setStartTime(LocalTime.NOON);
-        schedule.setEndTime(LocalTime.MIDNIGHT);
-        schedule.setFromStation(Station.of("FOO"));
-        schedule.setToStation(Station.of("BAR"));
-        schedule.setNotificationTarget(NotificationTarget.of("notification-to"));
+        Schedule schedule = Schedule.of(LocalTime.NOON, LocalTime.MIDNIGHT, Station.of("FOO"), Station.of("BAR"), NotificationTarget.of("notification-to"));
 
         // When...
         ScheduleDTO dto = new ScheduleDTO(schedule);
