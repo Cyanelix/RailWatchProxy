@@ -1,7 +1,10 @@
 package com.cyanelix.railwatch.service;
 
 import com.cyanelix.railwatch.domain.Schedule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;
@@ -12,6 +15,8 @@ import java.util.stream.Stream;
 
 @Service
 public class ScheduleService {
+    private static final Logger LOG = LoggerFactory.getLogger(ScheduleService.class);
+
     private final TrainTimesService trainTimesService;
 
     private final NotificationService notificationService;
@@ -31,7 +36,9 @@ public class ScheduleService {
         createdSchedules.add(schedule);
     }
 
+    @Scheduled(fixedDelay = 30000)
     public void checkTimes() {
+        LOG.debug("Checking times.");
         getActiveSchedules()
                 .forEach(schedule -> schedule.lookupAndNotifyTrainTimes(trainTimesService, notificationService));
     }
