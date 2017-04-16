@@ -12,7 +12,6 @@ import org.springframework.core.convert.converter.Converter;
 import com.cyanelix.railwatch.domain.TrainTime;
 import com.thalesgroup.rtti._2016_02_16.ldb.StationBoardResponseType;
 import com.thalesgroup.rtti._2016_02_16.ldb.types.ServiceItem;
-import com.thalesgroup.rtti._2016_02_16.ldb.types.StationBoard;
 
 public class DepartureBoardConverter implements Converter<StationBoardResponseType, List<TrainTime>> {
     private static final String ON_TIME_ETD = "On time";
