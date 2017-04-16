@@ -34,7 +34,7 @@ public class NotificationServiceTest {
     public void singleTrainTime_sendNotification() {
         // Given...
         Schedule schedule = Schedule.of(null, null, Station.of("FOO"), Station.of("BAR"), NotificationTarget.of("notification-to"));
-        List<TrainTime> trainTimes = Collections.singletonList(TrainTime.of(LocalTime.NOON, Optional.empty(), ""));
+        List<TrainTime> trainTimes = Collections.singletonList(TrainTime.of(LocalTime.NOON, Optional.of(LocalTime.NOON), ""));
 
         // When...
         notificationService.sendNotification(schedule, trainTimes);

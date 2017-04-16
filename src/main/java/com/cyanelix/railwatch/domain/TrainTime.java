@@ -1,9 +1,14 @@
 package com.cyanelix.railwatch.domain;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 public class TrainTime {
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
+
     private final LocalTime scheduledDepartureTime;
     private final Optional<LocalTime> expectedDepartureTime;
     private final String message;
@@ -31,16 +36,25 @@ public class TrainTime {
         return message;
     }
 
-    public String toString() {
-        StringBuilder stringBuilder = new StringBuilder(scheduledDepartureTime.toString());
+    public boolean isOnTime() {
+        return expectedDepartureTime.isPresent() && scheduledDepartureTime.equals(expectedDepartureTime.get());
+    }
 
-        if (expectedDepartureTime.isPresent()) {
-            stringBuilder.append(" -> ");
-            stringBuilder.append(expectedDepartureTime);
-        } else {
-            stringBuilder.append(message);
+    public String toString() {
+        String scheduledTime = scheduledDepartureTime.format(TIME_FORMATTER);
+
+        if (isOnTime()) {
+            return scheduledTime;
         }
 
-        return stringBuilder.toString();
+        if (expectedDepartureTime.isPresent()) {
+            return scheduledTime + " -> " + expectedDepartureTime.get().format(TIME_FORMATTER);
+        }
+
+        if (StringUtils.isNotBlank(message)) {
+            return scheduledTime + " (" + message + ")";
+        }
+
+        return scheduledTime + " [ERROR]";
     }
 }
