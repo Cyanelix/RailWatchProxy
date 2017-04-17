@@ -2,13 +2,13 @@ package com.cyanelix.railwatch.controller;
 
 import com.cyanelix.railwatch.domain.Station;
 import com.cyanelix.railwatch.domain.TrainTime;
-import com.cyanelix.railwatch.dto.ScheduleDTO;
 import com.cyanelix.railwatch.dto.TrainTimeDTO;
-import com.cyanelix.railwatch.service.ScheduleService;
 import com.cyanelix.railwatch.service.TrainTimesService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,12 +18,9 @@ import java.util.stream.Collectors;
 public class DeparturesController {
     private final TrainTimesService trainTimesService;
 
-    private final ScheduleService scheduleService;
-
     @Autowired
-    public DeparturesController(TrainTimesService trainTimesService, ScheduleService scheduleService) {
+    public DeparturesController(TrainTimesService trainTimesService) {
         this.trainTimesService = trainTimesService;
-        this.scheduleService = scheduleService;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -32,11 +29,5 @@ public class DeparturesController {
         return trainTimes.parallelStream()
                 .map(TrainTimeDTO::new)
                 .collect(Collectors.toList());
-    }
-
-    @RequestMapping(value = "schedule", method = RequestMethod.PUT)
-    @ResponseStatus(HttpStatus.CREATED)
-    public void put(@RequestBody ScheduleDTO scheduleDTO) {
-        scheduleService.createSchedule(scheduleDTO.toSchedule());
     }
 }

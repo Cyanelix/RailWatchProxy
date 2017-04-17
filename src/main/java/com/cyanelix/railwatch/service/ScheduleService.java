@@ -23,7 +23,7 @@ public class ScheduleService {
 
     private final Clock clock;
 
-    protected static final Set<Schedule> createdSchedules = new HashSet<>();
+    private static final Set<Schedule> createdSchedules = new HashSet<>();
 
     @Autowired
     public ScheduleService(TrainTimesService trainTimesService, NotificationService notificationService, Clock clock) {
@@ -46,5 +46,9 @@ public class ScheduleService {
     private Stream<Schedule> getActiveSchedules() {
         return createdSchedules.parallelStream()
                 .filter(schedule -> schedule.isActive(LocalTime.now(clock)));
+    }
+
+    public Set<Schedule> getSchedules() {
+        return createdSchedules;
     }
 }

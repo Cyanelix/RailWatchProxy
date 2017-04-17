@@ -17,7 +17,11 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.util.Set;
 
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -43,8 +47,7 @@ public class ScheduleServiceTest {
 
     @Before
     public void setup() {
-        // TODO: Temporary workaround to empty this list; longer-term this will be properly persisted in a real datastore.
-        scheduleService.createdSchedules.clear();
+        scheduleService.getSchedules().clear();
     }
 
     @Test
@@ -96,5 +99,19 @@ public class ScheduleServiceTest {
         // Then...
         verify(mockTrainTimesService, times(1)).lookupTrainTimes(Station.of("FOO"), Station.of("BAR"));
         verify(mockNotificationService, times(1)).sendNotification(eq(schedule1), any());
+    }
+
+    @Test
+    public void createSingleSchedule_getSchedules() {
+        // Given...
+        Schedule schedule = Schedule.of(LocalTime.MIN, LocalTime.MAX, Station.of("FOO"), Station.of("BAR"), NotificationTarget.of("notification-to"));
+        scheduleService.createSchedule(schedule);
+
+        // When...
+        Set<Schedule> schedules = scheduleService.getSchedules();
+
+        // Then...
+        assertThat(schedules, hasSize(1));
+        assertThat(schedules.contains(schedule), is(true));
     }
 }
