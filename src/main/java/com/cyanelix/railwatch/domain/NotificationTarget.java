@@ -10,7 +10,7 @@ public final class NotificationTarget {
     }
 
     public static NotificationTarget of(String targetAddress) {
-       return new NotificationTarget(targetAddress);
+        return new NotificationTarget(targetAddress);
     }
 
     @Override
