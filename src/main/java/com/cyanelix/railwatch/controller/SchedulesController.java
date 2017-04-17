@@ -33,7 +33,10 @@ public class SchedulesController {
     @RequestMapping(method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.CREATED)
     public void put(@RequestBody ScheduleDTO scheduleDTO) {
-        LOG.debug(String.format("Creating new schedule: %s -> %s @ %s -> %s", scheduleDTO.getFromStation(), scheduleDTO.getToStation(), scheduleDTO.getStartTime(), scheduleDTO.getEndTime()));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(String.format("Creating new schedule: %s -> %s @ %s -> %s", scheduleDTO.getFromStation(), scheduleDTO.getToStation(), scheduleDTO.getStartTime(), scheduleDTO.getEndTime()));
+        }
+
         scheduleService.createSchedule(scheduleDTO.toSchedule());
     }
 }
