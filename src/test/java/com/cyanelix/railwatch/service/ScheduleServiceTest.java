@@ -53,7 +53,6 @@ public class ScheduleServiceTest {
     @Test
     public void createSingleScheduleActiveNow_checkTimes_routeLookedUp() {
         // Given...
-
         Schedule activeSchedule = Schedule.of(LocalTime.MIN, LocalTime.MAX, null, null, null);
         scheduleService.createSchedule(activeSchedule);
 
