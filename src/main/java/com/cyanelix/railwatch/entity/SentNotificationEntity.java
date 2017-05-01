@@ -32,14 +32,6 @@ public class SentNotificationEntity {
     private String priority;
     private LocalDateTime sentDateTime;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getTo() {
         return to;
     }
@@ -52,31 +44,7 @@ public class SentNotificationEntity {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getBody() {
         return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
-    public String getPriority() {
-        return priority;
-    }
-
-    public void setPriority(String priority) {
-        this.priority = priority;
-    }
-
-    public LocalDateTime getSentDateTime() {
-        return sentDateTime;
-    }
-
-    public void setSentDateTime(LocalDateTime sentDateTime) {
-        this.sentDateTime = sentDateTime;
     }
 }
