@@ -9,15 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -37,10 +30,10 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class ScheduleServiceTest {
     @Mock
-    private TrainTimesService mockTrainTimesService;
+    private TrainTimesService trainTimesService;
 
     @Mock
-    private NotificationService mockNotificationService;
+    private NotificationService notificationService;
 
     @Mock
     private ScheduleRepository scheduleRepository;
@@ -49,7 +42,7 @@ public class ScheduleServiceTest {
 
     @Before
     public void setup() {
-        scheduleService = new ScheduleService(mockTrainTimesService, mockNotificationService, scheduleRepository, Clock.fixed(Instant.parse("2017-01-01T10:30:00Z"), ZoneId.systemDefault()));
+        scheduleService = new ScheduleService(trainTimesService, notificationService, scheduleRepository, Clock.fixed(Instant.parse("2017-01-01T10:30:00Z"), ZoneId.systemDefault()));
     }
 
     @Test
@@ -82,8 +75,8 @@ public class ScheduleServiceTest {
         scheduleService.checkTimes();
 
         // Then...
-        verify(mockTrainTimesService).lookupTrainTimes(any(), any());
-        verify(mockNotificationService).sendNotification(eq(activeSchedule), any());
+        verify(trainTimesService).lookupTrainTimes(any(), any());
+        verify(notificationService).sendNotification(eq(activeSchedule), any());
     }
 
     @Test
@@ -97,11 +90,11 @@ public class ScheduleServiceTest {
         scheduleService.checkTimes();
 
         // Then...
-        verify(mockTrainTimesService).lookupTrainTimes(Station.of("FOO"), Station.of("BAR"));
-        verify(mockTrainTimesService, never()).lookupTrainTimes(Station.of("XXX"), Station.of("ZZZ"));
+        verify(trainTimesService).lookupTrainTimes(Station.of("FOO"), Station.of("BAR"));
+        verify(trainTimesService, never()).lookupTrainTimes(Station.of("XXX"), Station.of("ZZZ"));
 
-        verify(mockNotificationService).sendNotification(eq(activeSchedule), any());
-        verify(mockNotificationService, never()).sendNotification(eq(inactiveSchedule), any());
+        verify(notificationService).sendNotification(eq(activeSchedule), any());
+        verify(notificationService, never()).sendNotification(eq(inactiveSchedule), any());
     }
 
     @Test
