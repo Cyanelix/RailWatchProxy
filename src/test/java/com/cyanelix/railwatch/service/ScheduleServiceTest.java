@@ -9,6 +9,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -31,32 +34,22 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(MockitoJUnitRunner.class)
 public class ScheduleServiceTest {
-    @TestConfiguration
-    public static class TestApplicationConfiguration {
-        @Bean
-        public Clock clock() {
-            return Clock.fixed(Instant.parse("2017-01-01T10:30:00Z"), ZoneId.systemDefault());
-        }
-    }
-
-    @MockBean
+    @Mock
     private TrainTimesService mockTrainTimesService;
 
-    @MockBean
+    @Mock
     private NotificationService mockNotificationService;
 
-    @MockBean
+    @Mock
     private ScheduleRepository scheduleRepository;
 
-    @Autowired
     private ScheduleService scheduleService;
 
     @Before
     public void setup() {
-        scheduleService.getSchedules().clear();
+        scheduleService = new ScheduleService(mockTrainTimesService, mockNotificationService, scheduleRepository, Clock.fixed(Instant.parse("2017-01-01T10:30:00Z"), ZoneId.systemDefault()));
     }
 
     @Test
