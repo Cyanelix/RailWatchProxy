@@ -3,9 +3,12 @@ package com.cyanelix.railwatch.service;
 import com.cyanelix.railwatch.domain.NotificationTarget;
 import com.cyanelix.railwatch.domain.Schedule;
 import com.cyanelix.railwatch.domain.Station;
+import com.cyanelix.railwatch.entity.ScheduleEntity;
+import com.cyanelix.railwatch.repository.ScheduleRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -17,11 +20,14 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Set;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -42,6 +48,9 @@ public class ScheduleServiceTest {
     @MockBean
     private NotificationService mockNotificationService;
 
+    @MockBean
+    private ScheduleRepository scheduleRepository;
+
     @Autowired
     private ScheduleService scheduleService;
 
@@ -51,10 +60,30 @@ public class ScheduleServiceTest {
     }
 
     @Test
-    public void createSingleScheduleActiveNow_checkTimes_routeLookedUp() {
+    public void createSchedule_savedInRepo() {
         // Given...
-        Schedule activeSchedule = Schedule.of(LocalTime.MIN, LocalTime.MAX, null, null, null);
-        scheduleService.createSchedule(activeSchedule);
+        Schedule schedule = Schedule.of(LocalTime.MIN, LocalTime.MAX, Station.of("FOO"), Station.of("BAR"), NotificationTarget.of("notification-target"));
+
+        // When...
+        scheduleService.createSchedule(schedule);
+
+        // Then...
+        ArgumentCaptor<ScheduleEntity> scheduleEntityCaptor = ArgumentCaptor.forClass(ScheduleEntity.class);
+        verify(scheduleRepository).save(scheduleEntityCaptor.capture());
+
+        ScheduleEntity scheduleEntity = scheduleEntityCaptor.getValue();
+        assertThat(scheduleEntity.getStartTime(), is(schedule.getStartTime()));
+        assertThat(scheduleEntity.getEndTime(), is(schedule.getEndTime()));
+        assertThat(scheduleEntity.getFromStation(), is(schedule.getFromStation().getStationCode()));
+        assertThat(scheduleEntity.getToStation(), is(schedule.getToStation().getStationCode()));
+        assertThat(scheduleEntity.getNotificationTarget(), is(schedule.getNotificationTarget().getTargetAddress()));
+    }
+
+    @Test
+    public void singleScheduleActiveNow_checkTimes_routeLookedUp() {
+        // Given...
+        Schedule activeSchedule = Schedule.of(LocalTime.MIN, LocalTime.MAX, Station.of("FOO"), Station.of("BAR"), NotificationTarget.of("target"));
+        given(scheduleRepository.findAll()).willReturn(Collections.singletonList(ScheduleEntity.of(activeSchedule)));
 
         // When...
         scheduleService.checkTimes();
@@ -65,13 +94,11 @@ public class ScheduleServiceTest {
     }
 
     @Test
-    public void createOneActiveOneInactiveSchedule_checkTimes_onlyActiveRouteLookedUp() {
+    public void oneActiveOneInactiveSchedule_checkTimes_onlyActiveRouteLookedUp() {
         // Given...
-        Schedule activeSchedule = Schedule.of(LocalTime.MIN, LocalTime.MAX, Station.of("FOO"), Station.of("BAR"), null);
-        scheduleService.createSchedule(activeSchedule);
-
-        Schedule inactiveSchedule = Schedule.of(LocalTime.MAX, LocalTime.MIN, Station.of("XXX"), Station.of("ZZZ"), null);
-        scheduleService.createSchedule(inactiveSchedule);
+        Schedule activeSchedule = Schedule.of(LocalTime.MIN, LocalTime.MAX, Station.of("FOO"), Station.of("BAR"), NotificationTarget.of("target"));
+        Schedule inactiveSchedule = Schedule.of(LocalTime.MAX, LocalTime.MIN, Station.of("XXX"), Station.of("ZZZ"), NotificationTarget.of("target"));
+        given(scheduleRepository.findAll()).willReturn(Arrays.asList(ScheduleEntity.of(activeSchedule), ScheduleEntity.of(inactiveSchedule)));
 
         // When...
         scheduleService.checkTimes();
@@ -85,26 +112,10 @@ public class ScheduleServiceTest {
     }
 
     @Test
-    public void createDuplicateSchedule_checkTimes_onlyOneExists() {
-        // Given...
-        Schedule schedule1 = Schedule.of(LocalTime.MIN, LocalTime.MAX, Station.of("FOO"), Station.of("BAR"), NotificationTarget.of("notification-to"));
-        Schedule schedule2 = Schedule.of(LocalTime.MIN, LocalTime.MAX, Station.of("FOO"), Station.of("BAR"), NotificationTarget.of("notification-to"));
-        scheduleService.createSchedule(schedule1);
-        scheduleService.createSchedule(schedule2);
-
-        // When..
-        scheduleService.checkTimes();
-
-        // Then...
-        verify(mockTrainTimesService, times(1)).lookupTrainTimes(Station.of("FOO"), Station.of("BAR"));
-        verify(mockNotificationService, times(1)).sendNotification(eq(schedule1), any());
-    }
-
-    @Test
-    public void createSingleSchedule_getSchedules() {
+    public void singleSchedule_getSchedules() {
         // Given...
         Schedule schedule = Schedule.of(LocalTime.MIN, LocalTime.MAX, Station.of("FOO"), Station.of("BAR"), NotificationTarget.of("notification-to"));
-        scheduleService.createSchedule(schedule);
+        given(scheduleRepository.findAll()).willReturn(Collections.singletonList(ScheduleEntity.of(schedule)));
 
         // When...
         Set<Schedule> schedules = scheduleService.getSchedules();

@@ -1,5 +1,6 @@
 package com.cyanelix.railwatch.domain;
 
+import com.cyanelix.railwatch.entity.ScheduleEntity;
 import com.cyanelix.railwatch.service.NotificationService;
 import com.cyanelix.railwatch.service.TrainTimesService;
 
@@ -24,6 +25,15 @@ public final class Schedule {
 
     public static Schedule of(LocalTime startTime, LocalTime endTime, Station fromStation, Station toStation, NotificationTarget notificationTarget) {
         return new Schedule(startTime, endTime, fromStation, toStation, notificationTarget);
+    }
+
+    public static Schedule of(ScheduleEntity scheduleEntity) {
+        return new Schedule(
+                scheduleEntity.getStartTime(),
+                scheduleEntity.getEndTime(),
+                Station.of(scheduleEntity.getFromStation()),
+                Station.of(scheduleEntity.getToStation()),
+                NotificationTarget.of(scheduleEntity.getNotificationTarget()));
     }
 
     @Override

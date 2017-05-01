@@ -1,6 +1,8 @@
 package com.cyanelix.railwatch.service;
 
 import com.cyanelix.railwatch.domain.Schedule;
+import com.cyanelix.railwatch.entity.ScheduleEntity;
+import com.cyanelix.railwatch.repository.ScheduleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.Clock;
 import java.time.LocalTime;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -21,19 +23,20 @@ public class ScheduleService {
 
     private final NotificationService notificationService;
 
+    private final ScheduleRepository scheduleRepository;
+
     private final Clock clock;
 
-    private static final Set<Schedule> createdSchedules = new HashSet<>();
-
     @Autowired
-    public ScheduleService(TrainTimesService trainTimesService, NotificationService notificationService, Clock clock) {
+    public ScheduleService(TrainTimesService trainTimesService, NotificationService notificationService, ScheduleRepository scheduleRepository, Clock clock) {
         this.trainTimesService = trainTimesService;
         this.notificationService = notificationService;
+        this.scheduleRepository = scheduleRepository;
         this.clock = clock;
     }
 
     public void createSchedule(Schedule schedule) {
-        createdSchedules.add(schedule);
+        scheduleRepository.save(ScheduleEntity.of(schedule));
     }
 
     @Scheduled(fixedDelay = 30000)
@@ -44,11 +47,14 @@ public class ScheduleService {
     }
 
     private Stream<Schedule> getActiveSchedules() {
-        return createdSchedules.parallelStream()
+        return scheduleRepository.findAll().parallelStream()
+                .map(Schedule::of)
                 .filter(schedule -> schedule.isActive(LocalTime.now(clock)));
     }
 
     public Set<Schedule> getSchedules() {
-        return createdSchedules;
+        return scheduleRepository.findAll().parallelStream()
+                .map(Schedule::of)
+                .collect(Collectors.toSet());
     }
 }
