@@ -4,22 +4,31 @@ import com.cyanelix.railwatch.domain.NotificationTarget;
 import com.cyanelix.railwatch.domain.Schedule;
 import com.cyanelix.railwatch.domain.Station;
 import com.cyanelix.railwatch.domain.TrainTime;
+import com.cyanelix.railwatch.entity.SentNotificationEntity;
 import com.cyanelix.railwatch.firebase.client.FirebaseClient;
 import com.cyanelix.railwatch.firebase.client.entity.NotificationRequest;
+import com.cyanelix.railwatch.repository.SentNotificationRepository;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -27,12 +36,21 @@ public class NotificationServiceTest {
     @Mock
     private FirebaseClient firebaseClient;
 
-    @InjectMocks
+    @Mock
+    private SentNotificationRepository sentNotificationRepository;
+
     private NotificationService notificationService;
 
+    @Before
+    public void setup() {
+        notificationService = new NotificationService(firebaseClient, sentNotificationRepository, Clock.fixed(Instant.parse("2017-01-01T10:30:00Z"), ZoneId.systemDefault()));
+    }
+
     @Test
-    public void singleTrainTime_sendNotification() {
+    public void singleUniqueTrainTime_sendNotification() {
         // Given...
+        given(sentNotificationRepository.findBySentDateTimeAfter(any())).willReturn(Collections.emptyList());
+
         Schedule schedule = Schedule.of(null, null, Station.of("FOO"), Station.of("BAR"), NotificationTarget.of("notification-to"));
         List<TrainTime> trainTimes = Collections.singletonList(TrainTime.of(LocalTime.NOON, Optional.of(LocalTime.NOON), ""));
 
@@ -49,4 +67,35 @@ public class NotificationServiceTest {
         assertThat(notificationRequest.getNotification().getBody(), is("FOO -> BAR @ 12:00"));
     }
 
+    @Test
+    public void doNotSendDuplicateNotification() {
+        // Given...
+        Schedule schedule = Schedule.of(null, null, Station.of("FOO"), Station.of("BAR"), NotificationTarget.of("notification-to"));
+        List<TrainTime> trainTimes = Collections.singletonList(TrainTime.of(LocalTime.NOON, Optional.of(LocalTime.NOON), ""));
+
+        SentNotificationEntity sentNotificationEntity = new SentNotificationEntity("notification-to", "RailWatch", "FOO -> BAR @ 12:00", "high", null);
+        given(sentNotificationRepository.findBySentDateTimeAfter(any())).willReturn(Collections.singletonList(sentNotificationEntity));
+
+        // When...
+        notificationService.sendNotification(schedule, trainTimes);
+
+        // Then...
+        verify(firebaseClient, never()).sendNotification(any());
+    }
+
+    @Test
+    public void notificationSentPreviously_sendDifferentNotification() {
+        // Given...
+        Schedule schedule = Schedule.of(null, null, Station.of("FOO"), Station.of("BAR"), NotificationTarget.of("notification-to"));
+        List<TrainTime> trainTimes = Collections.singletonList(TrainTime.of(LocalTime.NOON, Optional.of(LocalTime.NOON), ""));
+
+        SentNotificationEntity sentNotificationEntity = new SentNotificationEntity("notification-to", "RailWatch", "Different message body", "high", null);
+        given(sentNotificationRepository.findBySentDateTimeAfter(any())).willReturn(Collections.singletonList(sentNotificationEntity));
+
+        // When...
+        notificationService.sendNotification(schedule, trainTimes);
+
+        // Then...
+        verify(firebaseClient, times(1)).sendNotification(any());
+    }
 }

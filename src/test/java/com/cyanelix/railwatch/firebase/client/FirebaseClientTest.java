@@ -37,11 +37,6 @@ public class FirebaseClientTest {
     @Value("${firebase.url}")
     private String firebaseUrl;
 
-    @Before
-    public void setup() {
-        firebaseClient.sentRequests.clear();
-    }
-
     @Test
     public void sendValidNotification_getSuccessResponse() throws JsonProcessingException {
         // Given...
@@ -58,40 +53,6 @@ public class FirebaseClientTest {
 
         // Then...
         assertThat(success, is(true));
-        mockServer.verify();
-    }
-
-    @Test
-    public void doNotSendDuplicateNotification() throws JsonProcessingException {
-        // Given...
-        NotificationRequest request1 = new NotificationRequest(NotificationTarget.of("key"), "title", "body");
-        NotificationRequest request2 = new NotificationRequest(NotificationTarget.of("key"), "title", "body");
-
-        mockServer.expect(ExpectedCount.once(), requestTo(firebaseUrl))
-                .andRespond(withSuccess(objectMapper.writeValueAsString(successResponse()), MediaType.APPLICATION_JSON));
-
-        // When...
-        firebaseClient.sendNotification(request1);
-        firebaseClient.sendNotification(request2);
-
-        // Then...
-        mockServer.verify();
-    }
-
-    @Test
-    public void sendTwoDifferentNotifications() throws JsonProcessingException {
-        // Given...
-        NotificationRequest request1 = new NotificationRequest(NotificationTarget.of("key"), "title", "body1");
-        NotificationRequest request2 = new NotificationRequest(NotificationTarget.of("key"), "title", "body2");
-
-        mockServer.expect(ExpectedCount.times(2), requestTo(firebaseUrl))
-                .andRespond(withSuccess(objectMapper.writeValueAsString(successResponse()), MediaType.APPLICATION_JSON));
-
-        // When...
-        firebaseClient.sendNotification(request1);
-        firebaseClient.sendNotification(request2);
-
-        // Then...
         mockServer.verify();
     }
 
