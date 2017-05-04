@@ -17,3 +17,12 @@ cache:
     directories:
         - '$HOME/.m2/repository'
         - '$HOME/.sonar/cache'
+deploy:
+    provider: releases
+    api-key:
+        secure: "IRuWgHlHaadxxpC+xk5sXYaeNx2iX4mNzUgsqnM/j4DV3nqjgG1Pwr2WqCYKlayDV2qNl7Mp6ZSC6BNmc0UPLmR800cytnWC9lewmw82B0FlCn+ARS4bCgc1mSJxyDUe3zlse0YuNdQ00Wqab7nQPirIkrtOFJYuncwXIRUiVbtncTpujDfkCHRVECioRK1USWlWX077z4zgpk0fQRWsOQWXL/nhiIktdnSmA7efcwHeAycxlLN2/ekYLQCUcZ+HujACA9yTDdmRe6UTz6Ocya/DZE1kHlyLTFa/6qUWPR4Hi3/S58mQC6kcKuyMysF8wOUd6dUDdmaKkSxij87PSaBTLNUa2PK5cdKwZhSkmbb77vXu68VLDSVoHKN7FmlLpPPgzhAoiX0jvaIB2vk12P5FIQbf8pIwixN0Ave/VvKlFqBnnb3c+URBSAGqydhSJesc/dJaaweoHv14zG7AR6TUMGAhbVZADiqnk1/khLCNJ/DqNaeGVMxWXF75UbB/SHjMoBVkXarKvkKBXLg/wz6julBzWOHG5T2FbEE3tu3qU96ggEZ7o2ZgWJS0qhbM5I5zCieRAZzDf/ZRHCzyV+ax5ZCnrJce4hS8OR7UUSkeslt+jMlMBiEhiikFNcxHKsFD6JewQCPe7HCd5DQHE9N7o8tpwIuNqy26rC/pJuE="
+    file-glob: true
+    file: target/proxy-*.jar
+    skip-cleanup: true
+    on:
+        branch: master
