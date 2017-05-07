@@ -52,10 +52,12 @@ public class NotificationRequest {
     public class Notification {
         private final String title;
         private final String body;
+        private final String sound;
 
         private Notification(String title, String body) {
             this.title = title;
             this.body = body;
+            this.sound = "default";
         }
 
         public String getTitle() {
