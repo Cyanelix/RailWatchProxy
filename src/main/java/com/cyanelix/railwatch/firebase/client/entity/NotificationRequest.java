@@ -68,6 +68,10 @@ public class NotificationRequest {
             return body;
         }
 
+        public String getSound() {
+            return sound;
+        }
+
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
