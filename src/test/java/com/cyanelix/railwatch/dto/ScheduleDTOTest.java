@@ -1,5 +1,6 @@
 package com.cyanelix.railwatch.dto;
 
+import com.cyanelix.railwatch.domain.Journey;
 import com.cyanelix.railwatch.domain.NotificationTarget;
 import com.cyanelix.railwatch.domain.Schedule;
 import com.cyanelix.railwatch.domain.Station;
@@ -27,15 +28,15 @@ public class ScheduleDTOTest {
         // Then...
         assertThat(schedule.getStartTime(), is(LocalTime.NOON));
         assertThat(schedule.getEndTime(), is(LocalTime.MIDNIGHT));
-        assertThat(schedule.getFromStation(), is(Station.of("FOO")));
-        assertThat(schedule.getToStation(), is(Station.of("BAR")));
+        assertThat(schedule.getJourney().getFrom(), is(Station.of("FOO")));
+        assertThat(schedule.getJourney().getTo(), is(Station.of("BAR")));
         assertThat(schedule.getNotificationTarget(), is(NotificationTarget.of("notification-to")));
     }
 
     @Test
     public void dto_ScheduleConstructor() {
         // Given...
-        Schedule schedule = Schedule.of(LocalTime.NOON, LocalTime.MIDNIGHT, Station.of("FOO"), Station.of("BAR"), NotificationTarget.of("notification-to"));
+        Schedule schedule = Schedule.of(LocalTime.NOON, LocalTime.MIDNIGHT, Journey.of(Station.of("FOO"), Station.of("BAR")), NotificationTarget.of("notification-to"));
 
         // When...
         ScheduleDTO dto = new ScheduleDTO(schedule);

@@ -27,8 +27,8 @@ public class ScheduleEntity {
         return new ScheduleEntity(
                 schedule.getStartTime(),
                 schedule.getEndTime(),
-                schedule.getFromStation().getStationCode(),
-                schedule.getToStation().getStationCode(),
+                schedule.getJourney().getFrom().getStationCode(),
+                schedule.getJourney().getTo().getStationCode(),
                 schedule.getNotificationTarget().getTargetAddress());
     }
 

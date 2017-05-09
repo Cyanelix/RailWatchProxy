@@ -29,7 +29,7 @@ public class ScheduleTest {
     @Test
     public void timeWithinSchedule_isActive_returnsTrue() {
         // Given...
-        Schedule schedule = Schedule.of(LocalTime.MIN, LocalTime.MAX, null, null, null);
+        Schedule schedule = Schedule.of(LocalTime.MIN, LocalTime.MAX, null, null);
 
         // When...
         boolean isActive = schedule.isActive(LocalTime.NOON);
@@ -41,7 +41,7 @@ public class ScheduleTest {
     @Test
     public void timeBeforeSchedule_isActive_returnsFalse() {
         // Given...
-        Schedule schedule = Schedule.of(LocalTime.of(19, 0), LocalTime.of(20, 0), null, null, null);
+        Schedule schedule = Schedule.of(LocalTime.of(19, 0), LocalTime.of(20, 0), null, null);
 
         // When...
         boolean isActive = schedule.isActive(LocalTime.NOON);
@@ -53,7 +53,7 @@ public class ScheduleTest {
     @Test
     public void timeAfterSchedule_isActive_returnsFalse() {
         // Given...
-        Schedule schedule = Schedule.of(LocalTime.of(9, 0), LocalTime.of(10, 0), null, null, null);
+        Schedule schedule = Schedule.of(LocalTime.of(9, 0), LocalTime.of(10, 0), null, null);
 
         // When...
         boolean isActive = schedule.isActive(LocalTime.NOON);
@@ -68,7 +68,7 @@ public class ScheduleTest {
         Station from = Station.of("FOO");
         Station to = Station.of("BAR");
 
-        Schedule schedule = Schedule.of(null, null, from, to, null);
+        Schedule schedule = Schedule.of(null, null, Journey.of(from, to), null);
 
         List<TrainTime> trainTimes = Collections.singletonList(TrainTime.of(LocalTime.NOON, Optional.empty(), ""));
         given(mockTrainTimesService.lookupTrainTimes(from, to)).willReturn(trainTimes);

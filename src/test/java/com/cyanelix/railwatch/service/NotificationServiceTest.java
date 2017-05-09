@@ -1,9 +1,6 @@
 package com.cyanelix.railwatch.service;
 
-import com.cyanelix.railwatch.domain.NotificationTarget;
-import com.cyanelix.railwatch.domain.Schedule;
-import com.cyanelix.railwatch.domain.Station;
-import com.cyanelix.railwatch.domain.TrainTime;
+import com.cyanelix.railwatch.domain.*;
 import com.cyanelix.railwatch.entity.SentNotificationEntity;
 import com.cyanelix.railwatch.firebase.client.FirebaseClient;
 import com.cyanelix.railwatch.firebase.client.entity.NotificationRequest;
@@ -51,7 +48,7 @@ public class NotificationServiceTest {
         // Given...
         given(sentNotificationRepository.findBySentDateTimeAfter(any())).willReturn(Collections.emptyList());
 
-        Schedule schedule = Schedule.of(null, null, Station.of("FOO"), Station.of("BAR"), NotificationTarget.of("notification-to"));
+        Schedule schedule = Schedule.of(null, null, Journey.of(Station.of("FOO"), Station.of("BAR")), NotificationTarget.of("notification-to"));
         List<TrainTime> trainTimes = Collections.singletonList(TrainTime.of(LocalTime.NOON, Optional.of(LocalTime.NOON), ""));
 
         // When...
@@ -70,7 +67,7 @@ public class NotificationServiceTest {
     @Test
     public void doNotSendDuplicateNotification() {
         // Given...
-        Schedule schedule = Schedule.of(null, null, Station.of("FOO"), Station.of("BAR"), NotificationTarget.of("notification-to"));
+        Schedule schedule = Schedule.of(null, null, Journey.of(Station.of("FOO"), Station.of("BAR")), NotificationTarget.of("notification-to"));
         List<TrainTime> trainTimes = Collections.singletonList(TrainTime.of(LocalTime.NOON, Optional.of(LocalTime.NOON), ""));
 
         SentNotificationEntity sentNotificationEntity = new SentNotificationEntity("notification-to", "RailWatch", "FOO -> BAR @ 12:00", "high", null);
@@ -86,7 +83,7 @@ public class NotificationServiceTest {
     @Test
     public void notificationSentPreviously_sendDifferentNotification() {
         // Given...
-        Schedule schedule = Schedule.of(null, null, Station.of("FOO"), Station.of("BAR"), NotificationTarget.of("notification-to"));
+        Schedule schedule = Schedule.of(null, null, Journey.of(Station.of("FOO"), Station.of("BAR")), NotificationTarget.of("notification-to"));
         List<TrainTime> trainTimes = Collections.singletonList(TrainTime.of(LocalTime.NOON, Optional.of(LocalTime.NOON), ""));
 
         SentNotificationEntity sentNotificationEntity = new SentNotificationEntity("notification-to", "RailWatch", "Different message body", "high", null);

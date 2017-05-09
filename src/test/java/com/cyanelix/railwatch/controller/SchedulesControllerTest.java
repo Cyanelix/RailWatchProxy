@@ -1,5 +1,6 @@
 package com.cyanelix.railwatch.controller;
 
+import com.cyanelix.railwatch.domain.Journey;
 import com.cyanelix.railwatch.domain.NotificationTarget;
 import com.cyanelix.railwatch.domain.Schedule;
 import com.cyanelix.railwatch.domain.Station;
@@ -57,8 +58,7 @@ public class SchedulesControllerTest {
                 .willReturn(Collections.singleton(Schedule.of(
                         LocalTime.of(7, 0),
                         LocalTime.of(8, 0),
-                        Station.of("FOO"),
-                        Station.of("BAR"),
+                        Journey.of(Station.of("FOO"), Station.of("BAR")),
                         NotificationTarget.of("notification-to"))));
 
         mockMvc.perform(get("/schedules"))

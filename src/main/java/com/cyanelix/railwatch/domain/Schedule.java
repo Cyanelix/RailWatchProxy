@@ -11,28 +11,28 @@ import java.util.Objects;
 public final class Schedule {
     private final LocalTime startTime;
     private final LocalTime endTime;
-    private final Station fromStation;
-    private final Station toStation;
+    private final Journey journey;
     private final NotificationTarget notificationTarget;
 
-    private Schedule(LocalTime startTime, LocalTime endTime, Station fromStation, Station toStation, NotificationTarget notificationTarget) {
+    private Schedule(LocalTime startTime, LocalTime endTime, Journey journey, NotificationTarget notificationTarget) {
         this.startTime = startTime;
         this.endTime = endTime;
-        this.fromStation = fromStation;
-        this.toStation = toStation;
+        this.journey = journey;
         this.notificationTarget = notificationTarget;
     }
 
-    public static Schedule of(LocalTime startTime, LocalTime endTime, Station fromStation, Station toStation, NotificationTarget notificationTarget) {
-        return new Schedule(startTime, endTime, fromStation, toStation, notificationTarget);
+    public static Schedule of(LocalTime startTime, LocalTime endTime, Journey journey, NotificationTarget notificationTarget) {
+        return new Schedule(startTime, endTime, journey, notificationTarget);
     }
 
     public static Schedule of(ScheduleEntity scheduleEntity) {
         return new Schedule(
                 scheduleEntity.getStartTime(),
                 scheduleEntity.getEndTime(),
-                Station.of(scheduleEntity.getFromStation()),
-                Station.of(scheduleEntity.getToStation()),
+                Journey.of(
+                        Station.of(scheduleEntity.getFromStation()),
+                        Station.of(scheduleEntity.getToStation())
+                ),
                 NotificationTarget.of(scheduleEntity.getNotificationTarget()));
     }
 
@@ -43,14 +43,13 @@ public final class Schedule {
         Schedule schedule = (Schedule) o;
         return Objects.equals(startTime, schedule.startTime) &&
                 Objects.equals(endTime, schedule.endTime) &&
-                Objects.equals(fromStation, schedule.fromStation) &&
-                Objects.equals(toStation, schedule.toStation) &&
+                Objects.equals(journey, schedule.journey) &&
                 Objects.equals(notificationTarget, schedule.notificationTarget);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(startTime, endTime, fromStation, toStation, notificationTarget);
+        return Objects.hash(startTime, endTime, journey, notificationTarget);
     }
 
     public LocalTime getStartTime() {
@@ -61,12 +60,8 @@ public final class Schedule {
         return endTime;
     }
 
-    public Station getToStation() {
-        return toStation;
-    }
-
-    public Station getFromStation() {
-        return fromStation;
+    public Journey getJourney() {
+        return journey;
     }
 
     public boolean isActive(LocalTime testTime) {
@@ -78,7 +73,7 @@ public final class Schedule {
     }
 
     public void lookupAndNotifyTrainTimes(TrainTimesService trainTimesService, NotificationService notificationService) {
-        List<TrainTime> trainTimes = trainTimesService.lookupTrainTimes(fromStation, toStation);
+        List<TrainTime> trainTimes = trainTimesService.lookupTrainTimes(journey.getFrom(), journey.getTo());
         notificationService.sendNotification(this, trainTimes);
     }
 }
