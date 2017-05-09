@@ -1,5 +1,7 @@
 package com.cyanelix.railwatch.domain;
 
+import org.springframework.util.Assert;
+
 import java.util.Objects;
 
 public final class Journey {
@@ -12,6 +14,9 @@ public final class Journey {
     }
 
     public static Journey of(Station from, Station to) {
+        Assert.notNull(from);
+        Assert.notNull(to);
+
         return new Journey(from, to);
     }
 
@@ -29,9 +34,13 @@ public final class Journey {
         return Objects.hash(from, to);
     }
 
+    @Override
+    public String toString() {
+        return from.getStationCode() + " -> " + to.getStationCode();
+    }
+
     public Station getFrom() {
         return from;
-
     }
 
     public Station getTo() {
