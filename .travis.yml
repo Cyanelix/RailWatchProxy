@@ -10,19 +10,17 @@ addons:
         token:
             secure: "pqOg8yoL2lDhpzqFoV2OzKv0vmJpJ0Z9eBDIpg7Qzujxl+PJU72atphewBwH4096c+l6Mq5SbmaZKxRUef+H75rFxdTMA06gH9UsM4Gqn/4d0bFzjZwIb2vwBLFAJIwNzLYNhoUMI+TC8WfZbU2IgzM8ZkidKHfC07l/5ue3hZ+tox9nnRbUZfoJyL2ABl8p/Epk5xY8h3u4xORjnxKqXdQsj5rvt899iasKb8Qt+Uf1MOx30RDpvo6HP/1et6LietTXVNQVR9sfkhqvH8Cn/rzqMOzHhIDmzhIHliy949APcF0gpcnMxBjGT6GtmDR6P7TsP4jCW4xszPPkfsGeFrttJu0Qzpipy36/WLnqklV1zEejWw9YLosJibeB6lHrA9YtgRr2RNwou02d1IrbSopEmSCl20LPs60rgvV+2hiMrfk46Z3GJMhE9CzYYDdYmGSAMwDYjZHrbGXqIpV035jbysRqw4nBecS1ShuJ6la5kdTMWeAVf6tQ00eYFaAl7Ricjz43dcU2VwSOjAHFmGE44t2MJAVGeaMhdD2HtXkkzTU8yF1zDN5waXno7NjsWzjBnYezvbaNFwVrDb7jwW7jgsQQiNqkd/YJtcXPVzLbb+SQ23x3c+iV8OL6wiNjp1drEG00O2QJKlQ8OZP8b5b+/lQs1v0iASJ5uaOewZs="
 jdk:
-    - oraclejdk8
+  - oraclejdk8
 script:
-    - mvn clean verify org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar
+  - mvn clean verify org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar
 cache:
     directories:
         - '$HOME/.m2/repository'
         - '$HOME/.sonar/cache'
-deploy:
-    provider: releases
-    api-key:
-        secure: "IRuWgHlHaadxxpC+xk5sXYaeNx2iX4mNzUgsqnM/j4DV3nqjgG1Pwr2WqCYKlayDV2qNl7Mp6ZSC6BNmc0UPLmR800cytnWC9lewmw82B0FlCn+ARS4bCgc1mSJxyDUe3zlse0YuNdQ00Wqab7nQPirIkrtOFJYuncwXIRUiVbtncTpujDfkCHRVECioRK1USWlWX077z4zgpk0fQRWsOQWXL/nhiIktdnSmA7efcwHeAycxlLN2/ekYLQCUcZ+HujACA9yTDdmRe6UTz6Ocya/DZE1kHlyLTFa/6qUWPR4Hi3/S58mQC6kcKuyMysF8wOUd6dUDdmaKkSxij87PSaBTLNUa2PK5cdKwZhSkmbb77vXu68VLDSVoHKN7FmlLpPPgzhAoiX0jvaIB2vk12P5FIQbf8pIwixN0Ave/VvKlFqBnnb3c+URBSAGqydhSJesc/dJaaweoHv14zG7AR6TUMGAhbVZADiqnk1/khLCNJ/DqNaeGVMxWXF75UbB/SHjMoBVkXarKvkKBXLg/wz6julBzWOHG5T2FbEE3tu3qU96ggEZ7o2ZgWJS0qhbM5I5zCieRAZzDf/ZRHCzyV+ax5ZCnrJce4hS8OR7UUSkeslt+jMlMBiEhiikFNcxHKsFD6JewQCPe7HCd5DQHE9N7o8tpwIuNqy26rC/pJuE="
-    file-glob: true
-    file: target/proxy-*.jar
-    skip-cleanup: true
-    on:
-        tags: true
+
+after_success:
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+      docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+      docker push USER/REPO;
+    fi
+
