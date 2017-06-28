@@ -28,8 +28,5 @@ cache:
         - '$HOME/.sonar/cache'
 
 after_success:
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then
-    docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-    docker push USER/REPO;
-    fi
+  - script: ./travis-deploy.sh
 
