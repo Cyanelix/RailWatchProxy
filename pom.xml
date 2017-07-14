@@ -134,7 +134,7 @@
         </executions>
         <configuration>
           <repository>cyanelix/proxy</repository>
-          <tag>${project.version}</tag>
+          <!--<tag>${project.version}</tag>-->
         </configuration>
       </plugin>
     </plugins>
