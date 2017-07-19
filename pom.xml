@@ -69,7 +69,7 @@
     <finalName>proxy</finalName>
     <resources>
       <resource>
-        <directory>src/main/resources</directory>
+        <directory>src/main/resources/public/error</directory>
         <filtering>true</filtering>
       </resource>
     </resources>
