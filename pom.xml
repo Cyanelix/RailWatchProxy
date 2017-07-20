@@ -5,7 +5,7 @@
 
   <groupId>com.cyanelix.railwatch</groupId>
   <artifactId>proxy</artifactId>
-  <version>0.1.9</version>
+  <version>0.1.10</version>
   <packaging>jar</packaging>
 
   <name>RailWatchProxy</name>
@@ -134,7 +134,7 @@
         </executions>
         <configuration>
           <repository>cyanelix/proxy</repository>
-          <tag>${project.version}</tag>
+          <!--<tag>${project.version}</tag>-->
         </configuration>
       </plugin>
     </plugins>
