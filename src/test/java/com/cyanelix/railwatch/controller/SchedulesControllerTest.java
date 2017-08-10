@@ -1,9 +1,6 @@
 package com.cyanelix.railwatch.controller;
 
-import com.cyanelix.railwatch.domain.Journey;
-import com.cyanelix.railwatch.domain.NotificationTarget;
-import com.cyanelix.railwatch.domain.Schedule;
-import com.cyanelix.railwatch.domain.Station;
+import com.cyanelix.railwatch.domain.*;
 import com.cyanelix.railwatch.service.ScheduleService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,7 +38,7 @@ public class SchedulesControllerTest {
         mockMvc.perform(
                 put("/schedules")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"startTime\":\"07:00\", \"endTime\":\"09:00\"}"))
+                        .content("{\"startTime\":\"07:00\", \"endTime\":\"09:00\", \"days\":[\"MONDAY\", \"TUESDAY\"]}"))
                 .andExpect(status().isCreated());
 
         ArgumentCaptor<Schedule> scheduleArgumentCaptor = ArgumentCaptor.forClass(Schedule.class);
@@ -58,6 +55,7 @@ public class SchedulesControllerTest {
                 .willReturn(Collections.singleton(Schedule.of(
                         LocalTime.of(7, 0),
                         LocalTime.of(8, 0),
+                        DayRange.ALL,
                         Journey.of(Station.of("FOO"), Station.of("BAR")),
                         NotificationTarget.of("notification-to"))));
 

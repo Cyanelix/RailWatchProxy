@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -49,7 +49,7 @@ public class ScheduleService {
     private Stream<Schedule> getActiveSchedules() {
         return scheduleRepository.findAll().parallelStream()
                 .map(Schedule::of)
-                .filter(schedule -> schedule.isActive(LocalTime.now(clock)));
+                .filter(schedule -> schedule.isActive(LocalDateTime.now(clock)));
     }
 
     public Set<Schedule> getSchedules() {

@@ -8,10 +8,13 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.time.LocalTime;
+import java.time.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
@@ -29,10 +32,10 @@ public class ScheduleTest {
     @Test
     public void timeWithinSchedule_isActive_returnsTrue() {
         // Given...
-        Schedule schedule = Schedule.of(LocalTime.MIN, LocalTime.MAX, null, null);
+        Schedule schedule = Schedule.of(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, null, null);
 
         // When...
-        boolean isActive = schedule.isActive(LocalTime.NOON);
+        boolean isActive = schedule.isActive(LocalDateTime.of(2017, 1, 1, 12, 0));
 
         // Then...
         assertThat(isActive, is(true));
@@ -41,10 +44,10 @@ public class ScheduleTest {
     @Test
     public void timeBeforeSchedule_isActive_returnsFalse() {
         // Given...
-        Schedule schedule = Schedule.of(LocalTime.of(19, 0), LocalTime.of(20, 0), null, null);
+        Schedule schedule = Schedule.of(LocalTime.of(19, 0), LocalTime.of(20, 0), DayRange.ALL, null, null);
 
         // When...
-        boolean isActive = schedule.isActive(LocalTime.NOON);
+        boolean isActive = schedule.isActive(LocalDateTime.of(2017, 1, 1, 12, 0));
 
         // Then...
         assertThat(isActive, is(false));
@@ -53,13 +56,26 @@ public class ScheduleTest {
     @Test
     public void timeAfterSchedule_isActive_returnsFalse() {
         // Given...
-        Schedule schedule = Schedule.of(LocalTime.of(9, 0), LocalTime.of(10, 0), null, null);
+        Schedule schedule = Schedule.of(LocalTime.of(9, 0), LocalTime.of(10, 0), DayRange.ALL, null, null);
 
         // When...
-        boolean isActive = schedule.isActive(LocalTime.NOON);
+        boolean isActive = schedule.isActive(LocalDateTime.of(2017, 1, 1, 12, 0));
 
         // Then...
         assertThat(isActive, is(false));
+    }
+
+    @Test
+    public void timeWithinScheduleButOutsideDays_isActive_returnsFalse() {
+        // Given...
+        Schedule schedule = Schedule.of(LocalTime.of(9, 0), LocalTime.of(10, 0), DayRange.of(DayOfWeek.MONDAY), null, null);
+
+        // When...
+        // 2017-01-01 was a Sunday.
+        boolean active = schedule.isActive(LocalDateTime.of(2017, Month.JANUARY, 1, 9, 30));
+
+        // Then...
+        assertThat(active, is(false));
     }
 
     @Test
@@ -68,7 +84,7 @@ public class ScheduleTest {
         Station from = Station.of("FOO");
         Station to = Station.of("BAR");
 
-        Schedule schedule = Schedule.of(null, null, Journey.of(from, to), null);
+        Schedule schedule = Schedule.of(null, null, DayRange.ALL, Journey.of(from, to), null);
 
         List<TrainTime> trainTimes = Collections.singletonList(TrainTime.of(LocalTime.NOON, Optional.empty(), ""));
         given(mockTrainTimesService.lookupTrainTimes(from, to)).willReturn(trainTimes);
@@ -79,6 +95,39 @@ public class ScheduleTest {
         // Then...
         verify(mockTrainTimesService).lookupTrainTimes(from, to);
         verify(mockNotificationService).sendNotification(schedule, trainTimes);
+    }
+
+    @Test
+    public void scheduleForAllDays_getDayNames() {
+        // Given...
+        Schedule schedule = Schedule.of(null, null, DayRange.ALL, null, null);
+
+        // When...
+        Stream<String> dayNames = schedule.getDayNames();
+
+        // Then...
+        Set<String> names = dayNames.collect(Collectors.toSet());
+        assertThat(names.size(), is(7));
+        assertThat(names.contains("Monday"), is(true));
+        assertThat(names.contains("Tuesday"), is(true));
+        assertThat(names.contains("Wednesday"), is(true));
+        assertThat(names.contains("Thursday"), is(true));
+        assertThat(names.contains("Friday"), is(true));
+        assertThat(names.contains("Saturday"), is(true));
+        assertThat(names.contains("Sunday"), is(true));
+    }
+
+    @Test
+    public void schedulePopulatedWithValues_toString_contrainsExpectedValues() {
+        // Given...
+        Schedule schedule = Schedule.of(LocalTime.of(1, 1), LocalTime.of(2, 2),
+                DayRange.ALL, Journey.of(Station.of("ABC"), Station.of("DEF")), NotificationTarget.of("123"));
+
+        // When...
+        String string = schedule.toString();
+
+        // Then...
+        assertThat(string, is("ABC -> DEF; Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday @ 01:01 -> 02:02"));
     }
 
     @Test

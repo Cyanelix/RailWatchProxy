@@ -1,5 +1,6 @@
 package com.cyanelix.railwatch.entity;
 
+import com.cyanelix.railwatch.domain.DayRange;
 import com.cyanelix.railwatch.domain.Schedule;
 import org.springframework.data.annotation.Id;
 
@@ -11,13 +12,15 @@ public class ScheduleEntity {
 
     private LocalTime startTime;
     private LocalTime endTime;
+    private DayRange dayRange;
     private String fromStation;
     private String toStation;
     private String notificationTarget;
 
-    public ScheduleEntity(LocalTime startTime, LocalTime endTime, String fromStation, String toStation, String notificationTarget) {
+    public ScheduleEntity(LocalTime startTime, LocalTime endTime, DayRange dayRange, String fromStation, String toStation, String notificationTarget) {
         this.startTime = startTime;
         this.endTime = endTime;
+        this.dayRange = dayRange;
         this.fromStation = fromStation;
         this.toStation = toStation;
         this.notificationTarget = notificationTarget;
@@ -27,6 +30,7 @@ public class ScheduleEntity {
         return new ScheduleEntity(
                 schedule.getStartTime(),
                 schedule.getEndTime(),
+                schedule.getDayRange(),
                 schedule.getJourney().getFrom().getStationCode(),
                 schedule.getJourney().getTo().getStationCode(),
                 schedule.getNotificationTarget().getTargetAddress());
@@ -50,5 +54,9 @@ public class ScheduleEntity {
 
     public String getNotificationTarget() {
         return notificationTarget;
+    }
+
+    public DayRange getDayRange() {
+        return dayRange;
     }
 }
