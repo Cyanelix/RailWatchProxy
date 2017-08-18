@@ -1,12 +1,9 @@
 package com.cyanelix.railwatch.service;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
-
-import java.util.Collections;
-
+import com.cyanelix.railwatch.darwin.client.DarwinClient;
+import com.cyanelix.railwatch.darwin.client.DeparturesBoardRequest;
+import com.cyanelix.railwatch.domain.Station;
+import com.thalesgroup.rtti._2016_02_16.ldb.GetBoardRequestParams;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -14,10 +11,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.cyanelix.railwatch.darwin.client.DarwinClient;
-import com.cyanelix.railwatch.darwin.client.DeparturesBoardRequest;
-import com.cyanelix.railwatch.domain.Station;
-import com.thalesgroup.rtti._2016_02_16.ldb.GetBoardRequestParams;
+import java.util.Collections;
+
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.any;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TrainTimesServiceTest {

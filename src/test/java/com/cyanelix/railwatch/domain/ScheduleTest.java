@@ -118,7 +118,7 @@ public class ScheduleTest {
     }
 
     @Test
-    public void schedulePopulatedWithValues_toString_contrainsExpectedValues() {
+    public void schedulePopulatedWithValues_toString_containsExpectedValues() {
         // Given...
         Schedule schedule = Schedule.of(LocalTime.of(1, 1), LocalTime.of(2, 2),
                 DayRange.ALL, Journey.of(Station.of("ABC"), Station.of("DEF")), NotificationTarget.of("123"));
