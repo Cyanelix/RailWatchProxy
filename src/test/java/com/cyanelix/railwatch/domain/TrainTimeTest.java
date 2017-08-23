@@ -1,18 +1,22 @@
 package com.cyanelix.railwatch.domain;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.time.LocalTime;
-import java.util.Optional;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 public class TrainTimeTest {
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+
     @Test
     public void onTime_toString_justShowScheduledTime() {
         // Given...
-        TrainTime trainTime = TrainTime.of(LocalTime.NOON, Optional.of(LocalTime.NOON), "On time");
+        TrainTime trainTime = new TrainTime.Builder(LocalTime.NOON).withExpectedDepartureTime(LocalTime.NOON).build();
 
         // When...
         String string = trainTime.toString();
@@ -24,7 +28,9 @@ public class TrainTimeTest {
     @Test
     public void delayed_toString_showScheduledAndExpectedTimes() {
         // Given...
-        TrainTime trainTime = TrainTime.of(LocalTime.NOON, Optional.of(LocalTime.of(12, 1)), "");
+        TrainTime trainTime = new TrainTime.Builder(LocalTime.NOON)
+                .withExpectedDepartureTime(LocalTime.of(12, 1))
+                .build();
 
         // When...
         String string = trainTime.toString();
@@ -36,7 +42,9 @@ public class TrainTimeTest {
     @Test
     public void cancelled_toString_showScheduledAndMessage() {
         // Given...
-        TrainTime trainTime = TrainTime.of(LocalTime.NOON, Optional.empty(), "Cancelled");
+        TrainTime trainTime = new TrainTime.Builder(LocalTime.NOON)
+                .withMessage("Cancelled")
+                .build();
 
         // When...
         String string = trainTime.toString();
@@ -46,14 +54,43 @@ public class TrainTimeTest {
     }
 
     @Test
-    public void unexpectedCombination_toString_showScheduledAndError() {
+    public void reverseFormation_toString_includeR() {
         // Given...
-        TrainTime trainTime = TrainTime.of(LocalTime.NOON, Optional.empty(), "");
+        TrainTime trainTime = new TrainTime.Builder(LocalTime.NOON)
+                .withExpectedDepartureTime(LocalTime.NOON)
+                .withFormation(Formation.REVERSE)
+                .build();
 
         // When...
         String string = trainTime.toString();
 
         // Then...
-        assertThat(string, is("12:00 [ERROR]"));
+        assertThat(string, is("12:00 R"));
+    }
+
+    @Test
+    public void noMessageOrExpectedTime_build_throwException() {
+        // Given...
+        expectedException.expect(IllegalStateException.class);
+
+        TrainTime.Builder builder = new TrainTime.Builder(LocalTime.NOON);
+
+        // When...
+        builder.build();
+
+        // Then...
+        // (exception expected)
+    }
+
+    @Test
+    public void nullMessage_build_emptyString() {
+        // Given...
+        TrainTime.Builder builder = new TrainTime.Builder(LocalTime.NOON).withExpectedDepartureTime(LocalTime.NOON);
+
+        // When...
+        TrainTime trainTime = builder.build();
+
+        // Then...
+        assertThat(trainTime.getMessage(), is(""));
     }
 }

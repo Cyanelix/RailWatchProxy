@@ -8,16 +8,18 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.time.*;
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Month;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
@@ -86,7 +88,10 @@ public class ScheduleTest {
 
         Schedule schedule = Schedule.of(null, null, DayRange.ALL, Journey.of(from, to), null);
 
-        List<TrainTime> trainTimes = Collections.singletonList(TrainTime.of(LocalTime.NOON, Optional.empty(), ""));
+        List<TrainTime> trainTimes = Collections.singletonList(
+                new TrainTime.Builder(LocalTime.NOON)
+                        .withExpectedDepartureTime(LocalTime.NOON)
+                        .build());
         given(mockTrainTimesService.lookupTrainTimes(from, to)).willReturn(trainTimes);
 
         // When...

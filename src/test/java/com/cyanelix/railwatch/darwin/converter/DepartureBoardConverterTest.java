@@ -1,21 +1,21 @@
 package com.cyanelix.railwatch.darwin.converter;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertThat;
+import com.cyanelix.railwatch.domain.TrainTime;
+import com.thalesgroup.rtti._2016_02_16.ldb.StationBoardResponseType;
+import com.thalesgroup.rtti._2016_02_16.ldb.types.ArrayOfServiceItems;
+import com.thalesgroup.rtti._2016_02_16.ldb.types.ServiceItem;
+import com.thalesgroup.rtti._2016_02_16.ldb.types.StationBoard;
+import org.junit.Test;
 
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.junit.Test;
-
-import com.cyanelix.railwatch.domain.TrainTime;
-import com.thalesgroup.rtti._2016_02_16.ldb.StationBoardResponseType;
-import com.thalesgroup.rtti._2016_02_16.ldb.types.ArrayOfServiceItems;
-import com.thalesgroup.rtti._2016_02_16.ldb.types.ServiceItem;
-import com.thalesgroup.rtti._2016_02_16.ldb.types.StationBoard;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertThat;
 
 public class DepartureBoardConverterTest {
     @Test
@@ -32,7 +32,7 @@ public class DepartureBoardConverterTest {
         // Then...
         assertThat(trainTimes, hasSize(1));
         assertThat(trainTimes.get(0).getScheduledDepartureTime(), is(LocalTime.of(15, 0)));
-        assertThat(trainTimes.get(0).getExpectedDepartureTime().get(), is(LocalTime.of(15, 0)));
+        assertThat(trainTimes.get(0).getExpectedDepartureTime(), is(LocalTime.of(15, 0)));
         assertThat(trainTimes.get(0).getMessage(), is(""));
     }
 
@@ -50,7 +50,7 @@ public class DepartureBoardConverterTest {
         // Then...
         assertThat(trainTimes, hasSize(1));
         assertThat(trainTimes.get(0).getScheduledDepartureTime(), is(LocalTime.of(15, 0)));
-        assertThat(trainTimes.get(0).getExpectedDepartureTime().get(), is(LocalTime.of(15, 25)));
+        assertThat(trainTimes.get(0).getExpectedDepartureTime(), is(LocalTime.of(15, 25)));
         assertThat(trainTimes.get(0).getMessage(), is(""));
     }
 
@@ -69,9 +69,9 @@ public class DepartureBoardConverterTest {
         // Then...
         assertThat(trainTimes, hasSize(2));
         assertThat(trainTimes.get(0).getScheduledDepartureTime(), is(LocalTime.of(15, 0)));
-        assertThat(trainTimes.get(0).getExpectedDepartureTime().get(), is(LocalTime.of(15, 25)));
+        assertThat(trainTimes.get(0).getExpectedDepartureTime(), is(LocalTime.of(15, 25)));
         assertThat(trainTimes.get(1).getScheduledDepartureTime(), is(LocalTime.of(15, 0)));
-        assertThat(trainTimes.get(1).getExpectedDepartureTime().get(), is(LocalTime.of(15, 0)));
+        assertThat(trainTimes.get(1).getExpectedDepartureTime(), is(LocalTime.of(15, 0)));
     }
 
     @Test
@@ -88,7 +88,7 @@ public class DepartureBoardConverterTest {
         // Then...
         assertThat(trainTimes, hasSize(1));
         assertThat(trainTimes.get(0).getScheduledDepartureTime(), is(LocalTime.of(15, 0)));
-        assertThat(trainTimes.get(0).getExpectedDepartureTime(), is(Optional.empty()));
+        assertThat(trainTimes.get(0).getExpectedDepartureTime(), is(nullValue()));
         assertThat(trainTimes.get(0).getMessage(), is("Cancelled"));
     }
 

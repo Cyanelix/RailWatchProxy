@@ -14,7 +14,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -32,8 +31,11 @@ public class DeparturesControllerTest {
 
     @Test
     public void oneOnTimeServiceReturned_success() throws Exception {
-        List<TrainTime> singleTime = Collections
-                .singletonList(TrainTime.of(LocalTime.of(10, 0), Optional.of(LocalTime.of(10, 0)), ""));
+        List<TrainTime> singleTime = Collections.singletonList(
+                new TrainTime.Builder(LocalTime.of(10, 0))
+                        .withExpectedDepartureTime(LocalTime.of(10, 0))
+                        .build());
+
         given(mockTrainTimesService.lookupTrainTimes(Station.of("AAA"), Station.of("BBB"))).willReturn(singleTime);
 
         mockMvc.perform(get("/departures?from=AAA&to=BBB"))

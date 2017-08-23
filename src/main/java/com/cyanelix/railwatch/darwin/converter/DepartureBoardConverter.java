@@ -1,17 +1,16 @@
 package com.cyanelix.railwatch.darwin.converter;
 
+import com.cyanelix.railwatch.domain.Formation;
+import com.cyanelix.railwatch.domain.TrainTime;
+import com.thalesgroup.rtti._2016_02_16.ldb.StationBoardResponseType;
+import com.thalesgroup.rtti._2016_02_16.ldb.types.ServiceItem;
+import org.springframework.core.convert.converter.Converter;
+
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-
-import org.springframework.core.convert.converter.Converter;
-
-import com.cyanelix.railwatch.domain.TrainTime;
-import com.thalesgroup.rtti._2016_02_16.ldb.StationBoardResponseType;
-import com.thalesgroup.rtti._2016_02_16.ldb.types.ServiceItem;
 
 public class DepartureBoardConverter implements Converter<StationBoardResponseType, List<TrainTime>> {
     private static final String ON_TIME_ETD = "On time";
@@ -36,7 +35,7 @@ public class DepartureBoardConverter implements Converter<StationBoardResponseTy
     }
 
     private TrainTime convertServiceItemToTrainTime(ServiceItem serviceItem) {
-        LocalTime scheduledDepatureTime = LocalTime.parse(serviceItem.getStd());
+        LocalTime scheduledDepartureTime = LocalTime.parse(serviceItem.getStd());
 
         String etd = serviceItem.getEtd();
 
@@ -44,7 +43,7 @@ public class DepartureBoardConverter implements Converter<StationBoardResponseTy
         LocalTime expectedDepartureTime = null;
 
         if (ON_TIME_ETD.equals(etd)) {
-            expectedDepartureTime = scheduledDepatureTime;
+            expectedDepartureTime = scheduledDepartureTime;
         } else {
             try {
                 expectedDepartureTime = LocalTime.parse(etd);
@@ -53,6 +52,10 @@ public class DepartureBoardConverter implements Converter<StationBoardResponseTy
             }
         }
 
-        return TrainTime.of(scheduledDepatureTime, Optional.ofNullable(expectedDepartureTime), message);
+        return new TrainTime.Builder(scheduledDepartureTime)
+                .withExpectedDepartureTime(expectedDepartureTime)
+                .withMessage(message)
+                .withFormation(Formation.NORMAL)
+                .build();
     }
 }

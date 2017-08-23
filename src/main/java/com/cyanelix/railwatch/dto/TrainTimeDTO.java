@@ -1,10 +1,11 @@
 package com.cyanelix.railwatch.dto;
 
+import com.cyanelix.railwatch.domain.Formation;
 import com.cyanelix.railwatch.domain.TrainTime;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
+import java.util.Objects;
 
 public class TrainTimeDTO {
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
@@ -14,11 +15,12 @@ public class TrainTimeDTO {
     private String message;
 
     public TrainTimeDTO(TrainTime trainTime) {
-        this.scheduledDepartureTime = trainTime.getScheduledDepartureTime().format(TIME_FORMATTER);
-        this.expectedDepartureTime = trainTime.getExpectedDepartureTime()
-                .map(time -> time.format(TIME_FORMATTER))
-                .orElse(null);
+        this.scheduledDepartureTime = Objects.requireNonNull(trainTime.getScheduledDepartureTime()).format(TIME_FORMATTER);
         this.message = trainTime.getMessage();
+
+        if (trainTime.getExpectedDepartureTime() != null) {
+            this.expectedDepartureTime = trainTime.getExpectedDepartureTime().format(TIME_FORMATTER);
+        }
     }
 
     public TrainTimeDTO() {
@@ -39,7 +41,11 @@ public class TrainTimeDTO {
             expected = LocalTime.parse(expectedDepartureTime, TIME_FORMATTER);
         }
 
-        return TrainTime.of(LocalTime.parse(scheduledDepartureTime, TIME_FORMATTER), Optional.ofNullable(expected), message);
+        return new TrainTime.Builder(LocalTime.parse(scheduledDepartureTime, TIME_FORMATTER))
+                .withExpectedDepartureTime(expected)
+                .withMessage(message)
+                .withFormation(Formation.NORMAL)
+                .build();
     }
 
     public String getExpectedDepartureTime() {

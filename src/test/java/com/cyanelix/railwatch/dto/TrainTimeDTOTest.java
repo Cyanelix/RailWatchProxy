@@ -8,13 +8,16 @@ import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 public class TrainTimeDTOTest {
     @Test
     public void trainTimeWithExpectedTime_dtoConstructor() {
         // Given...
-        TrainTime trainTime = TrainTime.of(LocalTime.NOON, Optional.of(LocalTime.MIDNIGHT), "foo");
+        TrainTime trainTime = new TrainTime.Builder(LocalTime.NOON)
+                .withExpectedDepartureTime(LocalTime.MIDNIGHT)
+                .withMessage("foo")
+                .build();
 
         // When...
         TrainTimeDTO trainTimeDTO = new TrainTimeDTO(trainTime);
@@ -28,7 +31,9 @@ public class TrainTimeDTOTest {
     @Test
     public void trainTimeWithNoExpectedTime_dtoConstructor() {
         // Given...
-        TrainTime trainTime = TrainTime.of(LocalTime.NOON, Optional.empty(), "foo");
+        TrainTime trainTime = new TrainTime.Builder(LocalTime.NOON)
+                .withMessage("foo")
+                .build();
 
         // When...
         TrainTimeDTO trainTimeDTO = new TrainTimeDTO(trainTime);
@@ -52,7 +57,7 @@ public class TrainTimeDTOTest {
 
         // Then...
         assertThat(trainTime.getScheduledDepartureTime(), is(LocalTime.NOON));
-        assertThat(trainTime.getExpectedDepartureTime(), is(Optional.of(LocalTime.MIDNIGHT)));
+        assertThat(trainTime.getExpectedDepartureTime(), is(LocalTime.MIDNIGHT));
         assertThat(trainTime.getMessage(), is("foo"));
     }
 
@@ -68,7 +73,7 @@ public class TrainTimeDTOTest {
 
         // Then...
         assertThat(trainTime.getScheduledDepartureTime(), is(LocalTime.NOON));
-        assertThat(trainTime.getExpectedDepartureTime().isPresent(), is(false));
+        assertThat(trainTime.getExpectedDepartureTime(), is(nullValue()));
         assertThat(trainTime.getMessage(), is("foo"));
     }
 }
