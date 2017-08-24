@@ -9,6 +9,12 @@ public class SentNotificationEntity {
     @Id
     private String id;
 
+    private String to;
+    private String title;
+    private String body;
+    private String priority;
+    private LocalDateTime sentDateTime;
+
     public SentNotificationEntity(String to, String title, String body, String priority, LocalDateTime sentDateTime) {
         this.to = to;
         this.title = title;
@@ -17,27 +23,16 @@ public class SentNotificationEntity {
         this.sentDateTime = sentDateTime;
     }
 
-    public static SentNotificationEntity of(NotificationRequest notificationRequest, LocalDateTime sentDateTime) {
-        return new SentNotificationEntity(
-                notificationRequest.getTo(),
-                notificationRequest.getNotification().getTitle(),
-                notificationRequest.getNotification().getBody(),
-                notificationRequest.getPriority(),
-                sentDateTime);
+    public SentNotificationEntity(NotificationRequest notificationRequest, LocalDateTime sentDateTime) {
+        this.to = notificationRequest.getTo();
+        this.title = notificationRequest.getNotification().getTitle();
+        this.body = notificationRequest.getNotification().getBody();
+        this.priority = notificationRequest.getPriority();
+        this.sentDateTime = sentDateTime;
     }
-
-    private String to;
-    private String title;
-    private String body;
-    private String priority;
-    private LocalDateTime sentDateTime;
 
     public String getTo() {
         return to;
-    }
-
-    public void setTo(String to) {
-        this.to = to;
     }
 
     public String getTitle() {

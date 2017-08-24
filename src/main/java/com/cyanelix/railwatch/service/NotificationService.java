@@ -48,7 +48,7 @@ public class NotificationService {
         boolean success = firebaseClient.sendNotification(notificationRequest);
 
         if (success) {
-            sentNotificationRepository.save(SentNotificationEntity.of(notificationRequest, LocalDateTime.now(clock)));
+            sentNotificationRepository.save(new SentNotificationEntity(notificationRequest, LocalDateTime.now(clock)));
         }
     }
 
