@@ -18,19 +18,19 @@ public class JourneyTest {
         assertThat(string, is("FOO -> BAR"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void nullStations_of_throwsException() {
         // When...
         Journey.of(null, null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void nullFrom_of_throwsException() {
         // When...
         Journey.of(null, Station.of("BAR"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void nullTo_of_throwsException() {
         // When...
         Journey.of(Station.of("FOO"), null);

@@ -34,6 +34,10 @@ public class TrainTime {
         return message;
     }
 
+    public Formation getFormation() {
+        return formation;
+    }
+
     public boolean isOnTime() {
         return expectedDepartureTime != null && scheduledDepartureTime.equals(expectedDepartureTime);
     }

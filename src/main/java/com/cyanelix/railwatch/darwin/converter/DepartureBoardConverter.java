@@ -55,7 +55,19 @@ public class DepartureBoardConverter implements Converter<StationBoardResponseTy
         return new TrainTime.Builder(scheduledDepartureTime)
                 .withExpectedDepartureTime(expectedDepartureTime)
                 .withMessage(message)
-                .withFormation(Formation.NORMAL)
+                .withFormation(parseFormation(serviceItem))
                 .build();
+    }
+
+    private Formation parseFormation(ServiceItem serviceItem) {
+        Formation formation;
+        if (serviceItem.isIsReverseFormation() == null) {
+            formation = Formation.UNSPECIFIED;
+        } else if (serviceItem.isIsReverseFormation()) {
+            formation = Formation.REVERSE;
+        } else {
+            formation = Formation.NORMAL;
+        }
+        return formation;
     }
 }

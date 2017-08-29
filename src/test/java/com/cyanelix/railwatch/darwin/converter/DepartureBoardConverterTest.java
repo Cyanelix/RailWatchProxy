@@ -1,5 +1,6 @@
 package com.cyanelix.railwatch.darwin.converter;
 
+import com.cyanelix.railwatch.domain.Formation;
 import com.cyanelix.railwatch.domain.TrainTime;
 import com.thalesgroup.rtti._2016_02_16.ldb.StationBoardResponseType;
 import com.thalesgroup.rtti._2016_02_16.ldb.types.ArrayOfServiceItems;
@@ -9,7 +10,6 @@ import org.junit.Test;
 
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -34,6 +34,7 @@ public class DepartureBoardConverterTest {
         assertThat(trainTimes.get(0).getScheduledDepartureTime(), is(LocalTime.of(15, 0)));
         assertThat(trainTimes.get(0).getExpectedDepartureTime(), is(LocalTime.of(15, 0)));
         assertThat(trainTimes.get(0).getMessage(), is(""));
+        assertThat(trainTimes.get(0).getFormation(), is(Formation.UNSPECIFIED));
     }
 
     @Test
@@ -106,6 +107,40 @@ public class DepartureBoardConverterTest {
 
         // Then...
         assertThat(trainTimes, hasSize(0));
+    }
+
+    @Test
+    public void singleTrain_reverseFormation() {
+        // Given...
+        ServiceItem serviceItem = createServiceItemForTimes("15:00", "Cancelled");
+        serviceItem.setIsReverseFormation(Boolean.TRUE);
+
+        StationBoardResponseType response = createStationBoardResponseType(serviceItem);
+
+        DepartureBoardConverter converter = new DepartureBoardConverter();
+
+        // When...
+        List<TrainTime> trainTimes = converter.convert(response);
+
+        // Then...
+        assertThat(trainTimes.get(0).getFormation(), is(Formation.REVERSE));
+    }
+
+    @Test
+    public void singleTrain_normalFormation() {
+        // Given...
+        ServiceItem serviceItem = createServiceItemForTimes("15:00", "Cancelled");
+        serviceItem.setIsReverseFormation(Boolean.FALSE);
+
+        StationBoardResponseType response = createStationBoardResponseType(serviceItem);
+
+        DepartureBoardConverter converter = new DepartureBoardConverter();
+
+        // When...
+        List<TrainTime> trainTimes = converter.convert(response);
+
+        // Then...
+        assertThat(trainTimes.get(0).getFormation(), is(Formation.NORMAL));
     }
 
     private ServiceItem createServiceItemForTimes(String std, String etd) {
