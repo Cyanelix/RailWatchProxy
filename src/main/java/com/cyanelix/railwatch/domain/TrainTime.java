@@ -12,7 +12,7 @@ public class TrainTime {
     private final LocalTime expectedDepartureTime;
     private final String message;
     private final Formation formation;
-    private final int platformNumber;
+    private final Integer platformNumber;
 
     private TrainTime(Builder builder) {
         this.scheduledDepartureTime = builder.scheduledDepartureTime;
@@ -43,7 +43,7 @@ public class TrainTime {
     }
 
     public String toString() {
-        return String.format("%s%s", getTimeRepresentation(), getFormationRepresentation());
+        return String.format("%s%s%s", getTimeRepresentation(), getPlatformRepresentation(), getFormationRepresentation());
     }
 
     private String getTimeRepresentation() {
@@ -61,7 +61,15 @@ public class TrainTime {
             return scheduledTime + " (" + message + ")";
         }
 
-        return scheduledTime + " [ERROR]";
+        throw new IllegalStateException("Either an expected departure time or a message is required");
+    }
+
+    private String getPlatformRepresentation() {
+        if (platformNumber == null) {
+            return "";
+        }
+
+        return String.format(" [%s]", platformNumber);
     }
 
     private String getFormationRepresentation() {
@@ -79,7 +87,7 @@ public class TrainTime {
         private LocalTime expectedDepartureTime;
         private String message;
         private Formation formation;
-        private int platformNumber;
+        private Integer platformNumber;
 
         public Builder(LocalTime scheduledDepartureTime) {
             this.scheduledDepartureTime = scheduledDepartureTime;

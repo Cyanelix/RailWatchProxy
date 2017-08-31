@@ -69,6 +69,21 @@ public class TrainTimeTest {
     }
 
     @Test
+    public void platformSpecified_toString_includePlatform() {
+        // Given...
+        TrainTime trainTime = new TrainTime.Builder(LocalTime.NOON)
+                .withExpectedDepartureTime(LocalTime.NOON)
+                .withPlatformNumber(1)
+                .build();
+
+        // When...
+        String string = trainTime.toString();
+
+        // Then...
+        assertThat(string, is("12:00 [1]"));
+    }
+
+    @Test
     public void noMessageOrExpectedTime_build_throwException() {
         // Given...
         expectedException.expect(IllegalStateException.class);
