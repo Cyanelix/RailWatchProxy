@@ -17,7 +17,7 @@ public class SentNotificationEntityTest {
         NotificationRequest notificationRequest = new NotificationRequest(NotificationTarget.of("FOO"), "Title", "Body");
 
         // When...
-        SentNotificationEntity entity = new SentNotificationEntity(notificationRequest, LocalDateTime.of(2017, 1, 1, 10, 0));
+        SentNotificationEntity entity = SentNotificationEntity.of(notificationRequest, LocalDateTime.of(2017, 1, 1, 10, 0));
 
         // Then...
         assertThat(entity.getTo(), is("FOO"));
