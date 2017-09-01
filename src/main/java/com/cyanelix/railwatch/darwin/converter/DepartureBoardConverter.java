@@ -56,6 +56,7 @@ public class DepartureBoardConverter implements Converter<StationBoardResponseTy
                 .withExpectedDepartureTime(expectedDepartureTime)
                 .withMessage(message)
                 .withFormation(parseFormation(serviceItem))
+                .withPlatformNumber(parsePlatformNumber(serviceItem))
                 .build();
     }
 
@@ -69,5 +70,15 @@ public class DepartureBoardConverter implements Converter<StationBoardResponseTy
             formation = Formation.NORMAL;
         }
         return formation;
+    }
+
+    private Integer parsePlatformNumber(ServiceItem serviceItem) {
+        String platform = serviceItem.getPlatform();
+
+        if (platform == null) {
+            return null;
+        }
+
+        return Integer.parseInt(platform);
     }
 }

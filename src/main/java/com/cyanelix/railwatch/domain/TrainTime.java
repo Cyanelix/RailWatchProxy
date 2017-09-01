@@ -38,6 +38,10 @@ public class TrainTime {
         return formation;
     }
 
+    public Integer getPlatformNumber() {
+        return platformNumber;
+    }
+
     public boolean isOnTime() {
         return expectedDepartureTime != null && scheduledDepartureTime.equals(expectedDepartureTime);
     }
@@ -108,7 +112,7 @@ public class TrainTime {
             return this;
         }
 
-        public Builder withPlatformNumber(int platformNumber) {
+        public Builder withPlatformNumber(Integer platformNumber) {
             this.platformNumber = platformNumber;
             return this;
         }

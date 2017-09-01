@@ -18,13 +18,13 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
 public class DepartureBoardConverterTest {
+    private final DepartureBoardConverter converter = new DepartureBoardConverter();
+
     @Test
     public void singleTrain_OnTime_convertsSuccessfully() {
         // Given...
         ServiceItem serviceItem = createServiceItemForTimes("15:00", "On time");
         StationBoardResponseType response = createStationBoardResponseType(serviceItem);
-
-        DepartureBoardConverter converter = new DepartureBoardConverter();
 
         // When...
         List<TrainTime> trainTimes = converter.convert(response);
@@ -43,8 +43,6 @@ public class DepartureBoardConverterTest {
         ServiceItem serviceItem = createServiceItemForTimes("15:00", "15:25");
         StationBoardResponseType response = createStationBoardResponseType(serviceItem);
 
-        DepartureBoardConverter converter = new DepartureBoardConverter();
-
         // When...
         List<TrainTime> trainTimes = converter.convert(response);
 
@@ -61,8 +59,6 @@ public class DepartureBoardConverterTest {
         ServiceItem delayedServiceItem = createServiceItemForTimes("15:00", "15:25");
         ServiceItem onTimeServiceItem = createServiceItemForTimes("15:00", "On time");
         StationBoardResponseType response = createStationBoardResponseType(delayedServiceItem, onTimeServiceItem);
-
-        DepartureBoardConverter converter = new DepartureBoardConverter();
 
         // When...
         List<TrainTime> trainTimes = converter.convert(response);
@@ -81,8 +77,6 @@ public class DepartureBoardConverterTest {
         ServiceItem serviceItem = createServiceItemForTimes("15:00", "Cancelled");
         StationBoardResponseType response = createStationBoardResponseType(serviceItem);
 
-        DepartureBoardConverter converter = new DepartureBoardConverter();
-
         // When...
         List<TrainTime> trainTimes = converter.convert(response);
 
@@ -100,8 +94,6 @@ public class DepartureBoardConverterTest {
         StationBoardResponseType response = new StationBoardResponseType();
         response.setGetStationBoardResult(stationBoard);
 
-        DepartureBoardConverter converter = new DepartureBoardConverter();
-
         // When...
         List<TrainTime> trainTimes = converter.convert(response);
 
@@ -116,8 +108,6 @@ public class DepartureBoardConverterTest {
         serviceItem.setIsReverseFormation(Boolean.TRUE);
 
         StationBoardResponseType response = createStationBoardResponseType(serviceItem);
-
-        DepartureBoardConverter converter = new DepartureBoardConverter();
 
         // When...
         List<TrainTime> trainTimes = converter.convert(response);
@@ -134,13 +124,26 @@ public class DepartureBoardConverterTest {
 
         StationBoardResponseType response = createStationBoardResponseType(serviceItem);
 
-        DepartureBoardConverter converter = new DepartureBoardConverter();
-
         // When...
         List<TrainTime> trainTimes = converter.convert(response);
 
         // Then...
         assertThat(trainTimes.get(0).getFormation(), is(Formation.NORMAL));
+    }
+
+    @Test
+    public void singleTrain_withPlatform() {
+        // Given...
+        ServiceItem serviceItem = createServiceItemForTimes("15:00", "Cancelled");
+        serviceItem.setPlatform("1");
+
+        StationBoardResponseType response = createStationBoardResponseType(serviceItem);
+
+        // When...
+        List<TrainTime> trainTimes = converter.convert(response);
+
+        // Then...
+        assertThat(trainTimes.get(0).getPlatformNumber(), is(1));
     }
 
     private ServiceItem createServiceItemForTimes(String std, String etd) {
