@@ -1,0 +1,14 @@
+proxy:
+  build: .
+  dockerfile: Dockerfile
+  links:
+    - mongo
+  ports:
+    - "8080:8080"
+  env_file:
+    - ./tokens.env
+
+mongo:
+  image: mongo
+  ports:
+    - "27017:27017"
