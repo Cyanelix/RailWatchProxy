@@ -1,14 +1,17 @@
-proxy:
-  build: .
-  dockerfile: Dockerfile
-  links:
-    - mongo
-  ports:
-    - "8080:8080"
-  env_file:
-    - ./tokens.env
+version: "2"
 
-mongo:
-  image: mongo
-  ports:
-    - "27017:27017"
+services:
+  proxy:
+    build: .
+    image: cyanelix/proxy
+    links:
+      - mongo
+    ports:
+      - "80:8080"
+    env_file:
+      - ./tokens.env
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
