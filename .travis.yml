@@ -21,7 +21,7 @@ jdk:
 
 script:
   - mvn clean verify org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar
-  - docker build .
+  - docker build . -t cyanelix/proxy
 
 cache:
     directories:
