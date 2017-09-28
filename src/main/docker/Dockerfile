@@ -1,6 +1,6 @@
-FROM frolvlad/alpine-oraclejdk8:slim
+FROM openjdk:8-jdk-alpine
 VOLUME /tmp
-ADD target/proxy.jar proxy.jar
+ADD /maven/proxy.jar proxy.jar
 EXPOSE 8080
 RUN sh -c 'touch /proxy.jar'
 ENV JAVA_OPTS=""
