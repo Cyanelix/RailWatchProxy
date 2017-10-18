@@ -89,11 +89,10 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- tag::wsdl[] -->
             <plugin>
                 <groupId>org.jvnet.jaxb2.maven2</groupId>
                 <artifactId>maven-jaxb2-plugin</artifactId>
-                <version>0.12.3</version>
+                <version>0.13.2</version>
                 <executions>
                     <execution>
                         <goals>
@@ -103,97 +102,71 @@
                 </executions>
                 <configuration>
                     <schemaLanguage>WSDL</schemaLanguage>
-                    <schemas>
-                        <schema>
-                            <url>https://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=2016-02-16</url>
-                        </schema>
-                        <schema>
-                            <url>https://lite.realtime.nationalrail.co.uk/OpenLDBWS/rtti_2016-02-16_ldb.wsdl</url>
-                        </schema>
-                        <schema>
-                            <url>https://lite.realtime.nationalrail.co.uk/OpenLDBWS/darwin_token_types_2013-11-28.wsdl
-                            </url>
-                        </schema>
-                        <!--<schema> <url>https://lite.realtime.nationalrail.co.uk/OpenLDBWS/rtti_2012-01-13_ldb.wsdl</url>
-                          </schema> <schema> <url>https://lite.realtime.nationalrail.co.uk/OpenLDBWS/rtti_2007-10-10_ldb_common_types.xsd</url>
-                          </schema> <schema> <url>https://lite.realtime.nationalrail.co.uk/OpenLDBWS/rtti_2015-11-27_ldb_common_types.xsd</url>
-                          </schema> <schema> <url>https://lite.realtime.nationalrail.co.uk/OpenLDBWS/rtti_2016-02-16_ldb_types.xsd</url>
-                          </schema> -->
-                    </schemas>
+                    <schemaDirectory>src/main/resources/wsdl/darwin</schemaDirectory>
+                    <schemaIncludes>
+                        <include>*.wsdl</include>
+                    </schemaIncludes>
                 </configuration>
             </plugin>
-            <!-- end::wsdl[] -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <environmentVariables>
+                        <SPRING_DATA_MONGODB_PORT>${it-database.port}</SPRING_DATA_MONGODB_PORT>
+                    </environmentVariables>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>io.fabric8</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>0.22.1</version>
 
-                <configuration>
-                    <images>
-                        <image>
-                            <alias>proxy</alias>
-                            <name>cyanelix/railwatch-proxy:${project.version}</name>
-                            <build>
-                                <dockerFile>Dockerfile</dockerFile>
-                                <assembly>
-                                    <descriptorRef>artifact</descriptorRef>
-                                </assembly>
-                            </build>
-
-                            <run>
-                                <ports>
-                                    <port>tomcat.port:8080</port>
-                                </ports>
-                                <envPropertyFile>tokens.env</envPropertyFile>
-                                <!--<wait>-->
-                                    <!--<http>-->
-                                        <!--<url>http://localhost:${tomcat.port}/schedules</url>-->
-                                        <!--<method>GET</method>-->
-                                    <!--</http>-->
-                                    <!--<time>10000</time>-->
-                                <!--</wait>-->
-                                <links>
-                                    <link>database:db</link>
-                                </links>
-                            </run>
-                        </image>
-
-                        <image>
-                            <alias>database</alias>
-                            <name>mongo</name>
-                            <run>
-                                <wait>
-                                    <log>waiting for connections on port</log>
-                                    <time>10000</time>
-                                </wait>
-                            </run>
-                        </image>
-                    </images>
-                </configuration>
-
                 <!-- Connect start/stop to pre- and
                      post-integration-test phase, respectively if you want to start
                      your docker containers during integration tests -->
                 <executions>
                     <execution>
-                        <id>start</id>
+                        <id>start-mongo-db</id>
                         <phase>pre-integration-test</phase>
                         <goals>
                             <!-- "build" should be used to create the images with the
                                  artifact -->
-                            <goal>build</goal>
+                            <!--<goal>build</goal>-->
                             <goal>start</goal>
                         </goals>
+                        <configuration>
+                            <images>
+                                <image>
+                                    <name>mongo</name>
+                                    <alias>database</alias>
+                                    <run>
+                                        <ports>
+                                            <port>it-database.port:27017</port>
+                                        </ports>
+                                        <wait>
+                                            <log>waiting for connections on port</log>
+                                            <time>10000</time>
+                                        </wait>
+                                    </run>
+                                </image>
+                            </images>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>stop</id>
                         <phase>post-integration-test</phase>
                         <goals>
                             <goal>stop</goal>
+                            <goal>remove</goal>
                         </goals>
                     </execution>
                 </executions>
