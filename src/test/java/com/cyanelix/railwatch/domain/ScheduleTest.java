@@ -34,7 +34,7 @@ public class ScheduleTest {
     @Test
     public void timeWithinSchedule_isActive_returnsTrue() {
         // Given...
-        Schedule schedule = Schedule.of(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, null, null);
+        Schedule schedule = Schedule.of(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, null, null, ScheduleState.ENABLED);
 
         // When...
         boolean isActive = schedule.isActive(LocalDateTime.of(2017, 1, 1, 12, 0));
@@ -46,7 +46,7 @@ public class ScheduleTest {
     @Test
     public void timeBeforeSchedule_isActive_returnsFalse() {
         // Given...
-        Schedule schedule = Schedule.of(LocalTime.of(19, 0), LocalTime.of(20, 0), DayRange.ALL, null, null);
+        Schedule schedule = Schedule.of(LocalTime.of(19, 0), LocalTime.of(20, 0), DayRange.ALL, null, null, ScheduleState.ENABLED);
 
         // When...
         boolean isActive = schedule.isActive(LocalDateTime.of(2017, 1, 1, 12, 0));
@@ -58,7 +58,7 @@ public class ScheduleTest {
     @Test
     public void timeAfterSchedule_isActive_returnsFalse() {
         // Given...
-        Schedule schedule = Schedule.of(LocalTime.of(9, 0), LocalTime.of(10, 0), DayRange.ALL, null, null);
+        Schedule schedule = Schedule.of(LocalTime.of(9, 0), LocalTime.of(10, 0), DayRange.ALL, null, null, ScheduleState.ENABLED);
 
         // When...
         boolean isActive = schedule.isActive(LocalDateTime.of(2017, 1, 1, 12, 0));
@@ -70,7 +70,7 @@ public class ScheduleTest {
     @Test
     public void timeWithinScheduleButOutsideDays_isActive_returnsFalse() {
         // Given...
-        Schedule schedule = Schedule.of(LocalTime.of(9, 0), LocalTime.of(10, 0), DayRange.of(DayOfWeek.MONDAY), null, null);
+        Schedule schedule = Schedule.of(LocalTime.of(9, 0), LocalTime.of(10, 0), DayRange.of(DayOfWeek.MONDAY), null, null, ScheduleState.ENABLED);
 
         // When...
         // 2017-01-01 was a Sunday.
@@ -86,7 +86,7 @@ public class ScheduleTest {
         Station from = Station.of("FOO");
         Station to = Station.of("BAR");
 
-        Schedule schedule = Schedule.of(null, null, DayRange.ALL, Journey.of(from, to), null);
+        Schedule schedule = Schedule.of(null, null, DayRange.ALL, Journey.of(from, to), null, ScheduleState.ENABLED);
 
         List<TrainTime> trainTimes = Collections.singletonList(
                 new TrainTime.Builder(LocalTime.NOON)
@@ -105,7 +105,7 @@ public class ScheduleTest {
     @Test
     public void scheduleForAllDays_getDayNames() {
         // Given...
-        Schedule schedule = Schedule.of(null, null, DayRange.ALL, null, null);
+        Schedule schedule = Schedule.of(null, null, DayRange.ALL, null, null, ScheduleState.ENABLED);
 
         // When...
         Stream<String> dayNames = schedule.getDayNames();
@@ -125,8 +125,9 @@ public class ScheduleTest {
     @Test
     public void schedulePopulatedWithValues_toString_containsExpectedValues() {
         // Given...
-        Schedule schedule = Schedule.of(LocalTime.of(1, 1), LocalTime.of(2, 2),
-                DayRange.ALL, Journey.of(Station.of("ABC"), Station.of("DEF")), NotificationTarget.of("123"));
+        Schedule schedule = Schedule.of(
+                LocalTime.of(1, 1), LocalTime.of(2, 2), DayRange.ALL,
+                Journey.of(Station.of("ABC"), Station.of("DEF")), NotificationTarget.of("123"), ScheduleState.ENABLED);
 
         // When...
         String string = schedule.toString();

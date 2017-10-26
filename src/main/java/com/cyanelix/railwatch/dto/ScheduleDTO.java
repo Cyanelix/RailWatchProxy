@@ -14,11 +14,11 @@ public class ScheduleDTO {
 
     private String startTime;
     private String endTime;
-
     private String[] days;
     private String fromStation;
     private String toStation;
     private String notificationTarget;
+    private String state;
 
     public ScheduleDTO() {
         // Default constructor required for Jackson.
@@ -31,6 +31,7 @@ public class ScheduleDTO {
         fromStation = schedule.getJourney().getFrom().getStationCode();
         toStation = schedule.getJourney().getTo().getStationCode();
         notificationTarget = schedule.getNotificationTarget().getTargetAddress();
+        state = schedule.getState().name();
     }
 
     private String[] convertToDayNames(DayRange dayRange) {
@@ -47,7 +48,8 @@ public class ScheduleDTO {
                 LocalTime.parse(endTime, TIME_FORMATTER),
                 DayRange.of(days),
                 Journey.of(Station.of(fromStation), Station.of(toStation)),
-                NotificationTarget.of(notificationTarget));
+                NotificationTarget.of(notificationTarget),
+                ScheduleState.parse(state));
     }
 
     public String getStartTime() {
@@ -96,5 +98,13 @@ public class ScheduleDTO {
 
     public void setDays(String[] days) {
         this.days = days;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 }

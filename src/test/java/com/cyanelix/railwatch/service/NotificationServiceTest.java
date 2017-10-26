@@ -45,8 +45,10 @@ public class NotificationServiceTest {
         // Given...
         given(sentNotificationRepository.findBySentDateTimeAfter(any())).willReturn(Collections.emptyList());
 
-        Schedule schedule = Schedule.of(LocalTime.of(9, 0), LocalTime.of(10, 0),
-                DayRange.ALL, Journey.of(Station.of("FOO"), Station.of("BAR")), NotificationTarget.of("notification-to"));
+        Schedule schedule = Schedule.of(
+                LocalTime.of(9, 0), LocalTime.of(10, 0), DayRange.ALL,
+                Journey.of(Station.of("FOO"), Station.of("BAR")), NotificationTarget.of("notification-to"),
+                ScheduleState.ENABLED);
         List<TrainTime> trainTimes = Collections.singletonList(
                 new TrainTime.Builder(LocalTime.NOON)
                         .withExpectedDepartureTime(LocalTime.NOON)
@@ -69,7 +71,8 @@ public class NotificationServiceTest {
     public void doNotSendDuplicateNotification() {
         // Given...
         Schedule schedule = Schedule.of(
-                null, null, DayRange.ALL, Journey.of(Station.of("FOO"), Station.of("BAR")), NotificationTarget.of("notification-to"));
+                null, null, DayRange.ALL, Journey.of(Station.of("FOO"), Station.of("BAR")),
+                NotificationTarget.of("notification-to"), ScheduleState.ENABLED);
         List<TrainTime> trainTimes = Collections.singletonList(
                 new TrainTime.Builder(LocalTime.NOON)
                         .withExpectedDepartureTime(LocalTime.NOON)
@@ -88,8 +91,10 @@ public class NotificationServiceTest {
     @Test
     public void notificationSentPreviously_sendDifferentNotification() {
         // Given...
-        Schedule schedule = Schedule.of(LocalTime.of(9, 0), LocalTime.of(10, 0),
-                DayRange.ALL, Journey.of(Station.of("FOO"), Station.of("BAR")), NotificationTarget.of("notification-to"));
+        Schedule schedule = Schedule.of(
+                LocalTime.of(9, 0), LocalTime.of(10, 0), DayRange.ALL,
+                Journey.of(Station.of("FOO"), Station.of("BAR")), NotificationTarget.of("notification-to"),
+                ScheduleState.ENABLED);
         List<TrainTime> trainTimes = Collections.singletonList(
                 new TrainTime.Builder(LocalTime.NOON)
                         .withExpectedDepartureTime(LocalTime.NOON)

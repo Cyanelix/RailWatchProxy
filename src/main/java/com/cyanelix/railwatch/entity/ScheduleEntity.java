@@ -2,6 +2,7 @@ package com.cyanelix.railwatch.entity;
 
 import com.cyanelix.railwatch.domain.DayRange;
 import com.cyanelix.railwatch.domain.Schedule;
+import com.cyanelix.railwatch.domain.ScheduleState;
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalTime;
@@ -16,14 +17,16 @@ public class ScheduleEntity {
     private String fromStation;
     private String toStation;
     private String notificationTarget;
+    private ScheduleState state;
 
-    public ScheduleEntity(LocalTime startTime, LocalTime endTime, DayRange dayRange, String fromStation, String toStation, String notificationTarget) {
+    public ScheduleEntity(LocalTime startTime, LocalTime endTime, DayRange dayRange, String fromStation, String toStation, String notificationTarget, ScheduleState state) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.dayRange = dayRange;
         this.fromStation = fromStation;
         this.toStation = toStation;
         this.notificationTarget = notificationTarget;
+        this.state = state;
     }
 
     public static ScheduleEntity of(Schedule schedule) {
@@ -33,7 +36,8 @@ public class ScheduleEntity {
                 schedule.getDayRange(),
                 schedule.getJourney().getFrom().getStationCode(),
                 schedule.getJourney().getTo().getStationCode(),
-                schedule.getNotificationTarget().getTargetAddress());
+                schedule.getNotificationTarget().getTargetAddress(),
+                schedule.getState());
     }
 
     public LocalTime getStartTime() {
@@ -58,5 +62,9 @@ public class ScheduleEntity {
 
     public DayRange getDayRange() {
         return dayRange;
+    }
+
+    public ScheduleState getState() {
+        return state;
     }
 }

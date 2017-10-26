@@ -22,17 +22,19 @@ public final class Schedule {
     private final DayRange dayRange;
     private final Journey journey;
     private final NotificationTarget notificationTarget;
+    private final ScheduleState state;
 
-    private Schedule(LocalTime startTime, LocalTime endTime, DayRange dayRange, Journey journey, NotificationTarget notificationTarget) {
+    private Schedule(LocalTime startTime, LocalTime endTime, DayRange dayRange, Journey journey, NotificationTarget notificationTarget, ScheduleState state) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.dayRange = dayRange;
         this.journey = journey;
         this.notificationTarget = notificationTarget;
+        this.state = state;
     }
 
-    public static Schedule of(LocalTime startTime, LocalTime endTime, DayRange dayRange, Journey journey, NotificationTarget notificationTarget) {
-        return new Schedule(startTime, endTime, dayRange, journey, notificationTarget);
+    public static Schedule of(LocalTime startTime, LocalTime endTime, DayRange dayRange, Journey journey, NotificationTarget notificationTarget, ScheduleState state) {
+        return new Schedule(startTime, endTime, dayRange, journey, notificationTarget, state);
     }
 
     public static Schedule of(ScheduleEntity scheduleEntity) {
@@ -44,7 +46,8 @@ public final class Schedule {
                         Station.of(scheduleEntity.getFromStation()),
                         Station.of(scheduleEntity.getToStation())
                 ),
-                NotificationTarget.of(scheduleEntity.getNotificationTarget()));
+                NotificationTarget.of(scheduleEntity.getNotificationTarget()),
+                scheduleEntity.getState());
     }
 
     @Override
@@ -56,12 +59,13 @@ public final class Schedule {
                 Objects.equals(endTime, schedule.endTime) &&
                 Objects.equals(dayRange, schedule.dayRange) &&
                 Objects.equals(journey, schedule.journey) &&
-                Objects.equals(notificationTarget, schedule.notificationTarget);
+                Objects.equals(notificationTarget, schedule.notificationTarget) &&
+                state == schedule.state;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(startTime, endTime, dayRange, journey, notificationTarget);
+        return Objects.hash(startTime, endTime, dayRange, journey, notificationTarget, state);
     }
 
     public LocalTime getStartTime() {
@@ -103,6 +107,10 @@ public final class Schedule {
     public void lookupAndNotifyTrainTimes(TrainTimesService trainTimesService, NotificationService notificationService) {
         List<TrainTime> trainTimes = trainTimesService.lookupTrainTimes(journey.getFrom(), journey.getTo());
         notificationService.sendNotification(this, trainTimes);
+    }
+
+    public ScheduleState getState() {
+        return state;
     }
 
     @Override

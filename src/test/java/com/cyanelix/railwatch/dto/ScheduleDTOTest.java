@@ -6,8 +6,7 @@ import org.junit.Test;
 import java.time.LocalTime;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.contains;
+import static org.junit.Assert.assertThat;
 
 public class ScheduleDTOTest {
     @Test
@@ -37,7 +36,8 @@ public class ScheduleDTOTest {
     public void dto_ScheduleConstructor() {
         // Given...
         Schedule schedule = Schedule.of(
-                LocalTime.NOON, LocalTime.MIDNIGHT, DayRange.ALL, Journey.of(Station.of("FOO"), Station.of("BAR")), NotificationTarget.of("notification-to"));
+                LocalTime.NOON, LocalTime.MIDNIGHT, DayRange.ALL, Journey.of(Station.of("FOO"), Station.of("BAR")),
+                NotificationTarget.of("notification-to"), ScheduleState.ENABLED);
 
         // When...
         ScheduleDTO dto = new ScheduleDTO(schedule);

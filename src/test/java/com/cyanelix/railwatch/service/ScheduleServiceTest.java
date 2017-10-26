@@ -47,7 +47,8 @@ public class ScheduleServiceTest {
     public void createSchedule_savedInRepo() {
         // Given...
         Schedule schedule = Schedule.of(
-                LocalTime.MIN, LocalTime.MAX, DayRange.ALL, Journey.of(Station.of("FOO"), Station.of("BAR")), NotificationTarget.of("notification-target"));
+                LocalTime.MIN, LocalTime.MAX, DayRange.ALL, Journey.of(Station.of("FOO"), Station.of("BAR")),
+                NotificationTarget.of("notification-target"), ScheduleState.ENABLED);
 
         // When...
         scheduleService.createSchedule(schedule);
@@ -68,7 +69,8 @@ public class ScheduleServiceTest {
     public void singleScheduleActiveNow_checkTimes_routeLookedUp() {
         // Given...
         Schedule activeSchedule = Schedule.of(
-                LocalTime.MIN, LocalTime.MAX, DayRange.ALL, Journey.of(Station.of("FOO"), Station.of("BAR")), NotificationTarget.of("target"));
+                LocalTime.MIN, LocalTime.MAX, DayRange.ALL, Journey.of(Station.of("FOO"), Station.of("BAR")),
+                NotificationTarget.of("target"), ScheduleState.ENABLED);
         given(scheduleRepository.findAll()).willReturn(Collections.singletonList(ScheduleEntity.of(activeSchedule)));
 
         // When...
@@ -83,9 +85,11 @@ public class ScheduleServiceTest {
     public void oneActiveOneInactiveSchedule_checkTimes_onlyActiveRouteLookedUp() {
         // Given...
         Schedule activeSchedule = Schedule.of(
-                LocalTime.MIN, LocalTime.MAX, DayRange.ALL, Journey.of(Station.of("FOO"), Station.of("BAR")), NotificationTarget.of("target"));
+                LocalTime.MIN, LocalTime.MAX, DayRange.ALL, Journey.of(Station.of("FOO"), Station.of("BAR")),
+                NotificationTarget.of("target"), ScheduleState.ENABLED);
         Schedule inactiveSchedule = Schedule.of(
-                LocalTime.MAX, LocalTime.MIN, DayRange.ALL, Journey.of(Station.of("XXX"), Station.of("ZZZ")), NotificationTarget.of("target"));
+                LocalTime.MAX, LocalTime.MIN, DayRange.ALL, Journey.of(Station.of("XXX"), Station.of("ZZZ")),
+                NotificationTarget.of("target"), ScheduleState.ENABLED);
         given(scheduleRepository.findAll()).willReturn(Arrays.asList(ScheduleEntity.of(activeSchedule), ScheduleEntity.of(inactiveSchedule)));
 
         // When...
@@ -103,7 +107,8 @@ public class ScheduleServiceTest {
     public void singleSchedule_getSchedules() {
         // Given...
         Schedule schedule = Schedule.of(
-                LocalTime.MIN, LocalTime.MAX, DayRange.ALL, Journey.of(Station.of("FOO"), Station.of("BAR")), NotificationTarget.of("notification-to"));
+                LocalTime.MIN, LocalTime.MAX, DayRange.ALL, Journey.of(Station.of("FOO"), Station.of("BAR")),
+                NotificationTarget.of("notification-to"), ScheduleState.ENABLED);
         given(scheduleRepository.findAll()).willReturn(Collections.singletonList(ScheduleEntity.of(schedule)));
 
         // When...

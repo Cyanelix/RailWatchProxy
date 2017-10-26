@@ -38,7 +38,7 @@ public class SchedulesControllerTest {
         mockMvc.perform(
                 put("/schedules")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"startTime\":\"07:00\", \"endTime\":\"09:00\", \"days\":[\"MONDAY\", \"TUESDAY\"]}"))
+                        .content("{\"startTime\":\"07:00\", \"endTime\":\"09:00\", \"days\":[\"MONDAY\", \"TUESDAY\"], \"state\":\"ENABLED\"}"))
                 .andExpect(status().isCreated());
 
         ArgumentCaptor<Schedule> scheduleArgumentCaptor = ArgumentCaptor.forClass(Schedule.class);
@@ -50,6 +50,21 @@ public class SchedulesControllerTest {
     }
 
     @Test
+    public void putNewTimesRequestWithNoState_scheduleCreatedAsEnabled() throws Exception {
+        mockMvc.perform(
+                put("/schedules")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"startTime\":\"07:00\", \"endTime\":\"09:00\", \"days\":[\"MONDAY\", \"TUESDAY\"]}"))
+                .andExpect(status().isCreated());
+
+        ArgumentCaptor<Schedule> scheduleArgumentCaptor = ArgumentCaptor.forClass(Schedule.class);
+        verify(mockScheduleService).createSchedule(scheduleArgumentCaptor.capture());
+
+        Schedule schedule = scheduleArgumentCaptor.getValue();
+        assertThat(schedule.getState(), is(ScheduleState.ENABLED));
+    }
+
+    @Test
     public void getAllSchedules_success() throws Exception {
         given(mockScheduleService.getSchedules())
                 .willReturn(Collections.singleton(Schedule.of(
@@ -57,7 +72,8 @@ public class SchedulesControllerTest {
                         LocalTime.of(8, 0),
                         DayRange.ALL,
                         Journey.of(Station.of("FOO"), Station.of("BAR")),
-                        NotificationTarget.of("notification-to"))));
+                        NotificationTarget.of("notification-to"),
+                        ScheduleState.ENABLED)));
 
         mockMvc.perform(get("/schedules"))
                 .andExpect(status().isOk())
