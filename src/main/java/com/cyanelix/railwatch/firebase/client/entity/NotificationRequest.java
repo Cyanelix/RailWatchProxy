@@ -9,6 +9,7 @@ public class NotificationRequest {
     private final String to;
     private final Notification notification;
     private final String priority;
+
     public NotificationRequest(NotificationTarget to, String title, String body) {
         this.to = to.getTargetAddress();
         this.notification = new Notification(title, body);

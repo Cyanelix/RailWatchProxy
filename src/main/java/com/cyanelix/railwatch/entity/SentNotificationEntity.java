@@ -9,6 +9,12 @@ public class SentNotificationEntity {
     @Id
     private String id;
 
+    private String to;
+    private String title;
+    private String body;
+    private String priority;
+    private LocalDateTime sentDateTime;
+
     public SentNotificationEntity(String to, String title, String body, String priority, LocalDateTime sentDateTime) {
         this.to = to;
         this.title = title;
@@ -25,12 +31,6 @@ public class SentNotificationEntity {
                 notificationRequest.getPriority(),
                 sentDateTime);
     }
-
-    private String to;
-    private String title;
-    private String body;
-    private String priority;
-    private LocalDateTime sentDateTime;
 
     public String getTo() {
         return to;
