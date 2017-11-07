@@ -17,6 +17,10 @@ public final class HeartbeatEntity {
         this.dateTime = dateTime;
     }
 
+    public String getId() {
+        return id;
+    }
+
     public NotificationTarget getNotificationTarget() {
         return notificationTarget;
     }

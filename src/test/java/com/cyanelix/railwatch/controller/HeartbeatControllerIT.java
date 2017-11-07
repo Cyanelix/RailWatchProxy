@@ -2,6 +2,7 @@ package com.cyanelix.railwatch.controller;
 
 import com.cyanelix.railwatch.entity.HeartbeatEntity;
 import com.cyanelix.railwatch.repository.HeartbeatRepository;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,11 @@ public class HeartbeatControllerIT {
 
     @Autowired
     private HeartbeatRepository heartbeatRepository;
+
+    @Before
+    public void setup() {
+        heartbeatRepository.deleteAll();
+    }
 
     @Test
     public void createHeartbeat_queryDatabase_heartbeatIsStored() throws Exception {
