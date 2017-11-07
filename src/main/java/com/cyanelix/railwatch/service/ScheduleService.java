@@ -1,6 +1,7 @@
 package com.cyanelix.railwatch.service;
 
 import com.cyanelix.railwatch.domain.Schedule;
+import com.cyanelix.railwatch.domain.ScheduleState;
 import com.cyanelix.railwatch.entity.ScheduleEntity;
 import com.cyanelix.railwatch.repository.ScheduleRepository;
 import org.slf4j.Logger;
@@ -47,7 +48,7 @@ public class ScheduleService {
     }
 
     private Stream<Schedule> getActiveSchedules() {
-        return scheduleRepository.findAll().parallelStream()
+        return scheduleRepository.findByStateIs(ScheduleState.ENABLED).parallelStream()
                 .map(Schedule::of)
                 .filter(schedule -> schedule.isActive(LocalDateTime.now(clock)));
     }

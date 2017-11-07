@@ -27,6 +27,8 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ScheduleServiceTest {
+    private static final Journey FOO_TO_BAR = Journey.of(Station.of("FOO"), Station.of("BAR"));
+
     @Mock
     private TrainTimesService trainTimesService;
 
@@ -47,7 +49,7 @@ public class ScheduleServiceTest {
     public void createSchedule_savedInRepo() {
         // Given...
         Schedule schedule = Schedule.of(
-                LocalTime.MIN, LocalTime.MAX, DayRange.ALL, Journey.of(Station.of("FOO"), Station.of("BAR")),
+                LocalTime.MIN, LocalTime.MAX, DayRange.ALL, FOO_TO_BAR,
                 NotificationTarget.of("notification-target"), ScheduleState.ENABLED);
 
         // When...
@@ -69,9 +71,10 @@ public class ScheduleServiceTest {
     public void singleScheduleActiveNow_checkTimes_routeLookedUp() {
         // Given...
         Schedule activeSchedule = Schedule.of(
-                LocalTime.MIN, LocalTime.MAX, DayRange.ALL, Journey.of(Station.of("FOO"), Station.of("BAR")),
+                LocalTime.MIN, LocalTime.MAX, DayRange.ALL, FOO_TO_BAR,
                 NotificationTarget.of("target"), ScheduleState.ENABLED);
-        given(scheduleRepository.findAll()).willReturn(Collections.singletonList(ScheduleEntity.of(activeSchedule)));
+        given(scheduleRepository.findByStateIs(ScheduleState.ENABLED)).willReturn(
+                Collections.singletonList(ScheduleEntity.of(activeSchedule)));
 
         // When...
         scheduleService.checkTimes();
@@ -85,12 +88,13 @@ public class ScheduleServiceTest {
     public void oneActiveOneInactiveSchedule_checkTimes_onlyActiveRouteLookedUp() {
         // Given...
         Schedule activeSchedule = Schedule.of(
-                LocalTime.MIN, LocalTime.MAX, DayRange.ALL, Journey.of(Station.of("FOO"), Station.of("BAR")),
+                LocalTime.MIN, LocalTime.MAX, DayRange.ALL, FOO_TO_BAR,
                 NotificationTarget.of("target"), ScheduleState.ENABLED);
         Schedule inactiveSchedule = Schedule.of(
                 LocalTime.MAX, LocalTime.MIN, DayRange.ALL, Journey.of(Station.of("XXX"), Station.of("ZZZ")),
                 NotificationTarget.of("target"), ScheduleState.ENABLED);
-        given(scheduleRepository.findAll()).willReturn(Arrays.asList(ScheduleEntity.of(activeSchedule), ScheduleEntity.of(inactiveSchedule)));
+        given(scheduleRepository.findByStateIs(ScheduleState.ENABLED)).willReturn(
+                Arrays.asList(ScheduleEntity.of(activeSchedule), ScheduleEntity.of(inactiveSchedule)));
 
         // When...
         scheduleService.checkTimes();
@@ -104,12 +108,26 @@ public class ScheduleServiceTest {
     }
 
     @Test
+    public void noEnabledSchedules_checkTimes_notLookedUp() {
+        // Given...
+        given(scheduleRepository.findByStateIs(ScheduleState.ENABLED)).willReturn(Collections.emptyList());
+
+        // When...
+        scheduleService.checkTimes();
+
+        // Then...
+        verify(trainTimesService, never()).lookupTrainTimes(any(), any());
+        verify(notificationService, never()).sendNotification(any(), any());
+    }
+
+    @Test
     public void singleSchedule_getSchedules() {
         // Given...
         Schedule schedule = Schedule.of(
-                LocalTime.MIN, LocalTime.MAX, DayRange.ALL, Journey.of(Station.of("FOO"), Station.of("BAR")),
+                LocalTime.MIN, LocalTime.MAX, DayRange.ALL, FOO_TO_BAR,
                 NotificationTarget.of("notification-to"), ScheduleState.ENABLED);
-        given(scheduleRepository.findAll()).willReturn(Collections.singletonList(ScheduleEntity.of(schedule)));
+        given(scheduleRepository.findAll()).willReturn(
+                Collections.singletonList(ScheduleEntity.of(schedule)));
 
         // When...
         Set<Schedule> schedules = scheduleService.getSchedules();
