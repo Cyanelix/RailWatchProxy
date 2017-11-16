@@ -1,5 +1,6 @@
 package com.cyanelix.railwatch.service;
 
+import com.cyanelix.railwatch.domain.NotificationTarget;
 import com.cyanelix.railwatch.domain.Schedule;
 import com.cyanelix.railwatch.domain.ScheduleState;
 import com.cyanelix.railwatch.entity.ScheduleEntity;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -48,14 +50,23 @@ public class ScheduleService {
     }
 
     private Stream<Schedule> getActiveSchedules() {
-        return scheduleRepository.findByStateIs(ScheduleState.ENABLED).parallelStream()
-                .map(Schedule::of)
-                .filter(schedule -> schedule.isActive(LocalDateTime.now(clock)));
+        return getEnabledSchedules().filter(schedule -> schedule.isActive(LocalDateTime.now(clock)));
     }
 
     public Set<Schedule> getSchedules() {
         return scheduleRepository.findAll().parallelStream()
                 .map(Schedule::of)
                 .collect(Collectors.toSet());
+    }
+
+    void disableSchedulesForNotificationTarget(NotificationTarget notificationTarget) {
+        List<ScheduleEntity> scheduleEntities = scheduleRepository.findByNotificationTarget(notificationTarget.getTargetAddress());
+        scheduleEntities.forEach(scheduleEntity -> scheduleEntity.setState(ScheduleState.DISABLED));
+        scheduleRepository.save(scheduleEntities);
+    }
+
+    Stream<Schedule> getEnabledSchedules() {
+        return scheduleRepository.findByStateIs(ScheduleState.ENABLED).parallelStream()
+                .map(Schedule::of);
     }
 }

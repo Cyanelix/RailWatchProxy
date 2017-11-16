@@ -40,6 +40,10 @@ public class ScheduleEntity {
                 schedule.getState());
     }
 
+    public String getId() {
+        return id;
+    }
+
     public LocalTime getStartTime() {
         return startTime;
     }
@@ -66,5 +70,9 @@ public class ScheduleEntity {
 
     public ScheduleState getState() {
         return state;
+    }
+
+    public void setState(ScheduleState state) {
+        this.state = state;
     }
 }

@@ -2,6 +2,7 @@ package com.cyanelix.railwatch.repository;
 
 import com.cyanelix.railwatch.domain.NotificationTarget;
 import com.cyanelix.railwatch.entity.HeartbeatEntity;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,11 @@ public class HeartbeatRepositoryIT {
 
     @Autowired
     private HeartbeatRepository heartbeatRepository;
+
+    @Before
+    public void setup() {
+        heartbeatRepository.deleteAll();
+    }
 
     @Test
     public void saveHeartbeat_findAll_returnsSavedEntityWithId() {

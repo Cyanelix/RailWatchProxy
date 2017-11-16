@@ -16,7 +16,10 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
@@ -135,5 +138,41 @@ public class ScheduleServiceTest {
         // Then...
         assertThat(schedules, hasSize(1));
         assertThat(schedules.contains(schedule), is(true));
+    }
+
+    @Test
+    public void oneEnabledSchedule_getEnabledSchedules_enabledScheduleReturned() {
+        // Given...
+        ScheduleEntity scheduleEntity =
+                new ScheduleEntity(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, "FOO", "BAR", "notification-to", ScheduleState.ENABLED);
+        given(scheduleRepository.findByStateIs(ScheduleState.ENABLED)).willReturn(Collections.singletonList(scheduleEntity));
+
+        // When...
+        Stream<Schedule> scheduleStream = scheduleService.getEnabledSchedules();
+
+        // Then...
+        List<Schedule> schedules = scheduleStream.collect(Collectors.toList());
+        assertThat(schedules.size(), is(1));
+        assertThat(schedules.get(0), is(Schedule.of(scheduleEntity)));
+    }
+
+    @Test
+    public void disableSchedulesForNotificationTarget_scheduleStatesUpdated() {
+        // Given...
+        NotificationTarget notificationTarget = NotificationTarget.of("target");
+
+        ScheduleEntity scheduleEntity =
+                new ScheduleEntity(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, "FOO", "BAR", "notification-to", ScheduleState.ENABLED);
+        List<ScheduleEntity> scheduleEntities = Collections.singletonList(scheduleEntity);
+
+        given(scheduleRepository.findByNotificationTarget(notificationTarget.getTargetAddress()))
+                .willReturn(scheduleEntities);
+
+        // When...
+        scheduleService.disableSchedulesForNotificationTarget(notificationTarget);
+
+        // Then...
+        verify(scheduleRepository).save(scheduleEntities);
+        assertThat(scheduleEntity.getState(), is(ScheduleState.DISABLED));
     }
 }
