@@ -56,14 +56,17 @@ public class HeartbeatIT {
         ScheduleEntity notExpiringEnabled = createSchedule("ST4", "not-expiring", ScheduleState.ENABLED);
         ScheduleEntity noHeartbeatDisabled = createSchedule("ST5", "no-heartbeat", ScheduleState.DISABLED);
         ScheduleEntity noHeartbeatEnabled = createSchedule("ST5", "no-heartbeat", ScheduleState.ENABLED);
-        scheduleRepository.save(Arrays.asList(expiringDisabled, expiringEnabled, notExpiringDisabled, notExpiringEnabled, noHeartbeatDisabled, noHeartbeatEnabled));
+        ScheduleEntity warningDisabled = createSchedule("ST6", "warning", ScheduleState.DISABLED);
+        ScheduleEntity warningEnabled = createSchedule("ST7", "warning", ScheduleState.ENABLED);
+        scheduleRepository.save(Arrays.asList(expiringDisabled, expiringEnabled, notExpiringDisabled, notExpiringEnabled, noHeartbeatDisabled, noHeartbeatEnabled, warningDisabled, warningEnabled));
 
-        HeartbeatEntity expiringHeartbeat = new HeartbeatEntity(NotificationTarget.of("expiring"), LocalDateTime.of(2016, 12, 25, 11, 59));
+        HeartbeatEntity expiringHeartbeat = new HeartbeatEntity(NotificationTarget.of("expiring"), LocalDateTime.of(2016, 12, 22, 11, 59));
+        HeartbeatEntity warningHeartbeat = new HeartbeatEntity(NotificationTarget.of("expiring"), LocalDateTime.of(2016, 12, 25, 11, 59));
         HeartbeatEntity notExpiringHeartbeat = new HeartbeatEntity(NotificationTarget.of("not-expiring"), LocalDateTime.of(2016, 12, 25, 12, 1));
         heartbeatRepository.save(Arrays.asList(expiringHeartbeat, notExpiringHeartbeat));
 
         // When...
-        heartbeatService.disableAbsentClients();
+        heartbeatService.checkHeartbeats();
 
         // Then...
         List<ScheduleEntity> expiringSchedules = scheduleRepository.findByNotificationTarget("expiring");
@@ -80,6 +83,12 @@ public class HeartbeatIT {
 
         ScheduleEntity retrievedNotExpiringEnabled = scheduleRepository.findOne(notExpiringEnabled.getId());
         assertThat(retrievedNotExpiringEnabled.getState(), is(ScheduleState.ENABLED));
+
+        ScheduleEntity retrievedWarningDisabled = scheduleRepository.findOne(warningDisabled.getId());
+        assertThat(retrievedWarningDisabled.getState(), is(ScheduleState.DISABLED));
+
+        ScheduleEntity retrievedWarningEnabled = scheduleRepository.findOne(warningEnabled.getId());
+        assertThat(retrievedWarningEnabled.getState(), is(ScheduleState.ENABLED));
     }
 
     private ScheduleEntity createSchedule(String fromStation, String notificationTarget, ScheduleState scheduleState) {

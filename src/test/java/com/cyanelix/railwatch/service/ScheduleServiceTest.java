@@ -120,7 +120,7 @@ public class ScheduleServiceTest {
 
         // Then...
         verify(trainTimesService, never()).lookupTrainTimes(any(), any());
-        verify(notificationService, never()).sendNotification(any(), any());
+        verify(notificationService, never()).sendNotification(any(NotificationTarget.class), any());
     }
 
     @Test

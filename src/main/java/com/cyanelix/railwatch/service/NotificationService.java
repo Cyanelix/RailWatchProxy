@@ -1,5 +1,6 @@
 package com.cyanelix.railwatch.service;
 
+import com.cyanelix.railwatch.domain.NotificationTarget;
 import com.cyanelix.railwatch.domain.Schedule;
 import com.cyanelix.railwatch.domain.TrainTime;
 import com.cyanelix.railwatch.entity.SentNotificationEntity;
@@ -50,6 +51,14 @@ public class NotificationService {
         if (success) {
             sentNotificationRepository.save(SentNotificationEntity.of(notificationRequest, LocalDateTime.now(clock)));
         }
+    }
+
+    public void sendNotification(NotificationTarget notificationTarget, String message) {
+        NotificationRequest notificationRequest = new NotificationRequest(notificationTarget, "RailWatch", message);
+
+        LOG.debug("Sending message to {}: {}", notificationTarget.getTargetAddress(), message);
+
+        firebaseClient.sendNotification(notificationRequest);
     }
 
     private boolean isDuplicateRequest(NotificationRequest notificationRequest) {

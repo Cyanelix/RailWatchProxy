@@ -109,4 +109,22 @@ public class NotificationServiceTest {
         // Then...
         verify(firebaseClient, times(1)).sendNotification(any());
     }
+
+    @Test
+    public void sendMessageNotification_notificationSent() {
+        // Given...
+        NotificationTarget notificationTarget = NotificationTarget.of("notification-to");
+
+        // When...
+        notificationService.sendNotification(notificationTarget, "A message");
+
+        // Then...
+        ArgumentCaptor<NotificationRequest> notificationRequestCaptor = ArgumentCaptor.forClass(NotificationRequest.class);
+        verify(firebaseClient).sendNotification(notificationRequestCaptor.capture());
+
+        NotificationRequest notificationRequest = notificationRequestCaptor.getValue();
+        assertThat(notificationRequest.getTo(), is("notification-to"));
+        assertThat(notificationRequest.getNotification().getTitle(), is("RailWatch"));
+        assertThat(notificationRequest.getNotification().getBody(), is("A message"));
+    }
 }
