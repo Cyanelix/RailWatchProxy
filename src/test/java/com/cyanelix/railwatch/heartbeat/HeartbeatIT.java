@@ -43,7 +43,7 @@ public class HeartbeatIT {
 
     @Before
     public void setup() {
-        given(clock.instant()).willReturn(Instant.parse("2017-01-01T12:00:00Z"));
+//        given(clock.instant()).willReturn(Instant.parse("2017-01-01T12:00:00Z"));
         // Comment here just to investigate line number mis-match when building in Travis.
 //        given(clock.getZone()).willReturn(ZoneId.systemDefault());
     }
