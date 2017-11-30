@@ -51,6 +51,8 @@ public class HeartbeatIT {
     @Test
     public void enabledAndDisabledSchedulesWithNotificationTargetsThatDoAndDoNotExpire() {
         // Given...
+        given(clock.instant()).willReturn(Instant.parse("2017-01-01T12:00:00Z"));
+
         ScheduleEntity expiringDisabled = createSchedule("ST1", "expiring", ScheduleState.DISABLED);
         ScheduleEntity expiringEnabled = createSchedule("ST2", "expiring", ScheduleState.ENABLED);
         ScheduleEntity notExpiringDisabled = createSchedule("ST3", "not-expiring", ScheduleState.DISABLED);
