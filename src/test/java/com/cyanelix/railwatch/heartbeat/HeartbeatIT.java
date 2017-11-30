@@ -24,6 +24,7 @@ import java.util.List;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doReturn;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -43,8 +44,8 @@ public class HeartbeatIT {
 
     @Before
     public void setup() {
-        given(clock.instant()).willReturn(Instant.parse("2017-01-01T12:00:00Z"));
-        given(clock.getZone()).willReturn(ZoneId.systemDefault());
+        doReturn(Instant.parse("2017-01-01T12:00:00Z")).when(clock).instant();
+        doReturn(ZoneId.systemDefault()).when(clock).getZone();
     }
 
     @Test
