@@ -24,6 +24,7 @@ import java.util.List;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doReturn;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -43,16 +44,14 @@ public class HeartbeatIT {
 
     @Before
     public void setup() {
+        doReturn(Instant.parse("2017-01-01T12:00:00Z")).when(clock.instant());
 //        given(clock.instant()).willReturn(Instant.parse("2017-01-01T12:00:00Z"));
-        // Comment here just to investigate line number mis-match when building in Travis.
 //        given(clock.getZone()).willReturn(ZoneId.systemDefault());
     }
 
     @Test
     public void enabledAndDisabledSchedulesWithNotificationTargetsThatDoAndDoNotExpire() {
         // Given...
-        given(clock.instant()).willReturn(Instant.parse("2017-01-01T12:00:00Z"));
-
         ScheduleEntity expiringDisabled = createSchedule("ST1", "expiring", ScheduleState.DISABLED);
         ScheduleEntity expiringEnabled = createSchedule("ST2", "expiring", ScheduleState.ENABLED);
         ScheduleEntity notExpiringDisabled = createSchedule("ST3", "not-expiring", ScheduleState.DISABLED);
