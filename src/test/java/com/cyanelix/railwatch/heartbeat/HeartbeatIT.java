@@ -45,8 +45,7 @@ public class HeartbeatIT {
     @Before
     public void setup() {
         doReturn(Instant.parse("2017-01-01T12:00:00Z")).when(clock).instant();
-//        given(clock.instant()).willReturn(Instant.parse("2017-01-01T12:00:00Z"));
-//        given(clock.getZone()).willReturn(ZoneId.systemDefault());
+        doReturn(ZoneId.systemDefault()).when(clock).getZone();
     }
 
     @Test
