@@ -5,6 +5,8 @@ import com.cyanelix.railwatch.domain.NotificationTarget;
 import com.cyanelix.railwatch.domain.ScheduleState;
 import com.cyanelix.railwatch.entity.HeartbeatEntity;
 import com.cyanelix.railwatch.entity.ScheduleEntity;
+import com.cyanelix.railwatch.firebase.client.FirebaseClient;
+import com.cyanelix.railwatch.firebase.client.entity.NotificationRequest;
 import com.cyanelix.railwatch.repository.HeartbeatRepository;
 import com.cyanelix.railwatch.repository.ScheduleRepository;
 import com.cyanelix.railwatch.service.HeartbeatService;
@@ -23,8 +25,10 @@ import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -32,6 +36,9 @@ import static org.mockito.Mockito.doReturn;
 public class HeartbeatIT {
     @MockBean
     private Clock clock;
+
+    @MockBean
+    private FirebaseClient firebaseClient;
 
     @Autowired
     private ScheduleRepository scheduleRepository;
@@ -44,8 +51,11 @@ public class HeartbeatIT {
 
     @Before
     public void setup() {
+        heartbeatRepository.deleteAll();
+        scheduleRepository.deleteAll();
         doReturn(Instant.parse("2017-01-01T12:00:00Z")).when(clock).instant();
         doReturn(ZoneId.systemDefault()).when(clock).getZone();
+        when(firebaseClient.sendNotification(any())).thenReturn(true);
     }
 
     @Test
@@ -62,9 +72,9 @@ public class HeartbeatIT {
         scheduleRepository.save(Arrays.asList(expiringDisabled, expiringEnabled, notExpiringDisabled, notExpiringEnabled, noHeartbeatDisabled, noHeartbeatEnabled, warningDisabled, warningEnabled));
 
         HeartbeatEntity expiringHeartbeat = new HeartbeatEntity(NotificationTarget.of("expiring"), LocalDateTime.of(2016, 12, 22, 11, 59));
-        HeartbeatEntity warningHeartbeat = new HeartbeatEntity(NotificationTarget.of("expiring"), LocalDateTime.of(2016, 12, 25, 11, 59));
+        HeartbeatEntity warningHeartbeat = new HeartbeatEntity(NotificationTarget.of("warning"), LocalDateTime.of(2016, 12, 25, 11, 59));
         HeartbeatEntity notExpiringHeartbeat = new HeartbeatEntity(NotificationTarget.of("not-expiring"), LocalDateTime.of(2016, 12, 25, 12, 1));
-        heartbeatRepository.save(Arrays.asList(expiringHeartbeat, notExpiringHeartbeat));
+        heartbeatRepository.save(Arrays.asList(expiringHeartbeat, warningHeartbeat, notExpiringHeartbeat));
 
         // When...
         heartbeatService.checkHeartbeats();
@@ -90,6 +100,9 @@ public class HeartbeatIT {
 
         ScheduleEntity retrievedWarningEnabled = scheduleRepository.findOne(warningEnabled.getId());
         assertThat(retrievedWarningEnabled.getState(), is(ScheduleState.ENABLED));
+
+        verify(firebaseClient).sendNotification(
+                new NotificationRequest(NotificationTarget.of("warning"), "RailWatch", "Open the RailWatch app to keep your train time notifications coming!"));
     }
 
     private ScheduleEntity createSchedule(String fromStation, String notificationTarget, ScheduleState scheduleState) {
