@@ -42,7 +42,7 @@ public class HeartbeatService {
         getNotificationTargetsFilteredByHeartbeat(DISABLE_THRESHOLD)
                 .forEach(scheduleService::disableSchedulesForNotificationTarget);
         getNotificationTargetsFilteredByHeartbeat(WARN_THRESHOLD)
-                .forEach(notificationTarget -> notificationService.sendNotification(notificationTarget, "Tap this notification to keep your train time notifications coming!"));
+                .forEach(notificationTarget -> notificationService.sendNotification(notificationTarget, "Open the RailWatch app to keep your train time notifications coming!"));
     }
 
     private Stream<NotificationTarget> getNotificationTargetsFilteredByHeartbeat(Duration threshold) {

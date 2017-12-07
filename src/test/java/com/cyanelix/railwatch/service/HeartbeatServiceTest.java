@@ -122,7 +122,7 @@ public class HeartbeatServiceTest {
 
         // Then...
         verify(scheduleService, never()).disableSchedulesForNotificationTarget(any());
-        verify(notificationService).sendNotification(notificationTarget, "Tap this notification to keep your train time notifications coming!");
+        verify(notificationService).sendNotification(notificationTarget, "Open the RailWatch app to keep your train time notifications coming!");
     }
 
     @Test
