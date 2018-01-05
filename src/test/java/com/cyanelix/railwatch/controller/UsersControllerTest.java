@@ -1,9 +1,9 @@
 package com.cyanelix.railwatch.controller;
 
 import com.cyanelix.railwatch.domain.NotificationTarget;
-import com.cyanelix.railwatch.domain.ScheduleState;
 import com.cyanelix.railwatch.domain.User;
 import com.cyanelix.railwatch.domain.UserId;
+import com.cyanelix.railwatch.domain.UserState;
 import com.cyanelix.railwatch.service.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,7 +17,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.UUID;
 
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -61,7 +60,7 @@ public class UsersControllerTest {
         NotificationTarget notificationTarget = NotificationTarget.of("notification-target");
         String userUuid = UUID.randomUUID().toString();
 
-        given(userService.createUser(notificationTarget)).willReturn(new User(UserId.of(userUuid), notificationTarget, ScheduleState.ENABLED));
+        given(userService.createUser(notificationTarget)).willReturn(new User(UserId.of(userUuid), notificationTarget, UserState.ENABLED));
 
         mockMvc.perform(
                 post("/users")

@@ -1,8 +1,8 @@
 package com.cyanelix.railwatch.service;
 
 import com.cyanelix.railwatch.domain.NotificationTarget;
-import com.cyanelix.railwatch.domain.ScheduleState;
 import com.cyanelix.railwatch.domain.User;
+import com.cyanelix.railwatch.domain.UserState;
 import com.cyanelix.railwatch.repository.UserRepository;
 import org.junit.Rule;
 import org.junit.Test;
@@ -41,7 +41,7 @@ public class UserServiceTest {
         // Then...
         assertThat(user.getUserId(), is(notNullValue()));
         assertThat(user.getNotificationTarget(), is(notificationTarget));
-        assertThat(user.getScheduleState(), is(ScheduleState.ENABLED));
+        assertThat(user.getUserState(), is(UserState.ENABLED));
 
         verify(userRepository).save(user);
     }

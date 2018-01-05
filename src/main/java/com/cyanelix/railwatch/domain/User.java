@@ -3,12 +3,12 @@ package com.cyanelix.railwatch.domain;
 public final class User {
     private final UserId userId;
     private final NotificationTarget notificationTarget;
-    private final ScheduleState scheduleState;
+    private final UserState userState;
 
-    public User(UserId userId, NotificationTarget notificationTarget, ScheduleState scheduleState) {
+    public User(UserId userId, NotificationTarget notificationTarget, UserState userState) {
         this.userId = userId;
         this.notificationTarget = notificationTarget;
-        this.scheduleState = scheduleState;
+        this.userState = userState;
     }
 
     public UserId getUserId() {
@@ -19,7 +19,7 @@ public final class User {
         return notificationTarget;
     }
 
-    public ScheduleState getScheduleState() {
-        return scheduleState;
+    public UserState getUserState() {
+        return userState;
     }
 }
