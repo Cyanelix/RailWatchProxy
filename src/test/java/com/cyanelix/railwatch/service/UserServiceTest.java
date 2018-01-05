@@ -3,20 +3,32 @@ package com.cyanelix.railwatch.service;
 import com.cyanelix.railwatch.domain.NotificationTarget;
 import com.cyanelix.railwatch.domain.ScheduleState;
 import com.cyanelix.railwatch.domain.User;
+import com.cyanelix.railwatch.repository.UserRepository;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.internal.matchers.Null;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.verify;
 
-public class UsersServiceTest {
+public class UserServiceTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
-    private UsersService usersService = new UsersService();
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
+
+    @Mock
+    private UserRepository userRepository;
+
+    @InjectMocks
+    private UserService userService;
 
     @Test
     public void createUser_enabledUserReturnedWithIdAndNotificationTarget() {
@@ -24,12 +36,14 @@ public class UsersServiceTest {
         NotificationTarget notificationTarget = NotificationTarget.of("foo");
 
         // When...
-        User user = usersService.createUser(notificationTarget);
+        User user = userService.createUser(notificationTarget);
 
         // Then...
         assertThat(user.getUserId(), is(notNullValue()));
         assertThat(user.getNotificationTarget(), is(notificationTarget));
         assertThat(user.getScheduleState(), is(ScheduleState.ENABLED));
+
+        verify(userRepository).save(user);
     }
 
     @Test
@@ -37,6 +51,6 @@ public class UsersServiceTest {
         expectedException.expect(NullPointerException.class);
         expectedException.expectMessage("A notification target is required for a User");
 
-        usersService.createUser(null);
+        userService.createUser(null);
     }
 }
