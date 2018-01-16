@@ -1,6 +1,7 @@
 package com.cyanelix.railwatch.controller;
 
 import com.cyanelix.railwatch.domain.User;
+import com.cyanelix.railwatch.entity.UserEntity;
 import com.cyanelix.railwatch.repository.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,8 +60,8 @@ public class UsersControllerIT {
 
         String userId = locationHeader.substring(locationHeader.lastIndexOf("/") + 1);
 
-        List<User> users = userRepository.findAll();
+        List<UserEntity> users = userRepository.findAll();
         assertThat(users, hasSize(1));
-        assertThat(users.get(0).getUserId().get(), is(userId));
+        assertThat(users.get(0).getUserId(), is(userId));
     }
 }

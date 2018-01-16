@@ -3,10 +3,12 @@ package com.cyanelix.railwatch.service;
 import com.cyanelix.railwatch.domain.NotificationTarget;
 import com.cyanelix.railwatch.domain.User;
 import com.cyanelix.railwatch.domain.UserState;
+import com.cyanelix.railwatch.entity.UserEntity;
 import com.cyanelix.railwatch.repository.UserRepository;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
@@ -43,7 +45,13 @@ public class UserServiceTest {
         assertThat(user.getNotificationTarget(), is(notificationTarget));
         assertThat(user.getUserState(), is(UserState.ENABLED));
 
-        verify(userRepository).save(user);
+        ArgumentCaptor<UserEntity> userEntityCaptor = ArgumentCaptor.forClass(UserEntity.class);
+        verify(userRepository).save(userEntityCaptor.capture());
+
+        UserEntity userEntity = userEntityCaptor.getValue();
+        assertThat(userEntity.getUserId(), is(user.getUserId().get()));
+        assertThat(userEntity.getNotificationTarget(), is(user.getNotificationTarget().getTargetAddress()));
+        assertThat(userEntity.getUserState(), is(user.getUserState()));
     }
 
     @Test
