@@ -2,9 +2,11 @@ package com.cyanelix.railwatch.entity;
 
 import com.cyanelix.railwatch.domain.NotificationTarget;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
+@Document
 public final class HeartbeatEntity {
     @Id
     private String id;

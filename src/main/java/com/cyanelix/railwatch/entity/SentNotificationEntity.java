@@ -2,9 +2,11 @@ package com.cyanelix.railwatch.entity;
 
 import com.cyanelix.railwatch.firebase.client.entity.NotificationRequest;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
+@Document
 public class SentNotificationEntity {
     @Id
     private String id;

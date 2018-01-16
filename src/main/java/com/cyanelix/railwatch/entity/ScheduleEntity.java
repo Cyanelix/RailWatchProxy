@@ -4,9 +4,11 @@ import com.cyanelix.railwatch.domain.DayRange;
 import com.cyanelix.railwatch.domain.Schedule;
 import com.cyanelix.railwatch.domain.ScheduleState;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalTime;
 
+@Document
 public class ScheduleEntity {
     @Id
     private String id;
