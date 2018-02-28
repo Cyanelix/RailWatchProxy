@@ -1,7 +1,9 @@
 package com.cyanelix.railwatch.service;
 
 import com.cyanelix.railwatch.domain.*;
+import com.cyanelix.railwatch.entity.ScheduleEntity;
 import com.cyanelix.railwatch.entity.SentNotificationEntity;
+import com.cyanelix.railwatch.entity.UserEntity;
 import com.cyanelix.railwatch.firebase.client.FirebaseClient;
 import com.cyanelix.railwatch.firebase.client.entity.NotificationRequest;
 import com.cyanelix.railwatch.repository.SentNotificationRepository;
@@ -45,10 +47,10 @@ public class NotificationServiceTest {
         // Given...
         given(sentNotificationRepository.findBySentDateTimeAfter(any())).willReturn(Collections.emptyList());
 
-        Schedule schedule = Schedule.of(
+        UserEntity user = createUser();
+        ScheduleEntity schedule = new ScheduleEntity(
                 LocalTime.of(9, 0), LocalTime.of(10, 0), DayRange.ALL,
-                Journey.of(Station.of("FOO"), Station.of("BAR")), NotificationTarget.of("notification-to"),
-                ScheduleState.ENABLED);
+                "FOO", "BAR", ScheduleState.ENABLED, "notification-to", user);
         List<TrainTime> trainTimes = Collections.singletonList(
                 new TrainTime.Builder(LocalTime.NOON)
                         .withExpectedDepartureTime(LocalTime.NOON)
@@ -70,9 +72,10 @@ public class NotificationServiceTest {
     @Test
     public void doNotSendDuplicateNotification() {
         // Given...
-        Schedule schedule = Schedule.of(
-                null, null, DayRange.ALL, Journey.of(Station.of("FOO"), Station.of("BAR")),
-                NotificationTarget.of("notification-to"), ScheduleState.ENABLED);
+        UserEntity user = createUser();
+        ScheduleEntity schedule = new ScheduleEntity(
+                null, null, DayRange.ALL, "FOO", "BAR",
+                ScheduleState.ENABLED, "notification-to", user);
         List<TrainTime> trainTimes = Collections.singletonList(
                 new TrainTime.Builder(LocalTime.NOON)
                         .withExpectedDepartureTime(LocalTime.NOON)
@@ -91,10 +94,10 @@ public class NotificationServiceTest {
     @Test
     public void notificationSentPreviously_sendDifferentNotification() {
         // Given...
-        Schedule schedule = Schedule.of(
+        UserEntity user = createUser();
+        ScheduleEntity schedule = new ScheduleEntity(
                 LocalTime.of(9, 0), LocalTime.of(10, 0), DayRange.ALL,
-                Journey.of(Station.of("FOO"), Station.of("BAR")), NotificationTarget.of("notification-to"),
-                ScheduleState.ENABLED);
+                "FOO", "BAR", ScheduleState.ENABLED, "remove-notification-target", user);
         List<TrainTime> trainTimes = Collections.singletonList(
                 new TrainTime.Builder(LocalTime.NOON)
                         .withExpectedDepartureTime(LocalTime.NOON)
@@ -126,5 +129,9 @@ public class NotificationServiceTest {
         assertThat(notificationRequest.getTo(), is("notification-to"));
         assertThat(notificationRequest.getNotification().getTitle(), is("RailWatch"));
         assertThat(notificationRequest.getNotification().getBody(), is("A message"));
+    }
+
+    private UserEntity createUser() {
+        return new UserEntity(UserId.generate().get(), NotificationTarget.of("notification-to").getTargetAddress(), UserState.ENABLED);
     }
 }

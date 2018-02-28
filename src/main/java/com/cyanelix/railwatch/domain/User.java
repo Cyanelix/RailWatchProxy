@@ -1,5 +1,9 @@
 package com.cyanelix.railwatch.domain;
 
+import com.cyanelix.railwatch.entity.UserEntity;
+
+import java.util.Objects;
+
 public final class User {
     private final UserId userId;
     private final NotificationTarget notificationTarget;
@@ -9,6 +13,13 @@ public final class User {
         this.userId = userId;
         this.notificationTarget = notificationTarget;
         this.userState = userState;
+    }
+
+    public static User of(UserEntity userEntity) {
+        return new User(
+                UserId.of(userEntity.getUserId()),
+                NotificationTarget.of(userEntity.getNotificationTarget()),
+                userEntity.getUserState());
     }
 
     public UserId getUserId() {
@@ -21,5 +32,18 @@ public final class User {
 
     public UserState getUserState() {
         return userState;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(userId, user.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId);
     }
 }

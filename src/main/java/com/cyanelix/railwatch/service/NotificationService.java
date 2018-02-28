@@ -1,8 +1,7 @@
 package com.cyanelix.railwatch.service;
 
-import com.cyanelix.railwatch.domain.NotificationTarget;
-import com.cyanelix.railwatch.domain.Schedule;
-import com.cyanelix.railwatch.domain.TrainTime;
+import com.cyanelix.railwatch.domain.*;
+import com.cyanelix.railwatch.entity.ScheduleEntity;
 import com.cyanelix.railwatch.entity.SentNotificationEntity;
 import com.cyanelix.railwatch.firebase.client.FirebaseClient;
 import com.cyanelix.railwatch.firebase.client.entity.NotificationRequest;
@@ -33,9 +32,9 @@ public class NotificationService {
         this.clock = clock;
     }
 
-    public void sendNotification(Schedule schedule, List<TrainTime> trainTimes) {
+    public void sendNotification(ScheduleEntity schedule, List<TrainTime> trainTimes) {
         String notificationMessage = buildNotificationMessage(schedule, trainTimes);
-        NotificationRequest notificationRequest = new NotificationRequest(schedule.getNotificationTarget(), "RailWatch", notificationMessage);
+        NotificationRequest notificationRequest = new NotificationRequest(NotificationTarget.of(schedule.getNotificationTarget()), "RailWatch", notificationMessage);
 
         if (isDuplicateRequest(notificationRequest)) {
             LOG.debug("Not sending duplicate notification.");
@@ -67,9 +66,9 @@ public class NotificationService {
                 .anyMatch(sentRequest -> sentRequest.equals(notificationRequest));
     }
 
-    private String buildNotificationMessage(Schedule schedule, List<TrainTime> trainTimes) {
+    private String buildNotificationMessage(ScheduleEntity schedule, List<TrainTime> trainTimes) {
         return trainTimes.parallelStream()
-                .map(trainTime -> String.format("%s @ %s", schedule.getJourney().toString(), trainTime.toString()))
+                .map(trainTime -> String.format("%s @ %s", Journey.of(Station.of(schedule.getFromStation()), Station.of(schedule.getToStation())).toString(), trainTime.toString()))
                 .collect(Collectors.joining("\n"));
     }
 }

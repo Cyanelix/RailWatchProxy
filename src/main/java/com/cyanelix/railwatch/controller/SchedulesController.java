@@ -1,10 +1,12 @@
 package com.cyanelix.railwatch.controller;
 
 import com.cyanelix.railwatch.dto.ScheduleDTO;
+import com.cyanelix.railwatch.entity.ScheduleEntity;
 import com.cyanelix.railwatch.service.ScheduleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,16 +19,18 @@ public class SchedulesController {
     private static final Logger LOG = LoggerFactory.getLogger(SchedulesController.class);
 
     private final ScheduleService scheduleService;
+    private final ConversionService conversionService;
 
     @Autowired
-    public SchedulesController(ScheduleService scheduleService) {
+    public SchedulesController(ScheduleService scheduleService, ConversionService conversionService) {
         this.scheduleService = scheduleService;
+        this.conversionService = conversionService;
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public List<ScheduleDTO> get() {
         return scheduleService.getSchedules().stream()
-                .map(ScheduleDTO::new)
+                .map(scheduleEntity -> conversionService.convert(scheduleEntity, ScheduleDTO.class))
                 .collect(Collectors.toList());
     }
 
@@ -37,6 +41,7 @@ public class SchedulesController {
             LOG.debug(String.format("Creating new schedule: %s -> %s @ %s -> %s", scheduleDTO.getFromStation(), scheduleDTO.getToStation(), scheduleDTO.getStartTime(), scheduleDTO.getEndTime()));
         }
 
-        scheduleService.createSchedule(scheduleDTO.toSchedule());
+        ScheduleEntity schedule = conversionService.convert(scheduleDTO, ScheduleEntity.class);
+        scheduleService.createSchedule(schedule);
     }
 }

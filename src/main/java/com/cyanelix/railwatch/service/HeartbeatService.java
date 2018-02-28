@@ -1,8 +1,8 @@
 package com.cyanelix.railwatch.service;
 
 import com.cyanelix.railwatch.domain.NotificationTarget;
-import com.cyanelix.railwatch.domain.Schedule;
 import com.cyanelix.railwatch.entity.HeartbeatEntity;
+import com.cyanelix.railwatch.entity.ScheduleEntity;
 import com.cyanelix.railwatch.repository.HeartbeatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -47,7 +47,8 @@ public class HeartbeatService {
 
     private Stream<NotificationTarget> getNotificationTargetsFilteredByHeartbeat(Duration threshold) {
         return scheduleService.getEnabledSchedules()
-                .map(Schedule::getNotificationTarget)
+                .map(ScheduleEntity::getNotificationTarget)
+                .map(NotificationTarget::of)
                 .map(heartbeatRepository::findFirstByNotificationTargetEqualsOrderByDateTimeDesc)
                 .filter(heartbeatEntity -> heartbeatOlderThanThreshold(heartbeatEntity, threshold))
                 .map(HeartbeatEntity::getNotificationTarget)

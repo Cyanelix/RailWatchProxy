@@ -2,6 +2,8 @@ package com.cyanelix.railwatch.service;
 
 import com.cyanelix.railwatch.domain.*;
 import com.cyanelix.railwatch.entity.HeartbeatEntity;
+import com.cyanelix.railwatch.entity.ScheduleEntity;
+import com.cyanelix.railwatch.entity.UserEntity;
 import com.cyanelix.railwatch.repository.HeartbeatRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,10 +66,11 @@ public class HeartbeatServiceTest {
     public void givenNoHeartbeatsForTenDaysForTwoSchedulesWithSameNotificationTarget_onlyCallDisableSchedulesOnce() {
         // Given...
         NotificationTarget notificationTarget = NotificationTarget.of("foo");
-        Schedule schedule1 =
-                Schedule.of(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, Journey.of(Station.of("FOO"), Station.of("BAR")), notificationTarget, ScheduleState.ENABLED);
-        Schedule schedule2 =
-                Schedule.of(LocalTime.NOON, LocalTime.MAX, DayRange.ALL, Journey.of(Station.of("AAA"), Station.of("BBB")), notificationTarget, ScheduleState.ENABLED);
+        UserEntity user = createUser(notificationTarget);
+        ScheduleEntity schedule1 =
+                new ScheduleEntity(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, "FOO", "BAR", ScheduleState.ENABLED, notificationTarget.getTargetAddress(), user);
+        ScheduleEntity schedule2 =
+                new ScheduleEntity(LocalTime.NOON, LocalTime.MAX, DayRange.ALL, "AAA", "BBB", ScheduleState.ENABLED, notificationTarget.getTargetAddress(), user);
         HeartbeatEntity disablableHeartbeat =
                 new HeartbeatEntity(notificationTarget, LocalDateTime.of(2016, 12, 22, 11, 59));
 
@@ -89,8 +92,9 @@ public class HeartbeatServiceTest {
     public void givenAHeartbeatOneDayAgo_doNotDisable_doNotWarn() {
         // Given...
         NotificationTarget notificationTarget = NotificationTarget.of("foo");
-        Schedule schedule =
-                Schedule.of(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, Journey.of(Station.of("FOO"), Station.of("BAR")), notificationTarget, ScheduleState.ENABLED);
+        UserEntity user = createUser(notificationTarget);
+        ScheduleEntity schedule =
+                new ScheduleEntity(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, "FOO", "BAR", ScheduleState.ENABLED, "remove-notification-target", user);
         HeartbeatEntity oneDayOldHeartbeat =
                 new HeartbeatEntity(notificationTarget, LocalDateTime.of(2016, 12, 31, 12, 1));
 
@@ -109,8 +113,9 @@ public class HeartbeatServiceTest {
     public void givenAHeartbeatSevenDaysAgo_doNotDisable_doWarn() {
         // Given...
         NotificationTarget notificationTarget = NotificationTarget.of("foo");
-        Schedule schedule =
-                Schedule.of(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, Journey.of(Station.of("FOO"), Station.of("BAR")), notificationTarget, ScheduleState.ENABLED);
+        UserEntity user = createUser(notificationTarget);
+        ScheduleEntity schedule =
+                new ScheduleEntity(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, "FOO", "BAR", ScheduleState.ENABLED, notificationTarget.getTargetAddress(), user);
         HeartbeatEntity sevenDayOldHeartbeat =
                 new HeartbeatEntity(notificationTarget, LocalDateTime.of(2016, 12, 25, 11, 59));
 
@@ -129,13 +134,14 @@ public class HeartbeatServiceTest {
     public void givenAHeartbeatTenDaysAgo_doDisable_doNotWarn() {
         // Given...
         NotificationTarget notificationTarget = NotificationTarget.of("foo");
-        Schedule schedule =
-                Schedule.of(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, Journey.of(Station.of("FOO"), Station.of("BAR")), notificationTarget, ScheduleState.ENABLED);
-        HeartbeatEntity lessThanAWeekOldHeartbeat =
+        UserEntity user = createUser(notificationTarget);
+        ScheduleEntity schedule =
+                new ScheduleEntity(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, "FOO", "BAR", ScheduleState.ENABLED, notificationTarget.getTargetAddress(), user);
+        HeartbeatEntity overTenDaysAgoHeartbeat =
                 new HeartbeatEntity(notificationTarget, LocalDateTime.of(2016, 12, 22, 11, 59));
 
         given(scheduleService.getEnabledSchedules()).willReturn(Stream.of(schedule), Stream.empty());
-        given(heartbeatRepository.findFirstByNotificationTargetEqualsOrderByDateTimeDesc(notificationTarget)).willReturn(lessThanAWeekOldHeartbeat);
+        given(heartbeatRepository.findFirstByNotificationTargetEqualsOrderByDateTimeDesc(notificationTarget)).willReturn(overTenDaysAgoHeartbeat);
 
         // When...
         heartbeatService.checkHeartbeats();
@@ -143,5 +149,9 @@ public class HeartbeatServiceTest {
         // Then...
         verify(scheduleService).disableSchedulesForNotificationTarget(notificationTarget);
         verify(notificationService, never()).sendNotification(any(NotificationTarget.class), any());
+    }
+
+    private UserEntity createUser(NotificationTarget notificationTarget) {
+        return new UserEntity(UserId.generate().get(), notificationTarget.getTargetAddress(), UserState.ENABLED);
     }
 }

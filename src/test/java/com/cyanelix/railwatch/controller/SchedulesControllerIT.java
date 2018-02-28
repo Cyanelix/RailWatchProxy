@@ -12,10 +12,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -39,53 +41,65 @@ public class SchedulesControllerIT {
     @Test
     public void createScheduleWithoutState_listAllSchedules_scheduleIsReturnedAsEnabled() throws Exception {
         // TODO: From v3.x null states no longer needs supporting as state will be required, so this test can be removed.
-        String uuid = UUID.randomUUID().toString();
+        String userId = createUser();
 
         mockMvc.perform(
                 put("/schedules")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(buildRequest(uuid, null)))
+                        .content(buildRequest(userId, null)))
                 .andExpect(status().isCreated());
 
         mockMvc.perform(get("/schedules"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(expectedResponse(uuid, ScheduleState.ENABLED)));
+                .andExpect(content().json(expectedResponse(userId, ScheduleState.ENABLED)));
     }
 
     @Test
     public void createEnabledSchedule_listAllSchedules_scheduleIsReturnedAsEnabled() throws Exception {
-        String uuid = UUID.randomUUID().toString();
+        String userId = createUser();
 
         mockMvc.perform(
                 put("/schedules")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(buildRequest(uuid, ScheduleState.ENABLED)))
+                        .content(buildRequest(userId, ScheduleState.ENABLED)))
                 .andExpect(status().isCreated());
 
         mockMvc.perform(get("/schedules"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(expectedResponse(uuid, ScheduleState.ENABLED)));
+                .andExpect(content().json(expectedResponse(userId, ScheduleState.ENABLED)));
     }
 
     @Test
     public void createDisabledSchedule_listAllSchedules_scheduleIsReturnedAsDisabled() throws Exception {
-        String uuid = UUID.randomUUID().toString();
+        String userId = createUser();
 
         mockMvc.perform(
                 put("/schedules")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(buildRequest(uuid, ScheduleState.DISABLED)))
+                        .content(buildRequest(userId, ScheduleState.DISABLED)))
                 .andExpect(status().isCreated());
 
         mockMvc.perform(get("/schedules"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(expectedResponse(uuid, ScheduleState.DISABLED)));
+                .andExpect(content().json(expectedResponse(userId, ScheduleState.DISABLED)));
     }
 
-    private String buildRequest(String uuid, ScheduleState scheduleState) {
+    private String createUser() throws Exception {
+        MvcResult userResponse = mockMvc.perform(
+                post("/users")
+                        .content("{ \"notificationTarget\": \"foo\" }")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        String locationHeader = userResponse.getResponse().getHeader("Location");
+        return locationHeader.substring(locationHeader.lastIndexOf("/") + 1);
+    }
+
+    private String buildRequest(String userId, ScheduleState scheduleState) {
         String state = "";
 
         if (scheduleState != null) {
@@ -99,18 +113,18 @@ public class SchedulesControllerIT {
                 "  \"fromStation\": \"PAD\",\n" +
                 "  \"toStation\": \"BRI\",\n" +
                 state +
-                "  \"notificationTarget\": \"" + uuid + "\"\n" +
+                "  \"userId\": \"" + userId + "\"\n" +
                 "}";
     }
 
-    private String expectedResponse(String uuid, ScheduleState scheduleState) {
+    private String expectedResponse(String userId, ScheduleState scheduleState) {
         return "[{\n" +
                 "  \"startTime\": \"10:00\",\n" +
                 "  \"endTime\": \"11:00\",\n" +
                 "  \"days\": [\"Monday\"],\n" +
                 "  \"fromStation\": \"PAD\",\n" +
                 "  \"toStation\": \"BRI\",\n" +
-                "  \"notificationTarget\": \"" + uuid + "\",\n" +
+                "  \"userId\": \"" + userId + "\",\n" +
                 "  \"state\": \"" + scheduleState.name() + "\"\n" +
                 "}]";
     }

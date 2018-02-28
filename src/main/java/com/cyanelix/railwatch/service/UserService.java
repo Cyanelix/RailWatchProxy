@@ -7,6 +7,7 @@ import com.cyanelix.railwatch.domain.UserState;
 import com.cyanelix.railwatch.entity.UserEntity;
 import com.cyanelix.railwatch.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -27,5 +28,9 @@ public class UserService {
         userRepository.save(UserEntity.of(user));
 
         return user;
+    }
+
+    public UserEntity getUser(UserId userId) {
+        return userRepository.findByUserId(userId.get());
     }
 }

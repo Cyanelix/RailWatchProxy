@@ -2,11 +2,11 @@ package com.cyanelix.railwatch.service;
 
 import com.cyanelix.railwatch.domain.*;
 import com.cyanelix.railwatch.entity.ScheduleEntity;
+import com.cyanelix.railwatch.entity.UserEntity;
 import com.cyanelix.railwatch.repository.ScheduleRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -51,33 +51,30 @@ public class ScheduleServiceTest {
     @Test
     public void createSchedule_savedInRepo() {
         // Given...
-        Schedule schedule = Schedule.of(
-                LocalTime.MIN, LocalTime.MAX, DayRange.ALL, FOO_TO_BAR,
-                NotificationTarget.of("notification-target"), ScheduleState.ENABLED);
+        UserEntity user = createUser();
+
+        ScheduleEntity schedule = new ScheduleEntity(
+                LocalTime.MIN, LocalTime.MAX, DayRange.ALL,
+                FOO_TO_BAR.getFrom().getStationCode(), FOO_TO_BAR.getTo().getStationCode(),
+                ScheduleState.ENABLED,"remove-notification-target", user);
 
         // When...
         scheduleService.createSchedule(schedule);
 
         // Then...
-        ArgumentCaptor<ScheduleEntity> scheduleEntityCaptor = ArgumentCaptor.forClass(ScheduleEntity.class);
-        verify(scheduleRepository).save(scheduleEntityCaptor.capture());
-
-        ScheduleEntity scheduleEntity = scheduleEntityCaptor.getValue();
-        assertThat(scheduleEntity.getStartTime(), is(schedule.getStartTime()));
-        assertThat(scheduleEntity.getEndTime(), is(schedule.getEndTime()));
-        assertThat(scheduleEntity.getFromStation(), is(schedule.getJourney().getFrom().getStationCode()));
-        assertThat(scheduleEntity.getToStation(), is(schedule.getJourney().getTo().getStationCode()));
-        assertThat(scheduleEntity.getNotificationTarget(), is(schedule.getNotificationTarget().getTargetAddress()));
+        verify(scheduleRepository).save(schedule);
     }
 
     @Test
     public void singleScheduleActiveNow_checkTimes_routeLookedUp() {
         // Given...
-        Schedule activeSchedule = Schedule.of(
-                LocalTime.MIN, LocalTime.MAX, DayRange.ALL, FOO_TO_BAR,
-                NotificationTarget.of("target"), ScheduleState.ENABLED);
+        UserEntity user = createUser();
+
+        ScheduleEntity activeSchedule = new ScheduleEntity(
+                LocalTime.MIN, LocalTime.MAX, DayRange.ALL, FOO_TO_BAR.getFrom().getStationCode(), FOO_TO_BAR.getTo().getStationCode(),
+                ScheduleState.ENABLED, "remove-notification-target", user);
         given(scheduleRepository.findByStateIs(ScheduleState.ENABLED)).willReturn(
-                Collections.singletonList(ScheduleEntity.of(activeSchedule)));
+                Collections.singletonList(activeSchedule));
 
         // When...
         scheduleService.checkTimes();
@@ -90,14 +87,16 @@ public class ScheduleServiceTest {
     @Test
     public void oneActiveOneInactiveSchedule_checkTimes_onlyActiveRouteLookedUp() {
         // Given...
-        Schedule activeSchedule = Schedule.of(
-                LocalTime.MIN, LocalTime.MAX, DayRange.ALL, FOO_TO_BAR,
-                NotificationTarget.of("target"), ScheduleState.ENABLED);
-        Schedule inactiveSchedule = Schedule.of(
-                LocalTime.MAX, LocalTime.MIN, DayRange.ALL, Journey.of(Station.of("XXX"), Station.of("ZZZ")),
-                NotificationTarget.of("target"), ScheduleState.ENABLED);
+        UserEntity user = createUser();
+
+        ScheduleEntity activeSchedule = new ScheduleEntity(
+                LocalTime.MIN, LocalTime.MAX, DayRange.ALL, FOO_TO_BAR.getFrom().getStationCode(), FOO_TO_BAR.getTo().getStationCode(),
+                ScheduleState.ENABLED, "remove-notification-target", user);
+        ScheduleEntity inactiveSchedule = new ScheduleEntity(
+                LocalTime.MAX, LocalTime.MIN, DayRange.ALL, "XXX", "ZZZ",
+                ScheduleState.ENABLED, "remove-notification-target", user);
         given(scheduleRepository.findByStateIs(ScheduleState.ENABLED)).willReturn(
-                Arrays.asList(ScheduleEntity.of(activeSchedule), ScheduleEntity.of(inactiveSchedule)));
+                Arrays.asList(activeSchedule, inactiveSchedule));
 
         // When...
         scheduleService.checkTimes();
@@ -126,14 +125,16 @@ public class ScheduleServiceTest {
     @Test
     public void singleSchedule_getSchedules() {
         // Given...
-        Schedule schedule = Schedule.of(
-                LocalTime.MIN, LocalTime.MAX, DayRange.ALL, FOO_TO_BAR,
-                NotificationTarget.of("notification-to"), ScheduleState.ENABLED);
+        UserEntity user = createUser();
+
+        ScheduleEntity schedule = new ScheduleEntity(
+                LocalTime.MIN, LocalTime.MAX, DayRange.ALL, FOO_TO_BAR.getFrom().getStationCode(), FOO_TO_BAR.getTo().getStationCode(),
+                ScheduleState.ENABLED, "remove-notification-target", user);
         given(scheduleRepository.findAll()).willReturn(
-                Collections.singletonList(ScheduleEntity.of(schedule)));
+                Collections.singletonList(schedule));
 
         // When...
-        Set<Schedule> schedules = scheduleService.getSchedules();
+        Set<ScheduleEntity> schedules = scheduleService.getSchedules();
 
         // Then...
         assertThat(schedules, hasSize(1));
@@ -143,17 +144,20 @@ public class ScheduleServiceTest {
     @Test
     public void oneEnabledSchedule_getEnabledSchedules_enabledScheduleReturned() {
         // Given...
+        UserEntity user = createUser();
         ScheduleEntity scheduleEntity =
-                new ScheduleEntity(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, "FOO", "BAR", "notification-to", ScheduleState.ENABLED);
+                new ScheduleEntity(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, "FOO", "BAR", ScheduleState.ENABLED,
+                        user.getNotificationTarget(),
+                        user);
         given(scheduleRepository.findByStateIs(ScheduleState.ENABLED)).willReturn(Collections.singletonList(scheduleEntity));
 
         // When...
-        Stream<Schedule> scheduleStream = scheduleService.getEnabledSchedules();
+        Stream<ScheduleEntity> scheduleStream = scheduleService.getEnabledSchedules();
 
         // Then...
-        List<Schedule> schedules = scheduleStream.collect(Collectors.toList());
+        List<ScheduleEntity> schedules = scheduleStream.collect(Collectors.toList());
         assertThat(schedules.size(), is(1));
-        assertThat(schedules.get(0), is(Schedule.of(scheduleEntity)));
+        assertThat(schedules.get(0), is(scheduleEntity));
     }
 
     @Test
@@ -161,8 +165,11 @@ public class ScheduleServiceTest {
         // Given...
         NotificationTarget notificationTarget = NotificationTarget.of("target");
 
+        UserEntity user = createUser();
         ScheduleEntity scheduleEntity =
-                new ScheduleEntity(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, "FOO", "BAR", "notification-to", ScheduleState.ENABLED);
+                new ScheduleEntity(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, "FOO", "BAR", ScheduleState.ENABLED,
+                        user.getNotificationTarget(),
+                        user);
         List<ScheduleEntity> scheduleEntities = Collections.singletonList(scheduleEntity);
 
         given(scheduleRepository.findByNotificationTarget(notificationTarget.getTargetAddress()))
@@ -174,5 +181,9 @@ public class ScheduleServiceTest {
         // Then...
         verify(scheduleRepository).save(scheduleEntities);
         assertThat(scheduleEntity.getState(), is(ScheduleState.DISABLED));
+    }
+
+    private UserEntity createUser() {
+        return new UserEntity(UserId.generate().get(), NotificationTarget.of("notification-target").getTargetAddress(), UserState.ENABLED);
     }
 }

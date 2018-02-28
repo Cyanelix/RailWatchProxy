@@ -2,6 +2,7 @@ package com.cyanelix.railwatch.service;
 
 import com.cyanelix.railwatch.domain.NotificationTarget;
 import com.cyanelix.railwatch.domain.User;
+import com.cyanelix.railwatch.domain.UserId;
 import com.cyanelix.railwatch.domain.UserState;
 import com.cyanelix.railwatch.entity.UserEntity;
 import com.cyanelix.railwatch.repository.UserRepository;
@@ -18,6 +19,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class UserServiceTest {
     @Rule
@@ -61,4 +63,23 @@ public class UserServiceTest {
 
         userService.createUser(null);
     }
+
+    @Test
+    public void existingUser_getById_userReturned() {
+        // Given...
+        UserId userId = UserId.generate();
+        UserEntity userEntity = new UserEntity(userId.get(), "foo", UserState.ENABLED);
+
+        when(userRepository.findByUserId(userId.get())).thenReturn(userEntity);
+
+        // When...
+        UserEntity user = userService.getUser(userId);
+
+        // Then...
+        assertThat(user.getUserId(), is(userId.get()));
+        assertThat(user.getNotificationTarget(), is("foo"));
+        assertThat(user.getUserState(), is(UserState.ENABLED));
+    }
+
+    // TODO: More coverage of getUser method.
 }

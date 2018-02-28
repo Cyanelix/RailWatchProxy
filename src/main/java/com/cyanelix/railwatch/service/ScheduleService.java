@@ -1,8 +1,6 @@
 package com.cyanelix.railwatch.service;
 
-import com.cyanelix.railwatch.domain.NotificationTarget;
-import com.cyanelix.railwatch.domain.Schedule;
-import com.cyanelix.railwatch.domain.ScheduleState;
+import com.cyanelix.railwatch.domain.*;
 import com.cyanelix.railwatch.entity.ScheduleEntity;
 import com.cyanelix.railwatch.repository.ScheduleRepository;
 import org.slf4j.Logger;
@@ -38,24 +36,28 @@ public class ScheduleService {
         this.clock = clock;
     }
 
-    public void createSchedule(Schedule schedule) {
-        scheduleRepository.save(ScheduleEntity.of(schedule));
+    public void createSchedule(ScheduleEntity schedule) {
+        scheduleRepository.save(schedule);
     }
 
     @Scheduled(fixedDelay = 30000)
     public void checkTimes() {
         LOG.debug("Checking times.");
         getActiveSchedules()
-                .forEach(schedule -> schedule.lookupAndNotifyTrainTimes(trainTimesService, notificationService));
+                .forEach(this::lookupAndNotifyTrainTimes);
     }
 
-    private Stream<Schedule> getActiveSchedules() {
+    private void lookupAndNotifyTrainTimes(ScheduleEntity schedule) {
+        List<TrainTime> trainTimes = trainTimesService.lookupTrainTimes(Station.of(schedule.getFromStation()), Station.of(schedule.getToStation()));
+        notificationService.sendNotification(schedule, trainTimes);
+    }
+
+    private Stream<ScheduleEntity> getActiveSchedules() {
         return getEnabledSchedules().filter(schedule -> schedule.isActive(LocalDateTime.now(clock)));
     }
 
-    public Set<Schedule> getSchedules() {
+    public Set<ScheduleEntity> getSchedules() {
         return scheduleRepository.findAll().parallelStream()
-                .map(Schedule::of)
                 .collect(Collectors.toSet());
     }
 
@@ -65,8 +67,7 @@ public class ScheduleService {
         scheduleRepository.save(scheduleEntities);
     }
 
-    Stream<Schedule> getEnabledSchedules() {
-        return scheduleRepository.findByStateIs(ScheduleState.ENABLED).parallelStream()
-                .map(Schedule::of);
+    Stream<ScheduleEntity> getEnabledSchedules() {
+        return scheduleRepository.findByStateIs(ScheduleState.ENABLED).parallelStream();
     }
 }
