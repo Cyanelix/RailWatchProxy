@@ -90,7 +90,7 @@ public class SchedulesControllerTest {
                         LocalTime.of(7, 0),
                         LocalTime.of(8, 0),
                         DayRange.ALL,
-                        "FOO", "BAR",
+                        Station.of("FOO"), Station.of("BAR"),
                         ScheduleState.ENABLED,
                         "remove-notification-target",
                         new UserEntity(userId.get(), "foo", UserState.ENABLED))));

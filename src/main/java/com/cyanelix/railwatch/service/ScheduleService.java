@@ -48,7 +48,7 @@ public class ScheduleService {
     }
 
     private void lookupAndNotifyTrainTimes(ScheduleEntity schedule) {
-        List<TrainTime> trainTimes = trainTimesService.lookupTrainTimes(Station.of(schedule.getFromStation()), Station.of(schedule.getToStation()));
+        List<TrainTime> trainTimes = trainTimesService.lookupTrainTimes(schedule.getFromStation(), schedule.getToStation());
         notificationService.sendNotification(schedule, trainTimes);
     }
 

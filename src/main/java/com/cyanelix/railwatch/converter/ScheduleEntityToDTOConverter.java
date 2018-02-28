@@ -23,8 +23,8 @@ public class ScheduleEntityToDTOConverter implements Converter<ScheduleEntity, S
         scheduleDTO.setStartTime(scheduleEntity.getStartTime().format(TIME_FORMATTER));
         scheduleDTO.setEndTime(scheduleEntity.getEndTime().format(TIME_FORMATTER));
         scheduleDTO.setDays(convertToDayNames(scheduleEntity.getDayRange()));
-        scheduleDTO.setFromStation(scheduleEntity.getFromStation());
-        scheduleDTO.setToStation(scheduleEntity.getToStation());
+        scheduleDTO.setFromStation(scheduleEntity.getFromStation().getStationCode());
+        scheduleDTO.setToStation(scheduleEntity.getToStation().getStationCode());
         scheduleDTO.setState(scheduleEntity.getState().name());
         scheduleDTO.setUserId(scheduleEntity.getUser().getUserId());
 

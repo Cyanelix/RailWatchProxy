@@ -60,14 +60,14 @@ public class HeartbeatIT {
     @Test
     public void enabledAndDisabledSchedulesWithNotificationTargetsThatDoAndDoNotExpire() {
         // Given...
-        ScheduleEntity expiringDisabled = createSchedule("ST1", "expiring", ScheduleState.DISABLED);
-        ScheduleEntity expiringEnabled = createSchedule("ST2", "expiring", ScheduleState.ENABLED);
-        ScheduleEntity notExpiringDisabled = createSchedule("ST3", "not-expiring", ScheduleState.DISABLED);
-        ScheduleEntity notExpiringEnabled = createSchedule("ST4", "not-expiring", ScheduleState.ENABLED);
-        ScheduleEntity noHeartbeatDisabled = createSchedule("ST5", "no-heartbeat", ScheduleState.DISABLED);
-        ScheduleEntity noHeartbeatEnabled = createSchedule("ST5", "no-heartbeat", ScheduleState.ENABLED);
-        ScheduleEntity warningDisabled = createSchedule("ST6", "warning", ScheduleState.DISABLED);
-        ScheduleEntity warningEnabled = createSchedule("ST7", "warning", ScheduleState.ENABLED);
+        ScheduleEntity expiringDisabled = createSchedule(Station.of("ST1"), "expiring", ScheduleState.DISABLED);
+        ScheduleEntity expiringEnabled = createSchedule(Station.of("ST2"), "expiring", ScheduleState.ENABLED);
+        ScheduleEntity notExpiringDisabled = createSchedule(Station.of("ST3"), "not-expiring", ScheduleState.DISABLED);
+        ScheduleEntity notExpiringEnabled = createSchedule(Station.of("ST4"), "not-expiring", ScheduleState.ENABLED);
+        ScheduleEntity noHeartbeatDisabled = createSchedule(Station.of("ST5"), "no-heartbeat", ScheduleState.DISABLED);
+        ScheduleEntity noHeartbeatEnabled = createSchedule(Station.of("ST5"), "no-heartbeat", ScheduleState.ENABLED);
+        ScheduleEntity warningDisabled = createSchedule(Station.of("ST6"), "warning", ScheduleState.DISABLED);
+        ScheduleEntity warningEnabled = createSchedule(Station.of("ST7"), "warning", ScheduleState.ENABLED);
         scheduleRepository.save(Arrays.asList(expiringDisabled, expiringEnabled, notExpiringDisabled, notExpiringEnabled, noHeartbeatDisabled, noHeartbeatEnabled, warningDisabled, warningEnabled));
 
         HeartbeatEntity expiringHeartbeat = new HeartbeatEntity(NotificationTarget.of("expiring"), LocalDateTime.of(2016, 12, 22, 11, 59));
@@ -104,9 +104,9 @@ public class HeartbeatIT {
                 new NotificationRequest(NotificationTarget.of("warning"), "RailWatch", "Open the RailWatch app to keep your train time notifications coming!"));
     }
 
-    private ScheduleEntity createSchedule(String fromStation, String notificationTarget, ScheduleState scheduleState) {
+    private ScheduleEntity createSchedule(Station fromStation, String notificationTarget, ScheduleState scheduleState) {
         UserEntity user = new UserEntity(UserId.generate().get(), notificationTarget, UserState.ENABLED);
         userRepository.save(user);
-        return new ScheduleEntity(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, fromStation, "BAR", scheduleState, notificationTarget, user);
+        return new ScheduleEntity(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, fromStation, Station.of("BAR"), scheduleState, notificationTarget, user);
     }
 }

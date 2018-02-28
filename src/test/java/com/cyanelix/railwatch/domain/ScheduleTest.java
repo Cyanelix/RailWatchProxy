@@ -1,7 +1,6 @@
 package com.cyanelix.railwatch.domain;
 
 import com.cyanelix.railwatch.entity.ScheduleEntity;
-import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -73,7 +72,7 @@ public class ScheduleTest {
         // Given...
         ScheduleEntity schedule = new ScheduleEntity(
                 LocalTime.of(1, 1), LocalTime.of(2, 2), DayRange.ALL,
-                "ABC", "DEF", ScheduleState.ENABLED, "remove-notfication-target", null);
+                Station.of("ABC"), Station.of("DEF"), ScheduleState.ENABLED, "remove-notification-target", null);
 
         // When...
         String string = schedule.toString();

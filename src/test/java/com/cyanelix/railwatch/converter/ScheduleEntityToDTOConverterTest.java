@@ -1,6 +1,5 @@
 package com.cyanelix.railwatch.converter;
 
-import com.cyanelix.railwatch.converter.ScheduleEntityToDTOConverter;
 import com.cyanelix.railwatch.domain.*;
 import com.cyanelix.railwatch.dto.ScheduleDTO;
 import com.cyanelix.railwatch.entity.ScheduleEntity;
@@ -19,7 +18,7 @@ public class ScheduleEntityToDTOConverterTest {
         UserEntity user = new UserEntity(UserId.generate().get(), NotificationTarget.of("foo").getTargetAddress(), UserState.ENABLED);
 
         ScheduleEntity schedule = new ScheduleEntity(
-                LocalTime.NOON, LocalTime.MIDNIGHT, DayRange.ALL, "FOO", "BAR",
+                LocalTime.NOON, LocalTime.MIDNIGHT, DayRange.ALL, Station.of("FOO"), Station.of("BAR"),
                 ScheduleState.ENABLED, "remove-notification-target", user);
 
         // When...

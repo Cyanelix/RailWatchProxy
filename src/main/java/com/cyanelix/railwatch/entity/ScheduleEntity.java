@@ -23,10 +23,8 @@ public class ScheduleEntity {
     private LocalTime startTime;
     private LocalTime endTime;
     private DayRange dayRange;
-    // TODO: use Station
-    private String fromStation;
-    // TODO: use Station
-    private String toStation;
+    private Station fromStation;
+    private Station toStation;
     // TODO: remove from here, should come from User
     private String notificationTarget;
     private ScheduleState state;
@@ -34,7 +32,7 @@ public class ScheduleEntity {
     @DBRef
     private UserEntity user;
 
-    public ScheduleEntity(LocalTime startTime, LocalTime endTime, DayRange dayRange, String fromStation, String toStation, ScheduleState state, String notificationTarget, UserEntity user) {
+    public ScheduleEntity(LocalTime startTime, LocalTime endTime, DayRange dayRange, Station fromStation, Station toStation, ScheduleState state, String notificationTarget, UserEntity user) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.dayRange = dayRange;
@@ -57,11 +55,11 @@ public class ScheduleEntity {
         return endTime;
     }
 
-    public String getFromStation() {
+    public Station getFromStation() {
         return fromStation;
     }
 
-    public String getToStation() {
+    public Station getToStation() {
         return toStation;
     }
 
@@ -97,7 +95,7 @@ public class ScheduleEntity {
     }
 
     public String toString() {
-        return Journey.of(Station.of(fromStation), Station.of(toStation)).toString() + "; "
+        return Journey.of(fromStation, toStation).toString() + "; "
                 + dayRange.toString() + " @ "
                 + startTime.format(TIME_FORMATTER) + " -> " + endTime.format(TIME_FORMATTER);
     }

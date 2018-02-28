@@ -50,8 +50,8 @@ public class ScheduleDTOToEntityConverterTest {
         // Then...
         assertThat(schedule.getStartTime(), is(LocalTime.NOON));
         assertThat(schedule.getEndTime(), is(LocalTime.MIDNIGHT));
-        assertThat(schedule.getFromStation(), is("FOO"));
-        assertThat(schedule.getToStation(), is("BAR"));
+        assertThat(schedule.getFromStation(), is(Station.of("FOO")));
+        assertThat(schedule.getToStation(), is(Station.of("BAR")));
         assertThat(schedule.getDayRange(), is(DayRange.ALL));
         assertThat(schedule.getUser().getUserId(), is(userId.get()));
         assertThat(schedule.getUser().getNotificationTarget(), is("test"));

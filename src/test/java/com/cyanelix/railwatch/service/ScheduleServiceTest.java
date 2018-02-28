@@ -55,7 +55,7 @@ public class ScheduleServiceTest {
 
         ScheduleEntity schedule = new ScheduleEntity(
                 LocalTime.MIN, LocalTime.MAX, DayRange.ALL,
-                FOO_TO_BAR.getFrom().getStationCode(), FOO_TO_BAR.getTo().getStationCode(),
+                FOO_TO_BAR.getFrom(), FOO_TO_BAR.getTo(),
                 ScheduleState.ENABLED,"remove-notification-target", user);
 
         // When...
@@ -71,7 +71,7 @@ public class ScheduleServiceTest {
         UserEntity user = createUser();
 
         ScheduleEntity activeSchedule = new ScheduleEntity(
-                LocalTime.MIN, LocalTime.MAX, DayRange.ALL, FOO_TO_BAR.getFrom().getStationCode(), FOO_TO_BAR.getTo().getStationCode(),
+                LocalTime.MIN, LocalTime.MAX, DayRange.ALL, FOO_TO_BAR.getFrom(), FOO_TO_BAR.getTo(),
                 ScheduleState.ENABLED, "remove-notification-target", user);
         given(scheduleRepository.findByStateIs(ScheduleState.ENABLED)).willReturn(
                 Collections.singletonList(activeSchedule));
@@ -90,10 +90,10 @@ public class ScheduleServiceTest {
         UserEntity user = createUser();
 
         ScheduleEntity activeSchedule = new ScheduleEntity(
-                LocalTime.MIN, LocalTime.MAX, DayRange.ALL, FOO_TO_BAR.getFrom().getStationCode(), FOO_TO_BAR.getTo().getStationCode(),
+                LocalTime.MIN, LocalTime.MAX, DayRange.ALL, FOO_TO_BAR.getFrom(), FOO_TO_BAR.getTo(),
                 ScheduleState.ENABLED, "remove-notification-target", user);
         ScheduleEntity inactiveSchedule = new ScheduleEntity(
-                LocalTime.MAX, LocalTime.MIN, DayRange.ALL, "XXX", "ZZZ",
+                LocalTime.MAX, LocalTime.MIN, DayRange.ALL, Station.of("XXX"), Station.of("ZZZ"),
                 ScheduleState.ENABLED, "remove-notification-target", user);
         given(scheduleRepository.findByStateIs(ScheduleState.ENABLED)).willReturn(
                 Arrays.asList(activeSchedule, inactiveSchedule));
@@ -128,7 +128,7 @@ public class ScheduleServiceTest {
         UserEntity user = createUser();
 
         ScheduleEntity schedule = new ScheduleEntity(
-                LocalTime.MIN, LocalTime.MAX, DayRange.ALL, FOO_TO_BAR.getFrom().getStationCode(), FOO_TO_BAR.getTo().getStationCode(),
+                LocalTime.MIN, LocalTime.MAX, DayRange.ALL, FOO_TO_BAR.getFrom(), FOO_TO_BAR.getTo(),
                 ScheduleState.ENABLED, "remove-notification-target", user);
         given(scheduleRepository.findAll()).willReturn(
                 Collections.singletonList(schedule));
@@ -146,9 +146,8 @@ public class ScheduleServiceTest {
         // Given...
         UserEntity user = createUser();
         ScheduleEntity scheduleEntity =
-                new ScheduleEntity(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, "FOO", "BAR", ScheduleState.ENABLED,
-                        user.getNotificationTarget(),
-                        user);
+                new ScheduleEntity(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, Station.of("FOO"), Station.of("BAR"),
+                        ScheduleState.ENABLED, user.getNotificationTarget(), user);
         given(scheduleRepository.findByStateIs(ScheduleState.ENABLED)).willReturn(Collections.singletonList(scheduleEntity));
 
         // When...
@@ -167,9 +166,8 @@ public class ScheduleServiceTest {
 
         UserEntity user = createUser();
         ScheduleEntity scheduleEntity =
-                new ScheduleEntity(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, "FOO", "BAR", ScheduleState.ENABLED,
-                        user.getNotificationTarget(),
-                        user);
+                new ScheduleEntity(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, Station.of("FOO"), Station.of("BAR"),
+                        ScheduleState.ENABLED, user.getNotificationTarget(), user);
         List<ScheduleEntity> scheduleEntities = Collections.singletonList(scheduleEntity);
 
         given(scheduleRepository.findByNotificationTarget(notificationTarget.getTargetAddress()))

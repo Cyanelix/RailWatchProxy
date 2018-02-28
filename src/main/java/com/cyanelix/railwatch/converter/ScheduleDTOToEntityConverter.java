@@ -31,8 +31,8 @@ public class ScheduleDTOToEntityConverter implements Converter<ScheduleDTO, Sche
                 LocalTime.parse(scheduleDTO.getStartTime(), TIME_FORMATTER),
                 LocalTime.parse(scheduleDTO.getEndTime(), TIME_FORMATTER),
                 DayRange.of(scheduleDTO.getDays()),
-                scheduleDTO.getFromStation(),
-                scheduleDTO.getToStation(),
+                Station.of(scheduleDTO.getFromStation()),
+                Station.of(scheduleDTO.getToStation()),
                 ScheduleState.parse(scheduleDTO.getState()),
                 "replace-notification-target",
                 user);
