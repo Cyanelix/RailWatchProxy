@@ -2,13 +2,10 @@ package com.cyanelix.railwatch.repository;
 
 import com.cyanelix.railwatch.domain.NotificationTarget;
 import com.cyanelix.railwatch.entity.HeartbeatEntity;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
@@ -25,16 +22,10 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(SpringRunner.class)
 @DataMongoTest
-@ActiveProfiles("it")
 public class HeartbeatRepositoryIT {
 
     @Autowired
     private HeartbeatRepository heartbeatRepository;
-
-    @Before
-    public void setup() {
-        heartbeatRepository.deleteAll();
-    }
 
     @Test
     public void saveHeartbeat_findAll_returnsSavedEntityWithId() {

@@ -1,7 +1,5 @@
 package com.cyanelix.railwatch.heartbeat;
 
-import com.cyanelix.railwatch.converter.ScheduleDTOToEntityConverter;
-import com.cyanelix.railwatch.converter.ScheduleEntityToDTOConverter;
 import com.cyanelix.railwatch.domain.*;
 import com.cyanelix.railwatch.entity.HeartbeatEntity;
 import com.cyanelix.railwatch.entity.ScheduleEntity;
@@ -12,15 +10,12 @@ import com.cyanelix.railwatch.repository.HeartbeatRepository;
 import com.cyanelix.railwatch.repository.ScheduleRepository;
 import com.cyanelix.railwatch.repository.UserRepository;
 import com.cyanelix.railwatch.service.HeartbeatService;
-import com.cyanelix.railwatch.service.UserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.core.convert.support.GenericConversionService;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.*;
@@ -34,7 +29,6 @@ import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@ActiveProfiles("it")
 public class HeartbeatIT {
     @MockBean
     private Clock clock;
