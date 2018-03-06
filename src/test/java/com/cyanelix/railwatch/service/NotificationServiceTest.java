@@ -50,7 +50,7 @@ public class NotificationServiceTest {
         UserEntity user = createUser();
         ScheduleEntity schedule = new ScheduleEntity(
                 LocalTime.of(9, 0), LocalTime.of(10, 0), DayRange.ALL,
-                Station.of("FOO"), Station.of("BAR"), ScheduleState.ENABLED, "notification-to", user);
+                Station.of("FOO"), Station.of("BAR"), ScheduleState.ENABLED, user);
         List<TrainTime> trainTimes = Collections.singletonList(
                 new TrainTime.Builder(LocalTime.NOON)
                         .withExpectedDepartureTime(LocalTime.NOON)
@@ -75,7 +75,7 @@ public class NotificationServiceTest {
         UserEntity user = createUser();
         ScheduleEntity schedule = new ScheduleEntity(
                 null, null, DayRange.ALL, Station.of("FOO"), Station.of("BAR"),
-                ScheduleState.ENABLED, "notification-to", user);
+                ScheduleState.ENABLED, user);
         List<TrainTime> trainTimes = Collections.singletonList(
                 new TrainTime.Builder(LocalTime.NOON)
                         .withExpectedDepartureTime(LocalTime.NOON)
@@ -97,7 +97,7 @@ public class NotificationServiceTest {
         UserEntity user = createUser();
         ScheduleEntity schedule = new ScheduleEntity(
                 LocalTime.of(9, 0), LocalTime.of(10, 0), DayRange.ALL,
-                Station.of("FOO"), Station.of("BAR"), ScheduleState.ENABLED, "remove-notification-target", user);
+                Station.of("FOO"), Station.of("BAR"), ScheduleState.ENABLED, user);
         List<TrainTime> trainTimes = Collections.singletonList(
                 new TrainTime.Builder(LocalTime.NOON)
                         .withExpectedDepartureTime(LocalTime.NOON)

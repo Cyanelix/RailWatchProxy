@@ -19,7 +19,7 @@ public class ScheduleEntityToDTOConverterTest {
 
         ScheduleEntity schedule = new ScheduleEntity(
                 LocalTime.NOON, LocalTime.MIDNIGHT, DayRange.ALL, Station.of("FOO"), Station.of("BAR"),
-                ScheduleState.ENABLED, "remove-notification-target", user);
+                ScheduleState.ENABLED, user);
 
         // When...
         ScheduleDTO dto = new ScheduleEntityToDTOConverter().convert(schedule);

@@ -25,21 +25,18 @@ public class ScheduleEntity {
     private DayRange dayRange;
     private Station fromStation;
     private Station toStation;
-    // TODO: remove from here, should come from User
-    private String notificationTarget;
     private ScheduleState state;
 
     @DBRef
     private UserEntity user;
 
-    public ScheduleEntity(LocalTime startTime, LocalTime endTime, DayRange dayRange, Station fromStation, Station toStation, ScheduleState state, String notificationTarget, UserEntity user) {
+    public ScheduleEntity(LocalTime startTime, LocalTime endTime, DayRange dayRange, Station fromStation, Station toStation, ScheduleState state, UserEntity user) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.dayRange = dayRange;
         this.fromStation = fromStation;
         this.toStation = toStation;
         this.state = state;
-        this.notificationTarget = notificationTarget;
         this.user = user;
     }
 
@@ -80,7 +77,7 @@ public class ScheduleEntity {
     }
 
     public String getNotificationTarget() {
-        return notificationTarget;
+        return user.getNotificationTarget();
     }
 
     public boolean isActive(LocalDateTime testDateTime) {

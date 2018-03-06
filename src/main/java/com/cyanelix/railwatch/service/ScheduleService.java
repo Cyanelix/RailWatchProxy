@@ -61,12 +61,6 @@ public class ScheduleService {
                 .collect(Collectors.toSet());
     }
 
-    void disableSchedulesForNotificationTarget(NotificationTarget notificationTarget) {
-        List<ScheduleEntity> scheduleEntities = scheduleRepository.findByNotificationTarget(notificationTarget.getTargetAddress());
-        scheduleEntities.forEach(scheduleEntity -> scheduleEntity.setState(ScheduleState.DISABLED));
-        scheduleRepository.save(scheduleEntities);
-    }
-
     Stream<ScheduleEntity> getEnabledSchedules() {
         return scheduleRepository.findByStateIs(ScheduleState.ENABLED).parallelStream();
     }

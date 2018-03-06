@@ -53,10 +53,8 @@ public class ScheduleServiceTest {
         // Given...
         UserEntity user = createUser();
 
-        ScheduleEntity schedule = new ScheduleEntity(
-                LocalTime.MIN, LocalTime.MAX, DayRange.ALL,
-                FOO_TO_BAR.getFrom(), FOO_TO_BAR.getTo(),
-                ScheduleState.ENABLED,"remove-notification-target", user);
+        ScheduleEntity schedule = new ScheduleEntity(LocalTime.MIN, LocalTime.MAX, DayRange.ALL,
+                FOO_TO_BAR.getFrom(), FOO_TO_BAR.getTo(), ScheduleState.ENABLED, user);
 
         // When...
         scheduleService.createSchedule(schedule);
@@ -72,7 +70,7 @@ public class ScheduleServiceTest {
 
         ScheduleEntity activeSchedule = new ScheduleEntity(
                 LocalTime.MIN, LocalTime.MAX, DayRange.ALL, FOO_TO_BAR.getFrom(), FOO_TO_BAR.getTo(),
-                ScheduleState.ENABLED, "remove-notification-target", user);
+                ScheduleState.ENABLED, user);
         given(scheduleRepository.findByStateIs(ScheduleState.ENABLED)).willReturn(
                 Collections.singletonList(activeSchedule));
 
@@ -91,10 +89,10 @@ public class ScheduleServiceTest {
 
         ScheduleEntity activeSchedule = new ScheduleEntity(
                 LocalTime.MIN, LocalTime.MAX, DayRange.ALL, FOO_TO_BAR.getFrom(), FOO_TO_BAR.getTo(),
-                ScheduleState.ENABLED, "remove-notification-target", user);
+                ScheduleState.ENABLED, user);
         ScheduleEntity inactiveSchedule = new ScheduleEntity(
                 LocalTime.MAX, LocalTime.MIN, DayRange.ALL, Station.of("XXX"), Station.of("ZZZ"),
-                ScheduleState.ENABLED, "remove-notification-target", user);
+                ScheduleState.ENABLED, user);
         given(scheduleRepository.findByStateIs(ScheduleState.ENABLED)).willReturn(
                 Arrays.asList(activeSchedule, inactiveSchedule));
 
@@ -129,7 +127,7 @@ public class ScheduleServiceTest {
 
         ScheduleEntity schedule = new ScheduleEntity(
                 LocalTime.MIN, LocalTime.MAX, DayRange.ALL, FOO_TO_BAR.getFrom(), FOO_TO_BAR.getTo(),
-                ScheduleState.ENABLED, "remove-notification-target", user);
+                ScheduleState.ENABLED, user);
         given(scheduleRepository.findAll()).willReturn(
                 Collections.singletonList(schedule));
 
@@ -147,7 +145,7 @@ public class ScheduleServiceTest {
         UserEntity user = createUser();
         ScheduleEntity scheduleEntity =
                 new ScheduleEntity(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, Station.of("FOO"), Station.of("BAR"),
-                        ScheduleState.ENABLED, user.getNotificationTarget(), user);
+                        ScheduleState.ENABLED, user);
         given(scheduleRepository.findByStateIs(ScheduleState.ENABLED)).willReturn(Collections.singletonList(scheduleEntity));
 
         // When...
@@ -157,28 +155,6 @@ public class ScheduleServiceTest {
         List<ScheduleEntity> schedules = scheduleStream.collect(Collectors.toList());
         assertThat(schedules.size(), is(1));
         assertThat(schedules.get(0), is(scheduleEntity));
-    }
-
-    @Test
-    public void disableSchedulesForNotificationTarget_scheduleStatesUpdated() {
-        // Given...
-        NotificationTarget notificationTarget = NotificationTarget.of("target");
-
-        UserEntity user = createUser();
-        ScheduleEntity scheduleEntity =
-                new ScheduleEntity(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, Station.of("FOO"), Station.of("BAR"),
-                        ScheduleState.ENABLED, user.getNotificationTarget(), user);
-        List<ScheduleEntity> scheduleEntities = Collections.singletonList(scheduleEntity);
-
-        given(scheduleRepository.findByNotificationTarget(notificationTarget.getTargetAddress()))
-                .willReturn(scheduleEntities);
-
-        // When...
-        scheduleService.disableSchedulesForNotificationTarget(notificationTarget);
-
-        // Then...
-        verify(scheduleRepository).save(scheduleEntities);
-        assertThat(scheduleEntity.getState(), is(ScheduleState.DISABLED));
     }
 
     private UserEntity createUser() {

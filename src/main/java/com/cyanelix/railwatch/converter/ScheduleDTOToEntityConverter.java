@@ -34,7 +34,6 @@ public class ScheduleDTOToEntityConverter implements Converter<ScheduleDTO, Sche
                 Station.of(scheduleDTO.getFromStation()),
                 Station.of(scheduleDTO.getToStation()),
                 ScheduleState.parse(scheduleDTO.getState()),
-                "replace-notification-target",
                 user);
     }
 }

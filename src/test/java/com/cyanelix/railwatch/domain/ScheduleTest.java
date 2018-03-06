@@ -18,7 +18,7 @@ public class ScheduleTest {
     @Test
     public void timeWithinSchedule_isActive_returnsTrue() {
         // Given...
-        ScheduleEntity schedule = new ScheduleEntity(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, null, null, ScheduleState.ENABLED, null, null);
+        ScheduleEntity schedule = new ScheduleEntity(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, null, null, ScheduleState.ENABLED, null);
 
         // When...
         boolean isActive = schedule.isActive(LocalDateTime.of(2017, 1, 1, 12, 0));
@@ -31,7 +31,7 @@ public class ScheduleTest {
     public void timeBeforeSchedule_isActive_returnsFalse() {
         // Given...
         ScheduleEntity schedule = new ScheduleEntity(LocalTime.of(19, 0), LocalTime.of(20, 0),
-                DayRange.ALL, null, null, ScheduleState.ENABLED, null, null);
+                DayRange.ALL, null, null, ScheduleState.ENABLED, null);
 
         // When...
         boolean isActive = schedule.isActive(LocalDateTime.of(2017, 1, 1, 12, 0));
@@ -44,7 +44,7 @@ public class ScheduleTest {
     public void timeAfterSchedule_isActive_returnsFalse() {
         // Given...
         ScheduleEntity schedule = new ScheduleEntity(LocalTime.of(9, 0), LocalTime.of(10, 0),
-                DayRange.ALL, null, null, ScheduleState.ENABLED, null, null);
+                DayRange.ALL, null, null, ScheduleState.ENABLED, null);
 
         // When...
         boolean isActive = schedule.isActive(LocalDateTime.of(2017, 1, 1, 12, 0));
@@ -57,7 +57,7 @@ public class ScheduleTest {
     public void timeWithinScheduleButOutsideDays_isActive_returnsFalse() {
         // Given...
         ScheduleEntity schedule = new ScheduleEntity(LocalTime.of(9, 0), LocalTime.of(10, 0),
-                DayRange.of(DayOfWeek.MONDAY), null, null, ScheduleState.ENABLED, null, null);
+                DayRange.of(DayOfWeek.MONDAY), null, null, ScheduleState.ENABLED, null);
 
         // When...
         // 2017-01-01 was a Sunday.
@@ -72,7 +72,7 @@ public class ScheduleTest {
         // Given...
         ScheduleEntity schedule = new ScheduleEntity(
                 LocalTime.of(1, 1), LocalTime.of(2, 2), DayRange.ALL,
-                Station.of("ABC"), Station.of("DEF"), ScheduleState.ENABLED, "remove-notification-target", null);
+                Station.of("ABC"), Station.of("DEF"), ScheduleState.ENABLED, null);
 
         // When...
         String string = schedule.toString();

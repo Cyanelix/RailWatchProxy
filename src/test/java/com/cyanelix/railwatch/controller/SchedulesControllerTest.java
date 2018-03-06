@@ -92,7 +92,6 @@ public class SchedulesControllerTest {
                         DayRange.ALL,
                         Station.of("FOO"), Station.of("BAR"),
                         ScheduleState.ENABLED,
-                        "remove-notification-target",
                         new UserEntity(userId.get(), "foo", UserState.ENABLED))));
 
         mockMvc.perform(get("/schedules"))

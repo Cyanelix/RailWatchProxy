@@ -2,6 +2,7 @@ package com.cyanelix.railwatch.controller;
 
 import com.cyanelix.railwatch.domain.ScheduleState;
 import com.cyanelix.railwatch.repository.ScheduleRepository;
+import com.cyanelix.railwatch.repository.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,9 +28,13 @@ public class SchedulesControllerIT {
     @Autowired
     private ScheduleRepository scheduleRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Before
     public void setup() {
         scheduleRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test

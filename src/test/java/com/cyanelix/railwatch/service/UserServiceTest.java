@@ -81,5 +81,22 @@ public class UserServiceTest {
         assertThat(user.getUserState(), is(UserState.ENABLED));
     }
 
+    @Test
+    public void disableUserByNotificationTarget_userStatusUpdated() {
+        // Given...
+        NotificationTarget notificationTarget = NotificationTarget.of("target");
+        UserEntity userEntity = new UserEntity(UserId.generate().get(), notificationTarget.getTargetAddress(), UserState.ENABLED);
+
+        when(userRepository.findByNotificationTarget(notificationTarget.getTargetAddress()))
+                .thenReturn(userEntity);
+
+        // When...
+        userService.disableUserByNotificationTarget(notificationTarget);
+
+        // Then...
+        verify(userRepository).save(userEntity);
+        assertThat(userEntity.getUserState(), is(UserState.DISABLED));
+    }
+
     // TODO: More coverage of getUser method.
 }

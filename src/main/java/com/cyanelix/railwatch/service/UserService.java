@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+import java.util.stream.Stream;
 
 @Service
 public class UserService {
@@ -31,5 +32,15 @@ public class UserService {
 
     public UserEntity getUser(UserId userId) {
         return userRepository.findByUserId(userId.get());
+    }
+
+    public void disableUserByNotificationTarget(NotificationTarget notificationTarget) {
+        UserEntity user = userRepository.findByNotificationTarget(notificationTarget.getTargetAddress());
+        user.setUserState(UserState.DISABLED);
+        userRepository.save(user);
+    }
+
+    public Stream<UserEntity> getEnabledUsers() {
+        return userRepository.findByUserStateIs(UserState.ENABLED).parallel();
     }
 }
