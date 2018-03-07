@@ -31,7 +31,13 @@ public class ScheduleDTO {
         fromStation = schedule.getJourney().getFrom().getStationCode();
         toStation = schedule.getJourney().getTo().getStationCode();
         notificationTarget = schedule.getNotificationTarget().getTargetAddress();
-        state = schedule.getState().name();
+
+        ScheduleState state = schedule.getState();
+        if (state == null) {
+            this.state = ScheduleState.ENABLED.name();
+        } else {
+            this.state = state.name();
+        }
     }
 
     private String[] convertToDayNames(DayRange dayRange) {

@@ -51,6 +51,20 @@ public class ScheduleDTOTest {
         assertThat(dto.getDays(), is(allDaysStringArray()));
     }
 
+    @Test
+    public void dto_ScheduleConstructor_nullState() {
+        // Given...
+        Schedule schedule = Schedule.of(
+                LocalTime.NOON, LocalTime.MIDNIGHT, DayRange.ALL, Journey.of(Station.of("FOO"), Station.of("BAR")),
+                NotificationTarget.of("notification-to"), null);
+
+        // When...
+        ScheduleDTO dto = new ScheduleDTO(schedule);
+
+        // Then...
+        assertThat(dto.getState(), is(ScheduleState.ENABLED.name()));
+    }
+
     private String[] allDaysStringArray() {
         return new String[] {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
     }
