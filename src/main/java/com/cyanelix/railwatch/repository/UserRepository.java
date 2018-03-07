@@ -4,7 +4,6 @@ import com.cyanelix.railwatch.domain.UserState;
 import com.cyanelix.railwatch.entity.UserEntity;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import java.util.Collection;
 import java.util.stream.Stream;
 
 public interface UserRepository extends MongoRepository<UserEntity, String> {
