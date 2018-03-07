@@ -41,9 +41,7 @@ public class NotificationService {
             return;
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Sending request for schedule {}", schedule);
-        }
+        LOG.debug("Sending request for schedule {}", schedule);
 
         boolean success = firebaseClient.sendNotification(notificationRequest);
 
