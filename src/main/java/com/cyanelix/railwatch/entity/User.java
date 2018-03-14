@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.Objects;
 
 @Document
-public final class UserEntity {
+public final class User {
     @Id
     private String id;
 
@@ -20,7 +20,7 @@ public final class UserEntity {
 
     private UserState userState;
 
-    public UserEntity(String userId, String notificationTarget, UserState userState) {
+    public User(String userId, String notificationTarget, UserState userState) {
         this.userId = userId;
         this.notificationTarget = notificationTarget;
         this.userState = userState;
@@ -46,7 +46,7 @@ public final class UserEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserEntity that = (UserEntity) o;
+        User that = (User) o;
         return Objects.equals(userId, that.userId) &&
                 Objects.equals(notificationTarget, that.notificationTarget) &&
                 userState == that.userState;

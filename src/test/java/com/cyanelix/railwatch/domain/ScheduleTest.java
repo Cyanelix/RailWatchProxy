@@ -1,6 +1,6 @@
 package com.cyanelix.railwatch.domain;
 
-import com.cyanelix.railwatch.entity.ScheduleEntity;
+import com.cyanelix.railwatch.entity.Schedule;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
@@ -16,11 +16,11 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ScheduleEntityTest {
+public class ScheduleTest {
     @Test
     public void timeWithinSchedule_isActive_returnsTrue() {
         // Given...
-        ScheduleEntity schedule = new ScheduleEntity(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, null, null, ScheduleState.ENABLED, null);
+        Schedule schedule = new Schedule(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, null, null, ScheduleState.ENABLED, null);
 
         // When...
         boolean isActive = schedule.isActive(LocalDateTime.of(2017, 1, 1, 12, 0));
@@ -32,7 +32,7 @@ public class ScheduleEntityTest {
     @Test
     public void timeBeforeSchedule_isActive_returnsFalse() {
         // Given...
-        ScheduleEntity schedule = new ScheduleEntity(LocalTime.of(19, 0), LocalTime.of(20, 0),
+        Schedule schedule = new Schedule(LocalTime.of(19, 0), LocalTime.of(20, 0),
                 DayRange.ALL, null, null, ScheduleState.ENABLED, null);
 
         // When...
@@ -45,7 +45,7 @@ public class ScheduleEntityTest {
     @Test
     public void timeAfterSchedule_isActive_returnsFalse() {
         // Given...
-        ScheduleEntity schedule = new ScheduleEntity(LocalTime.of(9, 0), LocalTime.of(10, 0),
+        Schedule schedule = new Schedule(LocalTime.of(9, 0), LocalTime.of(10, 0),
                 DayRange.ALL, null, null, ScheduleState.ENABLED, null);
 
         // When...
@@ -58,7 +58,7 @@ public class ScheduleEntityTest {
     @Test
     public void timeWithinScheduleButOutsideDays_isActive_returnsFalse() {
         // Given...
-        ScheduleEntity schedule = new ScheduleEntity(LocalTime.of(9, 0), LocalTime.of(10, 0),
+        Schedule schedule = new Schedule(LocalTime.of(9, 0), LocalTime.of(10, 0),
                 DayRange.of(DayOfWeek.MONDAY), null, null, ScheduleState.ENABLED, null);
 
         // When...
@@ -72,7 +72,7 @@ public class ScheduleEntityTest {
     @Test
     public void schedulePopulatedWithValues_toString_containsExpectedValues() {
         // Given...
-        ScheduleEntity schedule = new ScheduleEntity(
+        Schedule schedule = new Schedule(
                 LocalTime.of(1, 1), LocalTime.of(2, 2), DayRange.ALL,
                 Station.of("ABC"), Station.of("DEF"), ScheduleState.ENABLED, null);
 
@@ -85,7 +85,7 @@ public class ScheduleEntityTest {
 
     @Test
     public void equalsContract() {
-        EqualsVerifier.forClass(ScheduleEntity.class)
+        EqualsVerifier.forClass(Schedule.class)
                 .suppress(Warning.NONFINAL_FIELDS)
                 .withIgnoredFields("id")
                 .verify();

@@ -3,13 +3,13 @@ package com.cyanelix.railwatch.converter;
 import com.cyanelix.railwatch.domain.UserId;
 import com.cyanelix.railwatch.domain.UserState;
 import com.cyanelix.railwatch.dto.UserDTO;
-import com.cyanelix.railwatch.entity.UserEntity;
+import com.cyanelix.railwatch.entity.User;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class UserEntityToDTOConverterTest {
+public class UserToDTOConverterTest {
     @Test
     public void convertEntityToDTO_success() {
         // Given...
@@ -17,10 +17,10 @@ public class UserEntityToDTOConverterTest {
         String notificationTarget = "notification-target";
         UserState userState = UserState.ENABLED;
 
-        UserEntity userEntity = new UserEntity(userId.get(), notificationTarget, userState);
+        User user = new User(userId.get(), notificationTarget, userState);
 
         // When...
-        UserDTO userDTO = new UserEntityToDTOConverter().convert(userEntity);
+        UserDTO userDTO = new UserEntityToDTOConverter().convert(user);
 
         // Then...
         assertThat(userDTO.getUserId(), is(userId.get()));

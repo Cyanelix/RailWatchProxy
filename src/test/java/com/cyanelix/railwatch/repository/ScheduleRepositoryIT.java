@@ -1,8 +1,8 @@
 package com.cyanelix.railwatch.repository;
 
 import com.cyanelix.railwatch.domain.*;
-import com.cyanelix.railwatch.entity.ScheduleEntity;
-import com.cyanelix.railwatch.entity.UserEntity;
+import com.cyanelix.railwatch.entity.Schedule;
+import com.cyanelix.railwatch.entity.User;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -41,18 +41,18 @@ public class ScheduleRepositoryIT {
     @Test
     public void enabledAndDisabledSchedule_getByStateEnabled_returnsEnabled() {
         // Given...
-        UserEntity user = new UserEntity(UserId.generate().get(), "notification-target", UserState.ENABLED);
+        User user = new User(UserId.generate().get(), "notification-target", UserState.ENABLED);
         userRepository.save(user);
 
-        ScheduleEntity enabledSchedule = new ScheduleEntity(LocalTime.NOON, LocalTime.MIDNIGHT, DayRange.ALL,
+        Schedule enabledSchedule = new Schedule(LocalTime.NOON, LocalTime.MIDNIGHT, DayRange.ALL,
                 Station.of("FOO"), Station.of("BAR"), ScheduleState.ENABLED, user);
-        ScheduleEntity disabledSchedule = new ScheduleEntity(LocalTime.MIN, LocalTime.NOON, DayRange.of(DayOfWeek.MONDAY),
+        Schedule disabledSchedule = new Schedule(LocalTime.MIN, LocalTime.NOON, DayRange.of(DayOfWeek.MONDAY),
                 Station.of("BAZ"), Station.of("FOB"), ScheduleState.DISABLED, user);
 
         scheduleRepository.save(Arrays.asList(enabledSchedule, disabledSchedule));
 
         // When...
-        List<ScheduleEntity> scheduleEntities = scheduleRepository.findByStateIs(ScheduleState.ENABLED);
+        List<Schedule> scheduleEntities = scheduleRepository.findByStateIs(ScheduleState.ENABLED);
 
         // Then...
         assertThat(scheduleEntities).containsExactly(enabledSchedule);
@@ -61,18 +61,18 @@ public class ScheduleRepositoryIT {
     @Test
     public void enabledAndDisabledSchedule_getByStateDisabled_returnsDisabled() {
         // Given...
-        UserEntity user = new UserEntity(UserId.generate().get(), "notification-target", UserState.ENABLED);
+        User user = new User(UserId.generate().get(), "notification-target", UserState.ENABLED);
         userRepository.save(user);
 
-        ScheduleEntity enabledSchedule = new ScheduleEntity(LocalTime.NOON, LocalTime.MIDNIGHT, DayRange.ALL,
+        Schedule enabledSchedule = new Schedule(LocalTime.NOON, LocalTime.MIDNIGHT, DayRange.ALL,
                 Station.of("FOO"), Station.of("BAR"), ScheduleState.ENABLED, user);
-        ScheduleEntity disabledSchedule = new ScheduleEntity(LocalTime.MIN, LocalTime.NOON, DayRange.of(DayOfWeek.MONDAY),
+        Schedule disabledSchedule = new Schedule(LocalTime.MIN, LocalTime.NOON, DayRange.of(DayOfWeek.MONDAY),
                 Station.of("BAZ"), Station.of("FOB"), ScheduleState.DISABLED, user);
 
         scheduleRepository.save(Arrays.asList(enabledSchedule, disabledSchedule));
 
         // When...
-        List<ScheduleEntity> scheduleEntities = scheduleRepository.findByStateIs(ScheduleState.DISABLED);
+        List<Schedule> scheduleEntities = scheduleRepository.findByStateIs(ScheduleState.DISABLED);
 
         // Then...
         assertThat(scheduleEntities).containsExactly(disabledSchedule);
@@ -81,19 +81,19 @@ public class ScheduleRepositoryIT {
     @Test
     public void schedulesWithDifferentUsers_getByUser_returnsCorrectSchedule() {
         // Given...
-        UserEntity user1 = new UserEntity(UserId.generate().get(), "notification-target", UserState.ENABLED);
-        UserEntity user2 = new UserEntity(UserId.generate().get(), "notification-target-2", UserState.ENABLED);
+        User user1 = new User(UserId.generate().get(), "notification-target", UserState.ENABLED);
+        User user2 = new User(UserId.generate().get(), "notification-target-2", UserState.ENABLED);
         userRepository.save(Arrays.asList(user1, user2));
 
-        ScheduleEntity schedule1 = new ScheduleEntity(LocalTime.NOON, LocalTime.MIDNIGHT, DayRange.ALL,
+        Schedule schedule1 = new Schedule(LocalTime.NOON, LocalTime.MIDNIGHT, DayRange.ALL,
                 Station.of("FOO"), Station.of("BAR"), ScheduleState.ENABLED, user1);
-        ScheduleEntity schedule2 = new ScheduleEntity(LocalTime.MIN, LocalTime.NOON, DayRange.of(DayOfWeek.MONDAY),
+        Schedule schedule2 = new Schedule(LocalTime.MIN, LocalTime.NOON, DayRange.of(DayOfWeek.MONDAY),
                 Station.of("BAZ"), Station.of("FOB"), ScheduleState.DISABLED, user2);
 
         scheduleRepository.save(Arrays.asList(schedule1, schedule2));
 
         // When...
-        List<ScheduleEntity> scheduleEntities = scheduleRepository.findByUser(user1);
+        List<Schedule> scheduleEntities = scheduleRepository.findByUser(user1);
 
         // Then...
         assertThat(scheduleEntities).containsExactly(schedule1);
@@ -102,15 +102,15 @@ public class ScheduleRepositoryIT {
     @Test
     public void singleSchedule_getByNonExistentUser_throwsException() {
         // Given...
-        UserEntity user = new UserEntity(UserId.generate().get(), "notification-target", UserState.ENABLED);
+        User user = new User(UserId.generate().get(), "notification-target", UserState.ENABLED);
         userRepository.save(user);
 
-        ScheduleEntity schedule = new ScheduleEntity(LocalTime.NOON, LocalTime.MIDNIGHT, DayRange.ALL,
+        Schedule schedule = new Schedule(LocalTime.NOON, LocalTime.MIDNIGHT, DayRange.ALL,
                 Station.of("FOO"), Station.of("BAR"), ScheduleState.ENABLED, user);
 
         scheduleRepository.save(schedule);
 
-        UserEntity userToSearchBy = new UserEntity(UserId.generate().get(), "different-target", UserState.ENABLED);
+        User userToSearchBy = new User(UserId.generate().get(), "different-target", UserState.ENABLED);
 
         expectedException.expect(MappingException.class);
         expectedException.expectMessage("Cannot create a reference to an object with a NULL id.");

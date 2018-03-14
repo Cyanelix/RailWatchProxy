@@ -3,7 +3,7 @@ package com.cyanelix.railwatch.service;
 import com.cyanelix.railwatch.domain.NotificationTarget;
 import com.cyanelix.railwatch.domain.UserId;
 import com.cyanelix.railwatch.domain.UserState;
-import com.cyanelix.railwatch.entity.UserEntity;
+import com.cyanelix.railwatch.entity.User;
 import com.cyanelix.railwatch.repository.UserRepository;
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,17 +40,17 @@ public class UserServiceTest {
         NotificationTarget notificationTarget = NotificationTarget.of("foo");
 
         // When...
-        UserEntity user = userService.createUser(notificationTarget);
+        User user = userService.createUser(notificationTarget);
 
         // Then...
         assertThat(user.getUserId(), is(notNullValue()));
         assertThat(user.getNotificationTarget(), is(notificationTarget.getTargetAddress()));
         assertThat(user.getUserState(), is(UserState.ENABLED));
 
-        ArgumentCaptor<UserEntity> userEntityCaptor = ArgumentCaptor.forClass(UserEntity.class);
+        ArgumentCaptor<User> userEntityCaptor = ArgumentCaptor.forClass(User.class);
         verify(userRepository).save(userEntityCaptor.capture());
 
-        UserEntity userEntity = userEntityCaptor.getValue();
+        User userEntity = userEntityCaptor.getValue();
         assertThat(userEntity.getUserId(), is(user.getUserId()));
         assertThat(userEntity.getNotificationTarget(), is(user.getNotificationTarget()));
         assertThat(userEntity.getUserState(), is(user.getUserState()));
@@ -68,12 +68,12 @@ public class UserServiceTest {
     public void existingUser_getById_userReturned() {
         // Given...
         UserId userId = UserId.generate();
-        UserEntity userEntity = new UserEntity(userId.get(), "foo", UserState.ENABLED);
+        User userEntity = new User(userId.get(), "foo", UserState.ENABLED);
 
         when(userRepository.findByUserId(userId.get())).thenReturn(userEntity);
 
         // When...
-        UserEntity user = userService.getUser(userId);
+        User user = userService.getUser(userId);
 
         // Then...
         assertThat(user.getUserId(), is(userId.get()));
@@ -85,17 +85,17 @@ public class UserServiceTest {
     public void disableUserByNotificationTarget_userStatusUpdated() {
         // Given...
         NotificationTarget notificationTarget = NotificationTarget.of("target");
-        UserEntity userEntity = new UserEntity(UserId.generate().get(), notificationTarget.getTargetAddress(), UserState.ENABLED);
+        User user = new User(UserId.generate().get(), notificationTarget.getTargetAddress(), UserState.ENABLED);
 
         when(userRepository.findByNotificationTarget(notificationTarget.getTargetAddress()))
-                .thenReturn(userEntity);
+                .thenReturn(user);
 
         // When...
         userService.disableUserByNotificationTarget(notificationTarget);
 
         // Then...
-        verify(userRepository).save(userEntity);
-        assertThat(userEntity.getUserState(), is(UserState.DISABLED));
+        verify(userRepository).save(user);
+        assertThat(user.getUserState(), is(UserState.DISABLED));
     }
 
     @Test
@@ -105,7 +105,7 @@ public class UserServiceTest {
         when(userRepository.findByUserId(userId.get())).thenReturn(null);
 
         // When...
-        UserEntity returnedUser = userService.getUser(userId);
+        User returnedUser = userService.getUser(userId);
 
         // Then...
         assertThat(returnedUser, is(nullValue()));

@@ -1,6 +1,6 @@
 package com.cyanelix.railwatch.controller;
 
-import com.cyanelix.railwatch.entity.HeartbeatEntity;
+import com.cyanelix.railwatch.entity.Heartbeat;
 import com.cyanelix.railwatch.repository.HeartbeatRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +38,7 @@ public class HeartbeatControllerIT {
         mockMvc.perform(put("/heartbeat/device-id"))
                 .andExpect(status().isCreated());
 
-        List<HeartbeatEntity> heartbeatEntities = heartbeatRepository.findAll();
+        List<Heartbeat> heartbeatEntities = heartbeatRepository.findAll();
         assertThat(heartbeatEntities.size(), is(1));
     }
 }

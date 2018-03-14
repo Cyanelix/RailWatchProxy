@@ -2,8 +2,8 @@ package com.cyanelix.railwatch.converter;
 
 import com.cyanelix.railwatch.domain.*;
 import com.cyanelix.railwatch.dto.ScheduleDTO;
-import com.cyanelix.railwatch.entity.ScheduleEntity;
-import com.cyanelix.railwatch.entity.UserEntity;
+import com.cyanelix.railwatch.entity.Schedule;
+import com.cyanelix.railwatch.entity.User;
 import org.junit.Test;
 
 import java.time.LocalTime;
@@ -11,13 +11,13 @@ import java.time.LocalTime;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class ScheduleEntityToDTOConverterTest {
+public class ScheduleToDTOConverterTest {
     @Test
     public void scheduleWithUser_convert_dtoPopulatedCorrectly() {
         // Given...
-        UserEntity user = new UserEntity(UserId.generate().get(), NotificationTarget.of("foo").getTargetAddress(), UserState.ENABLED);
+        User user = new User(UserId.generate().get(), NotificationTarget.of("foo").getTargetAddress(), UserState.ENABLED);
 
-        ScheduleEntity schedule = new ScheduleEntity(
+        Schedule schedule = new Schedule(
                 LocalTime.NOON, LocalTime.MIDNIGHT, DayRange.ALL, Station.of("FOO"), Station.of("BAR"),
                 ScheduleState.ENABLED, user);
 

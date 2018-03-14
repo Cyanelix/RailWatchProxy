@@ -3,8 +3,8 @@ package com.cyanelix.railwatch.service;
 import com.cyanelix.railwatch.domain.NotificationTarget;
 import com.cyanelix.railwatch.domain.UserId;
 import com.cyanelix.railwatch.domain.UserState;
-import com.cyanelix.railwatch.entity.HeartbeatEntity;
-import com.cyanelix.railwatch.entity.UserEntity;
+import com.cyanelix.railwatch.entity.Heartbeat;
+import com.cyanelix.railwatch.entity.User;
 import com.cyanelix.railwatch.repository.HeartbeatRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,21 +62,21 @@ public class HeartbeatServiceTest {
         heartbeatService.recordHeartbeat(notificationTarget);
 
         // Then...
-        ArgumentCaptor<HeartbeatEntity> heartbeatEntityArgumentCaptor = ArgumentCaptor.forClass(HeartbeatEntity.class);
+        ArgumentCaptor<Heartbeat> heartbeatEntityArgumentCaptor = ArgumentCaptor.forClass(Heartbeat.class);
         verify(heartbeatRepository).save(heartbeatEntityArgumentCaptor.capture());
 
-        HeartbeatEntity heartbeatEntity = heartbeatEntityArgumentCaptor.getValue();
-        assertThat(heartbeatEntity.getNotificationTarget(), is(notificationTarget));
-        assertThat(heartbeatEntity.getDateTime(), is(LocalDateTime.of(2017, 1, 1, 12, 0, 0)));
+        Heartbeat heartbeat = heartbeatEntityArgumentCaptor.getValue();
+        assertThat(heartbeat.getNotificationTarget(), is(notificationTarget));
+        assertThat(heartbeat.getDateTime(), is(LocalDateTime.of(2017, 1, 1, 12, 0, 0)));
     }
 
     @Test
     public void givenAHeartbeatOneDayAgo_doNotDisable_doNotWarn() {
         // Given...
         NotificationTarget notificationTarget = NotificationTarget.of("foo");
-        UserEntity user = createUser(notificationTarget);
-        HeartbeatEntity oneDayOldHeartbeat =
-                new HeartbeatEntity(notificationTarget, LocalDateTime.of(2016, 12, 31, 12, 1));
+        User user = createUser(notificationTarget);
+        Heartbeat oneDayOldHeartbeat =
+                new Heartbeat(notificationTarget, LocalDateTime.of(2016, 12, 31, 12, 1));
 
         given(userService.getEnabledUsers()).willReturn(Stream.of(user), Stream.of(user));
         given(heartbeatRepository.findFirstByNotificationTargetEqualsOrderByDateTimeDesc(notificationTarget)).willReturn(oneDayOldHeartbeat);
@@ -93,9 +93,9 @@ public class HeartbeatServiceTest {
     public void givenAHeartbeatSevenDaysAgo_doNotDisable_doWarn() {
         // Given...
         NotificationTarget notificationTarget = NotificationTarget.of("foo");
-        UserEntity user = createUser(notificationTarget);
-        HeartbeatEntity sevenDayOldHeartbeat =
-                new HeartbeatEntity(notificationTarget, LocalDateTime.of(2016, 12, 25, 11, 59));
+        User user = createUser(notificationTarget);
+        Heartbeat sevenDayOldHeartbeat =
+                new Heartbeat(notificationTarget, LocalDateTime.of(2016, 12, 25, 11, 59));
 
         given(userService.getEnabledUsers()).willReturn(Stream.of(user), Stream.of(user));
         given(heartbeatRepository.findFirstByNotificationTargetEqualsOrderByDateTimeDesc(notificationTarget)).willReturn(sevenDayOldHeartbeat);
@@ -112,9 +112,9 @@ public class HeartbeatServiceTest {
     public void givenAHeartbeatTenDaysAgo_doDisable_doNotWarn() {
         // Given...
         NotificationTarget notificationTarget = NotificationTarget.of("foo");
-        UserEntity user = createUser(notificationTarget);
-        HeartbeatEntity overTenDaysAgoHeartbeat =
-                new HeartbeatEntity(notificationTarget, LocalDateTime.of(2016, 12, 22, 11, 59));
+        User user = createUser(notificationTarget);
+        Heartbeat overTenDaysAgoHeartbeat =
+                new Heartbeat(notificationTarget, LocalDateTime.of(2016, 12, 22, 11, 59));
 
         given(userService.getEnabledUsers()).willReturn(Stream.of(user), Stream.empty());
         given(heartbeatRepository.findFirstByNotificationTargetEqualsOrderByDateTimeDesc(notificationTarget)).willReturn(overTenDaysAgoHeartbeat);
@@ -127,7 +127,7 @@ public class HeartbeatServiceTest {
         verify(notificationService, never()).sendNotification(any(NotificationTarget.class), any());
     }
 
-    private UserEntity createUser(NotificationTarget notificationTarget) {
-        return new UserEntity(UserId.generate().get(), notificationTarget.getTargetAddress(), UserState.ENABLED);
+    private User createUser(NotificationTarget notificationTarget) {
+        return new User(UserId.generate().get(), notificationTarget.getTargetAddress(), UserState.ENABLED);
     }
 }

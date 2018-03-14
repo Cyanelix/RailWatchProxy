@@ -1,8 +1,8 @@
 package com.cyanelix.railwatch.service;
 
 import com.cyanelix.railwatch.domain.*;
-import com.cyanelix.railwatch.entity.ScheduleEntity;
-import com.cyanelix.railwatch.entity.UserEntity;
+import com.cyanelix.railwatch.entity.Schedule;
+import com.cyanelix.railwatch.entity.User;
 import com.cyanelix.railwatch.repository.ScheduleRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,8 +18,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
@@ -51,9 +49,9 @@ public class ScheduleServiceTest {
     @Test
     public void createSchedule_savedInRepo() {
         // Given...
-        UserEntity user = createUser();
+        User user = createUser();
 
-        ScheduleEntity schedule = new ScheduleEntity(LocalTime.MIN, LocalTime.MAX, DayRange.ALL,
+        Schedule schedule = new Schedule(LocalTime.MIN, LocalTime.MAX, DayRange.ALL,
                 FOO_TO_BAR.getFrom(), FOO_TO_BAR.getTo(), ScheduleState.ENABLED, user);
 
         // When...
@@ -66,9 +64,9 @@ public class ScheduleServiceTest {
     @Test
     public void singleScheduleActiveNow_checkTimes_routeLookedUp() {
         // Given...
-        UserEntity user = createUser();
+        User user = createUser();
 
-        ScheduleEntity activeSchedule = new ScheduleEntity(
+        Schedule activeSchedule = new Schedule(
                 LocalTime.MIN, LocalTime.MAX, DayRange.ALL, FOO_TO_BAR.getFrom(), FOO_TO_BAR.getTo(),
                 ScheduleState.ENABLED, user);
         given(scheduleRepository.findByStateIs(ScheduleState.ENABLED)).willReturn(
@@ -85,12 +83,12 @@ public class ScheduleServiceTest {
     @Test
     public void oneActiveOneInactiveSchedule_checkTimes_onlyActiveRouteLookedUp() {
         // Given...
-        UserEntity user = createUser();
+        User user = createUser();
 
-        ScheduleEntity activeSchedule = new ScheduleEntity(
+        Schedule activeSchedule = new Schedule(
                 LocalTime.MIN, LocalTime.MAX, DayRange.ALL, FOO_TO_BAR.getFrom(), FOO_TO_BAR.getTo(),
                 ScheduleState.ENABLED, user);
-        ScheduleEntity inactiveSchedule = new ScheduleEntity(
+        Schedule inactiveSchedule = new Schedule(
                 LocalTime.MAX, LocalTime.MIN, DayRange.ALL, Station.of("XXX"), Station.of("ZZZ"),
                 ScheduleState.ENABLED, user);
         given(scheduleRepository.findByStateIs(ScheduleState.ENABLED)).willReturn(
@@ -123,16 +121,16 @@ public class ScheduleServiceTest {
     @Test
     public void singleSchedule_getSchedules() {
         // Given...
-        UserEntity user = createUser();
+        User user = createUser();
 
-        ScheduleEntity schedule = new ScheduleEntity(
+        Schedule schedule = new Schedule(
                 LocalTime.MIN, LocalTime.MAX, DayRange.ALL, FOO_TO_BAR.getFrom(), FOO_TO_BAR.getTo(),
                 ScheduleState.ENABLED, user);
         given(scheduleRepository.findAll()).willReturn(
                 Collections.singletonList(schedule));
 
         // When...
-        Set<ScheduleEntity> schedules = scheduleService.getSchedules();
+        Set<Schedule> schedules = scheduleService.getSchedules();
 
         // Then...
         assertThat(schedules, hasSize(1));
@@ -142,21 +140,21 @@ public class ScheduleServiceTest {
     @Test
     public void scheduleExistsForUser_getSchedulesForUser_success() {
         // Given...
-        UserEntity user = createUser();
+        User user = createUser();
 
-        ScheduleEntity scheduleEntity = new ScheduleEntity(LocalTime.MIN, LocalTime.MAX, DayRange.ALL,
+        Schedule schedule = new Schedule(LocalTime.MIN, LocalTime.MAX, DayRange.ALL,
                 FOO_TO_BAR.getFrom(), FOO_TO_BAR.getTo(), ScheduleState.ENABLED, user);
 
-        given(scheduleRepository.findByUser(user)).willReturn(Collections.singletonList(scheduleEntity));
+        given(scheduleRepository.findByUser(user)).willReturn(Collections.singletonList(schedule));
 
         // When...
-        List<ScheduleEntity> userSchedules = scheduleService.getSchedulesForUser(user);
+        List<Schedule> userSchedules = scheduleService.getSchedulesForUser(user);
 
         // Then...
         assertThat(userSchedules, hasSize(1));
     }
 
-    private UserEntity createUser() {
-        return new UserEntity(UserId.generate().get(), NotificationTarget.of("notification-target").getTargetAddress(), UserState.ENABLED);
+    private User createUser() {
+        return new User(UserId.generate().get(), NotificationTarget.of("notification-target").getTargetAddress(), UserState.ENABLED);
     }
 }

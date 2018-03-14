@@ -1,8 +1,8 @@
 package com.cyanelix.railwatch.service;
 
 import com.cyanelix.railwatch.domain.*;
-import com.cyanelix.railwatch.entity.ScheduleEntity;
-import com.cyanelix.railwatch.entity.SentNotificationEntity;
+import com.cyanelix.railwatch.entity.Schedule;
+import com.cyanelix.railwatch.entity.SentNotification;
 import com.cyanelix.railwatch.firebase.client.FirebaseClient;
 import com.cyanelix.railwatch.firebase.client.entity.NotificationRequest;
 import com.cyanelix.railwatch.repository.SentNotificationRepository;
@@ -32,7 +32,7 @@ public class NotificationService {
         this.clock = clock;
     }
 
-    public void sendNotification(ScheduleEntity schedule, List<TrainTime> trainTimes) {
+    public void sendNotification(Schedule schedule, List<TrainTime> trainTimes) {
         String notificationMessage = buildNotificationMessage(schedule, trainTimes);
         NotificationRequest notificationRequest = new NotificationRequest(NotificationTarget.of(schedule.getNotificationTarget()), "RailWatch", notificationMessage);
 
@@ -46,7 +46,7 @@ public class NotificationService {
         boolean success = firebaseClient.sendNotification(notificationRequest);
 
         if (success) {
-            sentNotificationRepository.save(SentNotificationEntity.of(notificationRequest, LocalDateTime.now(clock)));
+            sentNotificationRepository.save(SentNotification.of(notificationRequest, LocalDateTime.now(clock)));
         }
     }
 
@@ -64,7 +64,7 @@ public class NotificationService {
                 .anyMatch(sentRequest -> sentRequest.equals(notificationRequest));
     }
 
-    private String buildNotificationMessage(ScheduleEntity schedule, List<TrainTime> trainTimes) {
+    private String buildNotificationMessage(Schedule schedule, List<TrainTime> trainTimes) {
         return trainTimes.parallelStream()
                 .map(trainTime -> String.format("%s @ %s", Journey.of(schedule.getFromStation(), schedule.getToStation()).toString(), trainTime.toString()))
                 .collect(Collectors.joining("\n"));

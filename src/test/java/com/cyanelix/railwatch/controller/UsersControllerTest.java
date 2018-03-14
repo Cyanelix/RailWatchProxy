@@ -3,8 +3,8 @@ package com.cyanelix.railwatch.controller;
 import com.cyanelix.railwatch.converter.ScheduleEntityToDTOConverter;
 import com.cyanelix.railwatch.converter.UserEntityToDTOConverter;
 import com.cyanelix.railwatch.domain.*;
-import com.cyanelix.railwatch.entity.ScheduleEntity;
-import com.cyanelix.railwatch.entity.UserEntity;
+import com.cyanelix.railwatch.entity.Schedule;
+import com.cyanelix.railwatch.entity.User;
 import com.cyanelix.railwatch.service.ScheduleService;
 import com.cyanelix.railwatch.service.UserService;
 import org.junit.Before;
@@ -81,7 +81,7 @@ public class UsersControllerTest {
         NotificationTarget notificationTarget = NotificationTarget.of("notification-target");
         String userUuid = UUID.randomUUID().toString();
 
-        given(userService.createUser(notificationTarget)).willReturn(new UserEntity(userUuid, notificationTarget.getTargetAddress(), UserState.ENABLED));
+        given(userService.createUser(notificationTarget)).willReturn(new User(userUuid, notificationTarget.getTargetAddress(), UserState.ENABLED));
 
         mockMvc.perform(
                 post("/users")
@@ -96,7 +96,7 @@ public class UsersControllerTest {
         UserId userId = UserId.generate();
 
         given(userService.getUser(userId))
-                .willReturn(new UserEntity(userId.get(), "notification-target", UserState.ENABLED));
+                .willReturn(new User(userId.get(), "notification-target", UserState.ENABLED));
 
         mockMvc.perform(
                 get("/users/" + userId.get()))
@@ -108,11 +108,11 @@ public class UsersControllerTest {
     public void getFullDetailsForUserWithSchedules_success() throws Exception {
         UserId userId = UserId.generate();
 
-        UserEntity userEntity = new UserEntity(userId.get(), "notification-target", UserState.ENABLED);
+        User user = new User(userId.get(), "notification-target", UserState.ENABLED);
 
-        given(userService.getUser(userId)).willReturn(userEntity);
-        given(scheduleService.getSchedulesForUser(userEntity))
-                .willReturn(Collections.singletonList(new ScheduleEntity(LocalTime.MIN, LocalTime.MAX, DayRange.of(DayOfWeek.MONDAY), Station.of("FOO"), Station.of("BAR"), ScheduleState.ENABLED, userEntity)));
+        given(userService.getUser(userId)).willReturn(user);
+        given(scheduleService.getSchedulesForUser(user))
+                .willReturn(Collections.singletonList(new Schedule(LocalTime.MIN, LocalTime.MAX, DayRange.of(DayOfWeek.MONDAY), Station.of("FOO"), Station.of("BAR"), ScheduleState.ENABLED, user)));
 
         mockMvc.perform(
                 get("/users/" + userId.get()))

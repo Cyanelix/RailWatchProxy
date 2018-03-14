@@ -1,11 +1,10 @@
 package com.cyanelix.railwatch.heartbeat;
 
 import com.cyanelix.railwatch.domain.NotificationTarget;
-import com.cyanelix.railwatch.domain.ScheduleState;
 import com.cyanelix.railwatch.domain.UserId;
 import com.cyanelix.railwatch.domain.UserState;
-import com.cyanelix.railwatch.entity.HeartbeatEntity;
-import com.cyanelix.railwatch.entity.UserEntity;
+import com.cyanelix.railwatch.entity.Heartbeat;
+import com.cyanelix.railwatch.entity.User;
 import com.cyanelix.railwatch.firebase.client.FirebaseClient;
 import com.cyanelix.railwatch.firebase.client.entity.NotificationRequest;
 import com.cyanelix.railwatch.repository.HeartbeatRepository;
@@ -64,22 +63,22 @@ public class HeartbeatIT {
     @Test
     public void enabledAndDisabledSchedulesWithNotificationTargetsThatDoAndDoNotExpire() {
         // Given...
-        UserEntity expiringDisabled = new UserEntity(UserId.generate().get(), "expiring-disabled", UserState.DISABLED);
-        UserEntity expiringEnabled = new UserEntity(UserId.generate().get(), "expiring-enabled", UserState.ENABLED);
-        UserEntity notExpiringDisabled = new UserEntity(UserId.generate().get(), "not-expiring-disabled", UserState.DISABLED);
-        UserEntity notExpiringEnabled = new UserEntity(UserId.generate().get(), "not-expiring-enabled", UserState.ENABLED);
-        UserEntity noHeartbeatDisabled = new UserEntity(UserId.generate().get(), "no-heartbeat-disabled", UserState.DISABLED);
-        UserEntity noHeartbeatEnabled = new UserEntity(UserId.generate().get(), "no-heartbeat-enabled", UserState.ENABLED);
-        UserEntity warningDisabled = new UserEntity(UserId.generate().get(), "warning-disabled", UserState.DISABLED);
-        UserEntity warningEnabled = new UserEntity(UserId.generate().get(), "warning-enabled", UserState.ENABLED);
+        User expiringDisabled = new User(UserId.generate().get(), "expiring-disabled", UserState.DISABLED);
+        User expiringEnabled = new User(UserId.generate().get(), "expiring-enabled", UserState.ENABLED);
+        User notExpiringDisabled = new User(UserId.generate().get(), "not-expiring-disabled", UserState.DISABLED);
+        User notExpiringEnabled = new User(UserId.generate().get(), "not-expiring-enabled", UserState.ENABLED);
+        User noHeartbeatDisabled = new User(UserId.generate().get(), "no-heartbeat-disabled", UserState.DISABLED);
+        User noHeartbeatEnabled = new User(UserId.generate().get(), "no-heartbeat-enabled", UserState.ENABLED);
+        User warningDisabled = new User(UserId.generate().get(), "warning-disabled", UserState.DISABLED);
+        User warningEnabled = new User(UserId.generate().get(), "warning-enabled", UserState.ENABLED);
         userRepository.save(Arrays.asList(expiringDisabled, expiringEnabled, notExpiringDisabled, notExpiringEnabled, noHeartbeatDisabled, noHeartbeatEnabled, warningDisabled, warningEnabled));
 
-        HeartbeatEntity expiringDisabledHeartbeat = new HeartbeatEntity(NotificationTarget.of("expiring-disabled"), LocalDateTime.of(2016, 12, 22, 11, 59));
-        HeartbeatEntity expiringEnabledHeartbeat = new HeartbeatEntity(NotificationTarget.of("expiring-enabled"), LocalDateTime.of(2016, 12, 22, 11, 59));
-        HeartbeatEntity notExpiringDisabledHeartbeat = new HeartbeatEntity(NotificationTarget.of("not-expiring-disabled"), LocalDateTime.of(2016, 12, 25, 12, 1));
-        HeartbeatEntity notExpiringEnabledHeartbeat = new HeartbeatEntity(NotificationTarget.of("not-expiring-enabled"), LocalDateTime.of(2016, 12, 25, 12, 1));
-        HeartbeatEntity warningDisabledHeartbeat = new HeartbeatEntity(NotificationTarget.of("warning-disabled"), LocalDateTime.of(2016, 12, 25, 11, 59));
-        HeartbeatEntity warningEnabledHeartbeat = new HeartbeatEntity(NotificationTarget.of("warning-enabled"), LocalDateTime.of(2016, 12, 25, 11, 59));
+        Heartbeat expiringDisabledHeartbeat = new Heartbeat(NotificationTarget.of("expiring-disabled"), LocalDateTime.of(2016, 12, 22, 11, 59));
+        Heartbeat expiringEnabledHeartbeat = new Heartbeat(NotificationTarget.of("expiring-enabled"), LocalDateTime.of(2016, 12, 22, 11, 59));
+        Heartbeat notExpiringDisabledHeartbeat = new Heartbeat(NotificationTarget.of("not-expiring-disabled"), LocalDateTime.of(2016, 12, 25, 12, 1));
+        Heartbeat notExpiringEnabledHeartbeat = new Heartbeat(NotificationTarget.of("not-expiring-enabled"), LocalDateTime.of(2016, 12, 25, 12, 1));
+        Heartbeat warningDisabledHeartbeat = new Heartbeat(NotificationTarget.of("warning-disabled"), LocalDateTime.of(2016, 12, 25, 11, 59));
+        Heartbeat warningEnabledHeartbeat = new Heartbeat(NotificationTarget.of("warning-enabled"), LocalDateTime.of(2016, 12, 25, 11, 59));
         heartbeatRepository.save(Arrays.asList(expiringDisabledHeartbeat, expiringEnabledHeartbeat, notExpiringDisabledHeartbeat,
                 notExpiringEnabledHeartbeat, warningDisabledHeartbeat, warningEnabledHeartbeat));
 

@@ -1,7 +1,7 @@
 package com.cyanelix.railwatch.controller;
 
 import com.cyanelix.railwatch.dto.ScheduleDTO;
-import com.cyanelix.railwatch.entity.ScheduleEntity;
+import com.cyanelix.railwatch.entity.Schedule;
 import com.cyanelix.railwatch.service.ScheduleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +41,7 @@ public class SchedulesController {
             LOG.debug(String.format("Creating new schedule: %s -> %s @ %s -> %s", scheduleDTO.getFromStation(), scheduleDTO.getToStation(), scheduleDTO.getStartTime(), scheduleDTO.getEndTime()));
         }
 
-        ScheduleEntity schedule = conversionService.convert(scheduleDTO, ScheduleEntity.class);
+        Schedule schedule = conversionService.convert(scheduleDTO, Schedule.class);
         scheduleService.createSchedule(schedule);
     }
 }

@@ -2,7 +2,7 @@ package com.cyanelix.railwatch.repository;
 
 import com.cyanelix.railwatch.domain.UserId;
 import com.cyanelix.railwatch.domain.UserState;
-import com.cyanelix.railwatch.entity.UserEntity;
+import com.cyanelix.railwatch.entity.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,13 +35,13 @@ public class UserRepositoryIT {
         // Given...
         String notificationTarget = "foo";
 
-        UserEntity userEntity = new UserEntity(UserId.generate().get(), notificationTarget, UserState.ENABLED);
-        userRepository.save(userEntity);
+        User user = new User(UserId.generate().get(), notificationTarget, UserState.ENABLED);
+        userRepository.save(user);
 
-        UserEntity duplicateUserEntity = new UserEntity(UserId.generate().get(), notificationTarget, UserState.DISABLED);
+        User duplicateUser = new User(UserId.generate().get(), notificationTarget, UserState.DISABLED);
 
         // When...
-        userRepository.save(duplicateUserEntity);
+        userRepository.save(duplicateUser);
     }
 
     @Test(expected = DuplicateKeyException.class)
@@ -49,35 +49,35 @@ public class UserRepositoryIT {
         // Given...
         UserId userId = UserId.generate();
 
-        UserEntity userEntity = new UserEntity(userId.get(), "foo", UserState.ENABLED);
-        userRepository.save(userEntity);
+        User user = new User(userId.get(), "foo", UserState.ENABLED);
+        userRepository.save(user);
 
-        UserEntity duplicateUserEntity = new UserEntity(userId.get(), "bar", UserState.DISABLED);
+        User duplicateUser = new User(userId.get(), "bar", UserState.DISABLED);
 
         // When...
-        userRepository.save(duplicateUserEntity);
+        userRepository.save(duplicateUser);
     }
 
     @Test
     public void saveUsersWithUniqueUserIdsAndNotificationTargets_bothSavedSuccessfully() {
         // Given...
-        UserEntity userEntity = new UserEntity(UserId.generate().get(), "foo", UserState.ENABLED);
-        userRepository.save(userEntity);
+        User user = new User(UserId.generate().get(), "foo", UserState.ENABLED);
+        userRepository.save(user);
 
-        UserEntity duplicateUserEntity = new UserEntity(UserId.generate().get(), "bar", UserState.ENABLED);
+        User duplicateUser = new User(UserId.generate().get(), "bar", UserState.ENABLED);
 
         // When...
-        userRepository.save(duplicateUserEntity);
+        userRepository.save(duplicateUser);
 
         // Then...
-        List<UserEntity> userEntities = userRepository.findAll();
+        List<User> userEntities = userRepository.findAll();
         assertThat(userEntities, hasSize(2));
     }
 
     @Test
     public void nonExistentUser_findByUserId_returnsNull() {
         // When...
-        UserEntity returnedUser = userRepository.findByUserId("foo");
+        User returnedUser = userRepository.findByUserId("foo");
 
         // Then...
         assertThat(returnedUser, is(nullValue()));

@@ -1,8 +1,8 @@
 package com.cyanelix.railwatch.service;
 
 import com.cyanelix.railwatch.domain.NotificationTarget;
-import com.cyanelix.railwatch.entity.HeartbeatEntity;
-import com.cyanelix.railwatch.entity.UserEntity;
+import com.cyanelix.railwatch.entity.Heartbeat;
+import com.cyanelix.railwatch.entity.User;
 import com.cyanelix.railwatch.repository.HeartbeatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -33,8 +33,8 @@ public class HeartbeatService {
     }
 
     public void recordHeartbeat(NotificationTarget notificationTarget) {
-        HeartbeatEntity heartbeatEntity = new HeartbeatEntity(notificationTarget, LocalDateTime.now(clock));
-        heartbeatRepository.save(heartbeatEntity);
+        Heartbeat heartbeat = new Heartbeat(notificationTarget, LocalDateTime.now(clock));
+        heartbeatRepository.save(heartbeat);
     }
 
     @Scheduled(fixedDelay = 86400000L)
@@ -47,15 +47,15 @@ public class HeartbeatService {
 
     private Stream<NotificationTarget> getNotificationTargetsFilteredByHeartbeat(Duration threshold) {
         return userService.getEnabledUsers()
-                .map(UserEntity::getNotificationTarget)
+                .map(User::getNotificationTarget)
                 .map(NotificationTarget::of)
                 .map(heartbeatRepository::findFirstByNotificationTargetEqualsOrderByDateTimeDesc)
                 .filter(heartbeatEntity -> heartbeatOlderThanThreshold(heartbeatEntity, threshold))
-                .map(HeartbeatEntity::getNotificationTarget)
+                .map(Heartbeat::getNotificationTarget)
                 .distinct();
     }
 
-    private boolean heartbeatOlderThanThreshold(HeartbeatEntity heartbeat, Duration duration) {
+    private boolean heartbeatOlderThanThreshold(Heartbeat heartbeat, Duration duration) {
         if (heartbeat == null) {
             return false;
         }

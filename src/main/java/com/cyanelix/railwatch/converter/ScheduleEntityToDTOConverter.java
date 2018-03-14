@@ -2,7 +2,7 @@ package com.cyanelix.railwatch.converter;
 
 import com.cyanelix.railwatch.domain.DayRange;
 import com.cyanelix.railwatch.dto.ScheduleDTO;
-import com.cyanelix.railwatch.entity.ScheduleEntity;
+import com.cyanelix.railwatch.entity.Schedule;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
@@ -13,20 +13,20 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Component
-public class ScheduleEntityToDTOConverter implements Converter<ScheduleEntity, ScheduleDTO> {
+public class ScheduleEntityToDTOConverter implements Converter<Schedule, ScheduleDTO> {
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
     @Override
-    public ScheduleDTO convert(ScheduleEntity scheduleEntity) {
+    public ScheduleDTO convert(Schedule schedule) {
         ScheduleDTO scheduleDTO = new ScheduleDTO();
 
-        scheduleDTO.setStartTime(scheduleEntity.getStartTime().format(TIME_FORMATTER));
-        scheduleDTO.setEndTime(scheduleEntity.getEndTime().format(TIME_FORMATTER));
-        scheduleDTO.setDays(convertToDayNames(scheduleEntity.getDayRange()));
-        scheduleDTO.setFromStation(scheduleEntity.getFromStation().getStationCode());
-        scheduleDTO.setToStation(scheduleEntity.getToStation().getStationCode());
-        scheduleDTO.setState(scheduleEntity.getState().name());
-        scheduleDTO.setUserId(scheduleEntity.getUser().getUserId());
+        scheduleDTO.setStartTime(schedule.getStartTime().format(TIME_FORMATTER));
+        scheduleDTO.setEndTime(schedule.getEndTime().format(TIME_FORMATTER));
+        scheduleDTO.setDays(convertToDayNames(schedule.getDayRange()));
+        scheduleDTO.setFromStation(schedule.getFromStation().getStationCode());
+        scheduleDTO.setToStation(schedule.getToStation().getStationCode());
+        scheduleDTO.setState(schedule.getState().name());
+        scheduleDTO.setUserId(schedule.getUser().getUserId());
 
         return scheduleDTO;
     }

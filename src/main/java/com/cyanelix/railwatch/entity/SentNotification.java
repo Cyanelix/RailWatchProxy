@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 
 @Document
-public class SentNotificationEntity {
+public class SentNotification {
     @Id
     private String id;
 
@@ -17,7 +17,7 @@ public class SentNotificationEntity {
     private String priority;
     private LocalDateTime sentDateTime;
 
-    public SentNotificationEntity(String to, String title, String body, String priority, LocalDateTime sentDateTime) {
+    public SentNotification(String to, String title, String body, String priority, LocalDateTime sentDateTime) {
         this.to = to;
         this.title = title;
         this.body = body;
@@ -25,8 +25,8 @@ public class SentNotificationEntity {
         this.sentDateTime = sentDateTime;
     }
 
-    public static SentNotificationEntity of(NotificationRequest notificationRequest, LocalDateTime sentDateTime) {
-        return new SentNotificationEntity(
+    public static SentNotification of(NotificationRequest notificationRequest, LocalDateTime sentDateTime) {
+        return new SentNotification(
                 notificationRequest.getTo(),
                 notificationRequest.getNotification().getTitle(),
                 notificationRequest.getNotification().getBody(),

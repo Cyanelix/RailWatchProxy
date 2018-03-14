@@ -1,9 +1,9 @@
 package com.cyanelix.railwatch.service;
 
 import com.cyanelix.railwatch.domain.*;
-import com.cyanelix.railwatch.entity.ScheduleEntity;
-import com.cyanelix.railwatch.entity.SentNotificationEntity;
-import com.cyanelix.railwatch.entity.UserEntity;
+import com.cyanelix.railwatch.entity.Schedule;
+import com.cyanelix.railwatch.entity.SentNotification;
+import com.cyanelix.railwatch.entity.User;
 import com.cyanelix.railwatch.firebase.client.FirebaseClient;
 import com.cyanelix.railwatch.firebase.client.entity.NotificationRequest;
 import com.cyanelix.railwatch.repository.SentNotificationRepository;
@@ -47,8 +47,8 @@ public class NotificationServiceTest {
         // Given...
         given(sentNotificationRepository.findBySentDateTimeAfter(any())).willReturn(Collections.emptyList());
 
-        UserEntity user = createUser();
-        ScheduleEntity schedule = new ScheduleEntity(
+        User user = createUser();
+        Schedule schedule = new Schedule(
                 LocalTime.of(9, 0), LocalTime.of(10, 0), DayRange.ALL,
                 Station.of("FOO"), Station.of("BAR"), ScheduleState.ENABLED, user);
         List<TrainTime> trainTimes = Collections.singletonList(
@@ -72,8 +72,8 @@ public class NotificationServiceTest {
     @Test
     public void doNotSendDuplicateNotification() {
         // Given...
-        UserEntity user = createUser();
-        ScheduleEntity schedule = new ScheduleEntity(
+        User user = createUser();
+        Schedule schedule = new Schedule(
                 null, null, DayRange.ALL, Station.of("FOO"), Station.of("BAR"),
                 ScheduleState.ENABLED, user);
         List<TrainTime> trainTimes = Collections.singletonList(
@@ -81,8 +81,8 @@ public class NotificationServiceTest {
                         .withExpectedDepartureTime(LocalTime.NOON)
                         .build());
 
-        SentNotificationEntity sentNotificationEntity = new SentNotificationEntity("notification-to", "RailWatch", "FOO -> BAR @ 12:00", "high", null);
-        given(sentNotificationRepository.findBySentDateTimeAfter(any())).willReturn(Collections.singletonList(sentNotificationEntity));
+        SentNotification sentNotification = new SentNotification("notification-to", "RailWatch", "FOO -> BAR @ 12:00", "high", null);
+        given(sentNotificationRepository.findBySentDateTimeAfter(any())).willReturn(Collections.singletonList(sentNotification));
 
         // When...
         notificationService.sendNotification(schedule, trainTimes);
@@ -94,8 +94,8 @@ public class NotificationServiceTest {
     @Test
     public void notificationSentPreviously_sendDifferentNotification() {
         // Given...
-        UserEntity user = createUser();
-        ScheduleEntity schedule = new ScheduleEntity(
+        User user = createUser();
+        Schedule schedule = new Schedule(
                 LocalTime.of(9, 0), LocalTime.of(10, 0), DayRange.ALL,
                 Station.of("FOO"), Station.of("BAR"), ScheduleState.ENABLED, user);
         List<TrainTime> trainTimes = Collections.singletonList(
@@ -103,8 +103,8 @@ public class NotificationServiceTest {
                         .withExpectedDepartureTime(LocalTime.NOON)
                         .build());
 
-        SentNotificationEntity sentNotificationEntity = new SentNotificationEntity("notification-to", "RailWatch", "Different message body", "high", null);
-        given(sentNotificationRepository.findBySentDateTimeAfter(any())).willReturn(Collections.singletonList(sentNotificationEntity));
+        SentNotification sentNotification = new SentNotification("notification-to", "RailWatch", "Different message body", "high", null);
+        given(sentNotificationRepository.findBySentDateTimeAfter(any())).willReturn(Collections.singletonList(sentNotification));
 
         // When...
         notificationService.sendNotification(schedule, trainTimes);
@@ -131,7 +131,7 @@ public class NotificationServiceTest {
         assertThat(notificationRequest.getNotification().getBody(), is("A message"));
     }
 
-    private UserEntity createUser() {
-        return new UserEntity(UserId.generate().get(), NotificationTarget.of("notification-to").getTargetAddress(), UserState.ENABLED);
+    private User createUser() {
+        return new User(UserId.generate().get(), NotificationTarget.of("notification-to").getTargetAddress(), UserState.ENABLED);
     }
 }

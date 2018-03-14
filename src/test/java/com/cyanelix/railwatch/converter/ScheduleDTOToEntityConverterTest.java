@@ -2,8 +2,8 @@ package com.cyanelix.railwatch.converter;
 
 import com.cyanelix.railwatch.domain.*;
 import com.cyanelix.railwatch.dto.ScheduleDTO;
-import com.cyanelix.railwatch.entity.ScheduleEntity;
-import com.cyanelix.railwatch.entity.UserEntity;
+import com.cyanelix.railwatch.entity.Schedule;
+import com.cyanelix.railwatch.entity.User;
 import com.cyanelix.railwatch.service.UserService;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,7 +33,7 @@ public class ScheduleDTOToEntityConverterTest {
         // Given...
         UserId userId = UserId.generate();
 
-        UserEntity user = createUser(userId, NotificationTarget.of("test"));
+        User user = createUser(userId, NotificationTarget.of("test"));
         given(userService.getUser(userId)).willReturn(user);
 
         ScheduleDTO scheduleDTO = new ScheduleDTO();
@@ -45,7 +45,7 @@ public class ScheduleDTOToEntityConverterTest {
         scheduleDTO.setDays(new String[] {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"});
 
         // When...
-        ScheduleEntity schedule = converter.convert(scheduleDTO);
+        Schedule schedule = converter.convert(scheduleDTO);
 
         // Then...
         assertThat(schedule.getStartTime(), is(LocalTime.NOON));
@@ -59,7 +59,7 @@ public class ScheduleDTOToEntityConverterTest {
 
     // TODO: More coverage of error cases (what happens if user ID does not exist in DB?
 
-    private UserEntity createUser(UserId userId, NotificationTarget notificationTarget) {
-        return new UserEntity(userId.get(), notificationTarget.getTargetAddress(), UserState.ENABLED);
+    private User createUser(UserId userId, NotificationTarget notificationTarget) {
+        return new User(userId.get(), notificationTarget.getTargetAddress(), UserState.ENABLED);
     }
 }

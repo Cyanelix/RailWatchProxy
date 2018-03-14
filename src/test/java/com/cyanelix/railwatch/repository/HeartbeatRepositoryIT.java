@@ -1,7 +1,7 @@
 package com.cyanelix.railwatch.repository;
 
 import com.cyanelix.railwatch.domain.NotificationTarget;
-import com.cyanelix.railwatch.entity.HeartbeatEntity;
+import com.cyanelix.railwatch.entity.Heartbeat;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,14 +30,14 @@ public class HeartbeatRepositoryIT {
     @Test
     public void saveHeartbeat_findAll_returnsSavedEntityWithId() {
         // Given...
-        HeartbeatEntity heartbeatEntity = new HeartbeatEntity(
+        Heartbeat heartbeat = new Heartbeat(
                 NotificationTarget.of("foo"), LocalDateTime.of(2017, Month.JANUARY, 1, 12, 0));
 
         // When...
-        heartbeatRepository.save(heartbeatEntity);
+        heartbeatRepository.save(heartbeat);
 
         // Then...
-        List<HeartbeatEntity> heartbeatEntities = heartbeatRepository.findAll();
+        List<Heartbeat> heartbeatEntities = heartbeatRepository.findAll();
         assertThat(heartbeatEntities, hasSize(1));
         assertThat(heartbeatEntities.get(0).getId(), not(isEmptyString()));
     }
@@ -45,37 +45,37 @@ public class HeartbeatRepositoryIT {
     @Test
     public void oneMatchingHeartbeatOneNot_findFirstByNotificationTargetEqualsOrderByDateTimeDesc_returnsMatchingHeartbeat() {
         // Given...
-        HeartbeatEntity matchingHeartbeat = new HeartbeatEntity(
+        Heartbeat matchingHeartbeat = new Heartbeat(
                 NotificationTarget.of("foo"), LocalDateTime.of(2017, Month.JANUARY, 1, 12, 0));
-        HeartbeatEntity nonMatchingHeartbeat = new HeartbeatEntity(
+        Heartbeat nonMatchingHeartbeat = new Heartbeat(
                 NotificationTarget.of("bar"), LocalDateTime.of(2017, Month.JANUARY, 1, 12, 0));
 
         // When...
         heartbeatRepository.save(Arrays.asList(matchingHeartbeat, nonMatchingHeartbeat));
 
         // Then...
-        HeartbeatEntity heartbeatEntity =
+        Heartbeat heartbeat =
                 heartbeatRepository.findFirstByNotificationTargetEqualsOrderByDateTimeDesc(NotificationTarget.of("foo"));
-        assertThat(heartbeatEntity, is(notNullValue()));
-        assertThat(heartbeatEntity.getNotificationTarget().getTargetAddress(), is("foo"));
+        assertThat(heartbeat, is(notNullValue()));
+        assertThat(heartbeat.getNotificationTarget().getTargetAddress(), is("foo"));
     }
 
     @Test
     public void twoMatchingHeartbeats_findFirstByNotificationTargetEqualsOrderByDateTimeDesc_returnsFirstHeartbeat() {
         // Given...
         NotificationTarget notificationTarget = NotificationTarget.of("foo");
-        HeartbeatEntity earlierHeartbeat = new HeartbeatEntity(
+        Heartbeat earlierHeartbeat = new Heartbeat(
                 notificationTarget, LocalDateTime.of(2017, Month.JANUARY, 1, 12, 0));
-        HeartbeatEntity laterHeartbeat = new HeartbeatEntity(
+        Heartbeat laterHeartbeat = new Heartbeat(
                 notificationTarget, LocalDateTime.of(2017, Month.JANUARY, 1, 12, 1));
 
         // When...
         heartbeatRepository.save(Arrays.asList(earlierHeartbeat, laterHeartbeat));
 
         // Then...
-        HeartbeatEntity heartbeatEntity =
+        Heartbeat heartbeat =
                 heartbeatRepository.findFirstByNotificationTargetEqualsOrderByDateTimeDesc(notificationTarget);
-        assertThat(heartbeatEntity, is(notNullValue()));
-        assertThat(heartbeatEntity.getDateTime().getMinute(), is(1));
+        assertThat(heartbeat, is(notNullValue()));
+        assertThat(heartbeat.getDateTime().getMinute(), is(1));
     }
 }

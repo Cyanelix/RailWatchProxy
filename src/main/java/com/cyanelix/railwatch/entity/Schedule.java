@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 @Document
-public final class ScheduleEntity {
+public final class Schedule {
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
     @Id
@@ -29,9 +29,9 @@ public final class ScheduleEntity {
     private ScheduleState state;
 
     @DBRef
-    private UserEntity user;
+    private User user;
 
-    public ScheduleEntity(LocalTime startTime, LocalTime endTime, DayRange dayRange, Station fromStation, Station toStation, ScheduleState state, UserEntity user) {
+    public Schedule(LocalTime startTime, LocalTime endTime, DayRange dayRange, Station fromStation, Station toStation, ScheduleState state, User user) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.dayRange = dayRange;
@@ -73,7 +73,7 @@ public final class ScheduleEntity {
         this.state = state;
     }
 
-    public UserEntity getUser() {
+    public User getUser() {
         return user;
     }
 
@@ -102,7 +102,7 @@ public final class ScheduleEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ScheduleEntity that = (ScheduleEntity) o;
+        Schedule that = (Schedule) o;
         return Objects.equals(startTime, that.startTime) &&
                 Objects.equals(endTime, that.endTime) &&
                 Objects.equals(dayRange, that.dayRange) &&
