@@ -1,6 +1,8 @@
 package com.cyanelix.railwatch.domain;
 
 import com.cyanelix.railwatch.entity.ScheduleEntity;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -14,7 +16,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ScheduleTest {
+public class ScheduleEntityTest {
     @Test
     public void timeWithinSchedule_isActive_returnsTrue() {
         // Given...
@@ -79,5 +81,13 @@ public class ScheduleTest {
 
         // Then...
         assertThat(string, is("ABC -> DEF; Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday @ 01:01 -> 02:02"));
+    }
+
+    @Test
+    public void equalsContract() {
+        EqualsVerifier.forClass(ScheduleEntity.class)
+                .suppress(Warning.NONFINAL_FIELDS)
+                .withIgnoredFields("id")
+                .verify();
     }
 }

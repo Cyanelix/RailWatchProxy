@@ -140,21 +140,20 @@ public class ScheduleServiceTest {
     }
 
     @Test
-    public void oneEnabledSchedule_getEnabledSchedules_enabledScheduleReturned() {
+    public void scheduleExistsForUser_getSchedulesForUser_success() {
         // Given...
         UserEntity user = createUser();
-        ScheduleEntity scheduleEntity =
-                new ScheduleEntity(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, Station.of("FOO"), Station.of("BAR"),
-                        ScheduleState.ENABLED, user);
-        given(scheduleRepository.findByStateIs(ScheduleState.ENABLED)).willReturn(Collections.singletonList(scheduleEntity));
+
+        ScheduleEntity scheduleEntity = new ScheduleEntity(LocalTime.MIN, LocalTime.MAX, DayRange.ALL,
+                FOO_TO_BAR.getFrom(), FOO_TO_BAR.getTo(), ScheduleState.ENABLED, user);
+
+        given(scheduleRepository.findByUser(user)).willReturn(Collections.singletonList(scheduleEntity));
 
         // When...
-        Stream<ScheduleEntity> scheduleStream = scheduleService.getEnabledSchedules();
+        List<ScheduleEntity> userSchedules = scheduleService.getSchedulesForUser(user);
 
         // Then...
-        List<ScheduleEntity> schedules = scheduleStream.collect(Collectors.toList());
-        assertThat(schedules.size(), is(1));
-        assertThat(schedules.get(0), is(scheduleEntity));
+        assertThat(userSchedules, hasSize(1));
     }
 
     private UserEntity createUser() {

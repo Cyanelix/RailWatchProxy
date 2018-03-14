@@ -2,6 +2,7 @@ package com.cyanelix.railwatch.service;
 
 import com.cyanelix.railwatch.domain.*;
 import com.cyanelix.railwatch.entity.ScheduleEntity;
+import com.cyanelix.railwatch.entity.UserEntity;
 import com.cyanelix.railwatch.repository.ScheduleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,21 +48,22 @@ public class ScheduleService {
                 .forEach(this::lookupAndNotifyTrainTimes);
     }
 
+    public Set<ScheduleEntity> getSchedules() {
+        return scheduleRepository.findAll().parallelStream()
+                .collect(Collectors.toSet());
+    }
+
+    public List<ScheduleEntity> getSchedulesForUser(UserEntity user) {
+        return scheduleRepository.findByUser(user);
+    }
+
     private void lookupAndNotifyTrainTimes(ScheduleEntity schedule) {
         List<TrainTime> trainTimes = trainTimesService.lookupTrainTimes(schedule.getFromStation(), schedule.getToStation());
         notificationService.sendNotification(schedule, trainTimes);
     }
 
     private Stream<ScheduleEntity> getActiveSchedules() {
-        return getEnabledSchedules().filter(schedule -> schedule.isActive(LocalDateTime.now(clock)));
-    }
-
-    public Set<ScheduleEntity> getSchedules() {
-        return scheduleRepository.findAll().parallelStream()
-                .collect(Collectors.toSet());
-    }
-
-    Stream<ScheduleEntity> getEnabledSchedules() {
-        return scheduleRepository.findByStateIs(ScheduleState.ENABLED).parallelStream();
+        return scheduleRepository.findByStateIs(ScheduleState.ENABLED).parallelStream()
+                .filter(schedule -> schedule.isActive(LocalDateTime.now(clock)));
     }
 }

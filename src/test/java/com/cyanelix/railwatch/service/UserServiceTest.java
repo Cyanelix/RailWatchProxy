@@ -17,6 +17,7 @@ import org.mockito.junit.MockitoRule;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -98,5 +99,16 @@ public class UserServiceTest {
         assertThat(userEntity.getUserState(), is(UserState.DISABLED));
     }
 
-    // TODO: More coverage of getUser method.
+    @Test
+    public void nonExistentUser_getUserById_returnsNull() {
+        // Given...
+        UserId userId = UserId.generate();
+        when(userRepository.findByUserId(userId.get())).thenReturn(null);
+
+        // When...
+        UserEntity returnedUser = userService.getUser(userId);
+
+        // Then...
+        assertThat(returnedUser, is(nullValue()));
+    }
 }

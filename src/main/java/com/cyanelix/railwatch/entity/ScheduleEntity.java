@@ -12,9 +12,10 @@ import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 @Document
-public class ScheduleEntity {
+public final class ScheduleEntity {
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
     @Id
@@ -95,5 +96,24 @@ public class ScheduleEntity {
         return Journey.of(fromStation, toStation).toString() + "; "
                 + dayRange.toString() + " @ "
                 + startTime.format(TIME_FORMATTER) + " -> " + endTime.format(TIME_FORMATTER);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ScheduleEntity that = (ScheduleEntity) o;
+        return Objects.equals(startTime, that.startTime) &&
+                Objects.equals(endTime, that.endTime) &&
+                Objects.equals(dayRange, that.dayRange) &&
+                Objects.equals(fromStation, that.fromStation) &&
+                Objects.equals(toStation, that.toStation) &&
+                state == that.state &&
+                Objects.equals(user, that.user);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(startTime, endTime, dayRange, fromStation, toStation, state, user);
     }
 }

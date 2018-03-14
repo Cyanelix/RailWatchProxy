@@ -6,8 +6,10 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Objects;
+
 @Document
-public class UserEntity {
+public final class UserEntity {
     @Id
     private String id;
 
@@ -46,5 +48,20 @@ public class UserEntity {
 
     public void setUserState(UserState userState) {
         this.userState = userState;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserEntity that = (UserEntity) o;
+        return Objects.equals(userId, that.userId) &&
+                Objects.equals(notificationTarget, that.notificationTarget) &&
+                userState == that.userState;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId, notificationTarget, userState);
     }
 }
