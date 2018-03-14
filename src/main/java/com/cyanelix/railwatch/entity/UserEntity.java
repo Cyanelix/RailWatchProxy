@@ -56,8 +56,4 @@ public final class UserEntity {
     public int hashCode() {
         return Objects.hash(userId, notificationTarget, userState);
     }
-
-    public String getId() {
-        return id;
-    }
 }
