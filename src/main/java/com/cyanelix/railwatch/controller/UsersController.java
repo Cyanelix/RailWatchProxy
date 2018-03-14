@@ -2,7 +2,6 @@ package com.cyanelix.railwatch.controller;
 
 import com.cyanelix.railwatch.controller.exception.ResourceNotFoundException;
 import com.cyanelix.railwatch.domain.NotificationTarget;
-import com.cyanelix.railwatch.domain.User;
 import com.cyanelix.railwatch.domain.UserId;
 import com.cyanelix.railwatch.dto.FullUserDetailsDTO;
 import com.cyanelix.railwatch.dto.ScheduleDTO;
@@ -58,9 +57,9 @@ public class UsersController {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Void> create(@RequestBody @Valid UserDTO userDTO, UriComponentsBuilder uriComponentsBuilder) {
-        User user = userService.createUser(NotificationTarget.of(userDTO.getNotificationTarget()));
+        UserEntity user = userService.createUser(NotificationTarget.of(userDTO.getNotificationTarget()));
 
-        UriComponents uriComponents = uriComponentsBuilder.path("/users/{id}").buildAndExpand(user.getUserId().get());
+        UriComponents uriComponents = uriComponentsBuilder.path("/users/{id}").buildAndExpand(user.getUserId());
 
         return ResponseEntity.created(uriComponents.toUri()).build();
     }

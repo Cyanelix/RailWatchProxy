@@ -59,7 +59,7 @@ public class UserRepositoryIT {
     }
 
     @Test
-    public void saveUsersWithUniqueUserIdsAndNotificationTargets_throwsException() {
+    public void saveUsersWithUniqueUserIdsAndNotificationTargets_bothSavedSuccessfully() {
         // Given...
         UserEntity userEntity = new UserEntity(UserId.generate().get(), "foo", UserState.ENABLED);
         userRepository.save(userEntity);

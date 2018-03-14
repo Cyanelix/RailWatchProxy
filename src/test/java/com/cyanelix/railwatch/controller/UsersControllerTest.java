@@ -81,7 +81,7 @@ public class UsersControllerTest {
         NotificationTarget notificationTarget = NotificationTarget.of("notification-target");
         String userUuid = UUID.randomUUID().toString();
 
-        given(userService.createUser(notificationTarget)).willReturn(new User(UserId.of(userUuid), notificationTarget, UserState.ENABLED));
+        given(userService.createUser(notificationTarget)).willReturn(new UserEntity(userUuid, notificationTarget.getTargetAddress(), UserState.ENABLED));
 
         mockMvc.perform(
                 post("/users")

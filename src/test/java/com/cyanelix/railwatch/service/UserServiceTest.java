@@ -1,7 +1,6 @@
 package com.cyanelix.railwatch.service;
 
 import com.cyanelix.railwatch.domain.NotificationTarget;
-import com.cyanelix.railwatch.domain.User;
 import com.cyanelix.railwatch.domain.UserId;
 import com.cyanelix.railwatch.domain.UserState;
 import com.cyanelix.railwatch.entity.UserEntity;
@@ -41,19 +40,19 @@ public class UserServiceTest {
         NotificationTarget notificationTarget = NotificationTarget.of("foo");
 
         // When...
-        User user = userService.createUser(notificationTarget);
+        UserEntity user = userService.createUser(notificationTarget);
 
         // Then...
         assertThat(user.getUserId(), is(notNullValue()));
-        assertThat(user.getNotificationTarget(), is(notificationTarget));
+        assertThat(user.getNotificationTarget(), is(notificationTarget.getTargetAddress()));
         assertThat(user.getUserState(), is(UserState.ENABLED));
 
         ArgumentCaptor<UserEntity> userEntityCaptor = ArgumentCaptor.forClass(UserEntity.class);
         verify(userRepository).save(userEntityCaptor.capture());
 
         UserEntity userEntity = userEntityCaptor.getValue();
-        assertThat(userEntity.getUserId(), is(user.getUserId().get()));
-        assertThat(userEntity.getNotificationTarget(), is(user.getNotificationTarget().getTargetAddress()));
+        assertThat(userEntity.getUserId(), is(user.getUserId()));
+        assertThat(userEntity.getNotificationTarget(), is(user.getNotificationTarget()));
         assertThat(userEntity.getUserState(), is(user.getUserState()));
     }
 

@@ -1,6 +1,5 @@
 package com.cyanelix.railwatch.entity;
 
-import com.cyanelix.railwatch.domain.User;
 import com.cyanelix.railwatch.domain.UserState;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -25,13 +24,6 @@ public final class UserEntity {
         this.userId = userId;
         this.notificationTarget = notificationTarget;
         this.userState = userState;
-    }
-
-    public static UserEntity of(User user) {
-        return new UserEntity(
-                user.getUserId().get(),
-                user.getNotificationTarget().getTargetAddress(),
-                user.getUserState());
     }
 
     public String getUserId() {
@@ -63,5 +55,9 @@ public final class UserEntity {
     @Override
     public int hashCode() {
         return Objects.hash(userId, notificationTarget, userState);
+    }
+
+    public String getId() {
+        return id;
     }
 }

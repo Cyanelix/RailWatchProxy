@@ -1,7 +1,6 @@
 package com.cyanelix.railwatch.service;
 
 import com.cyanelix.railwatch.domain.NotificationTarget;
-import com.cyanelix.railwatch.domain.User;
 import com.cyanelix.railwatch.domain.UserId;
 import com.cyanelix.railwatch.domain.UserState;
 import com.cyanelix.railwatch.entity.UserEntity;
@@ -21,13 +20,13 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User createUser(NotificationTarget notificationTarget) {
+    public UserEntity createUser(NotificationTarget notificationTarget) {
         Objects.requireNonNull(notificationTarget, "A notification target is required for a User");
 
-        User user = new User(UserId.generate(), notificationTarget, UserState.ENABLED);
-        userRepository.save(UserEntity.of(user));
+        UserEntity userEntity = new UserEntity(UserId.generate().get(), notificationTarget.getTargetAddress(), UserState.ENABLED);
+        userRepository.save(userEntity);
 
-        return user;
+        return userEntity;
     }
 
     public UserEntity getUser(UserId userId) {
