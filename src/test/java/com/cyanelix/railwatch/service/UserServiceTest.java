@@ -68,15 +68,15 @@ public class UserServiceTest {
     public void existingUser_getById_userReturned() {
         // Given...
         UserId userId = UserId.generate();
-        User userEntity = new User(userId.get(), "foo", UserState.ENABLED);
+        User userEntity = new User(userId, "foo", UserState.ENABLED);
 
-        when(userRepository.findByUserId(userId.get())).thenReturn(userEntity);
+        when(userRepository.findByUserId(userId)).thenReturn(userEntity);
 
         // When...
         User user = userService.getUser(userId);
 
         // Then...
-        assertThat(user.getUserId(), is(userId.get()));
+        assertThat(user.getUserId(), is(userId));
         assertThat(user.getNotificationTarget(), is("foo"));
         assertThat(user.getUserState(), is(UserState.ENABLED));
     }
@@ -85,7 +85,7 @@ public class UserServiceTest {
     public void disableUserByNotificationTarget_userStatusUpdated() {
         // Given...
         NotificationTarget notificationTarget = NotificationTarget.of("target");
-        User user = new User(UserId.generate().get(), notificationTarget.getTargetAddress(), UserState.ENABLED);
+        User user = new User(UserId.generate(), notificationTarget.getTargetAddress(), UserState.ENABLED);
 
         when(userRepository.findByNotificationTarget(notificationTarget.getTargetAddress()))
                 .thenReturn(user);
@@ -102,7 +102,7 @@ public class UserServiceTest {
     public void nonExistentUser_getUserById_returnsNull() {
         // Given...
         UserId userId = UserId.generate();
-        when(userRepository.findByUserId(userId.get())).thenReturn(null);
+        when(userRepository.findByUserId(userId)).thenReturn(null);
 
         // When...
         User returnedUser = userService.getUser(userId);

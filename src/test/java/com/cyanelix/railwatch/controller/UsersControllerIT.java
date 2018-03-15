@@ -59,6 +59,6 @@ public class UsersControllerIT {
 
         List<User> users = userRepository.findAll();
         assertThat(users, hasSize(1));
-        assertThat(users.get(0).getUserId(), is(userId));
+        assertThat(users.get(0).getUserId().get(), is(userId));
     }
 }

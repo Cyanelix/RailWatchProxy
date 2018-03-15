@@ -1,6 +1,6 @@
 package com.cyanelix.railwatch.controller;
 
-import com.cyanelix.railwatch.converter.ScheduleEntityToDTOConverter;
+import com.cyanelix.railwatch.converter.ScheduleToDTOConverter;
 import com.cyanelix.railwatch.converter.UserEntityToDTOConverter;
 import com.cyanelix.railwatch.domain.*;
 import com.cyanelix.railwatch.entity.Schedule;
@@ -21,14 +21,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.Collections;
-import java.util.UUID;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UsersController.class)
 @RunWith(SpringRunner.class)
@@ -48,7 +45,7 @@ public class UsersControllerTest {
     @Before
     public void setup() {
         conversionService.addConverter(new UserEntityToDTOConverter());
-        conversionService.addConverter(new ScheduleEntityToDTOConverter());
+        conversionService.addConverter(new ScheduleToDTOConverter());
     }
 
     @Test
@@ -79,16 +76,16 @@ public class UsersControllerTest {
     @Test
     public void createUser_returnsCreatedWithLocation() throws Exception {
         NotificationTarget notificationTarget = NotificationTarget.of("notification-target");
-        String userUuid = UUID.randomUUID().toString();
+        UserId userId = UserId.generate();
 
-        given(userService.createUser(notificationTarget)).willReturn(new User(userUuid, notificationTarget.getTargetAddress(), UserState.ENABLED));
+        given(userService.createUser(notificationTarget)).willReturn(new User(userId, notificationTarget.getTargetAddress(), UserState.ENABLED));
 
         mockMvc.perform(
                 post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"notificationTarget\":\"" + notificationTarget.getTargetAddress() + "\"}"))
                 .andExpect(status().isCreated())
-                .andExpect(header().string("Location", "http://localhost/users/" + userUuid));
+                .andExpect(header().string("Location", "http://localhost/users/" + userId.get()));
     }
 
     @Test
@@ -96,7 +93,7 @@ public class UsersControllerTest {
         UserId userId = UserId.generate();
 
         given(userService.getUser(userId))
-                .willReturn(new User(userId.get(), "notification-target", UserState.ENABLED));
+                .willReturn(new User(userId, "notification-target", UserState.ENABLED));
 
         mockMvc.perform(
                 get("/users/" + userId.get()))
@@ -108,7 +105,7 @@ public class UsersControllerTest {
     public void getFullDetailsForUserWithSchedules_success() throws Exception {
         UserId userId = UserId.generate();
 
-        User user = new User(userId.get(), "notification-target", UserState.ENABLED);
+        User user = new User(userId, "notification-target", UserState.ENABLED);
 
         given(userService.getUser(userId)).willReturn(user);
         given(scheduleService.getSchedulesForUser(user))

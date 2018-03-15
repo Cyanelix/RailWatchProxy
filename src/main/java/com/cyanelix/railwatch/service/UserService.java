@@ -23,14 +23,14 @@ public class UserService {
     public User createUser(NotificationTarget notificationTarget) {
         Objects.requireNonNull(notificationTarget, "A notification target is required for a User");
 
-        User user = new User(UserId.generate().get(), notificationTarget.getTargetAddress(), UserState.ENABLED);
+        User user = new User(UserId.generate(), notificationTarget.getTargetAddress(), UserState.ENABLED);
         userRepository.save(user);
 
         return user;
     }
 
     public User getUser(UserId userId) {
-        return userRepository.findByUserId(userId.get());
+        return userRepository.findByUserId(userId);
     }
 
     public void disableUserByNotificationTarget(NotificationTarget notificationTarget) {

@@ -10,7 +10,7 @@ public class UserEntityToDTOConverter implements Converter<User, UserDTO> {
     @Override
     public UserDTO convert(User user) {
         UserDTO userDTO = new UserDTO();
-        userDTO.setUserId(user.getUserId());
+        userDTO.setUserId(user.getUserId().get());
         userDTO.setNotificationTarget(user.getNotificationTarget());
         return userDTO;
     }

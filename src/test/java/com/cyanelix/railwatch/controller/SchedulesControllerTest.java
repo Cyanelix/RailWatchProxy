@@ -1,7 +1,7 @@
 package com.cyanelix.railwatch.controller;
 
-import com.cyanelix.railwatch.converter.ScheduleDTOToEntityConverter;
-import com.cyanelix.railwatch.converter.ScheduleEntityToDTOConverter;
+import com.cyanelix.railwatch.converter.ScheduleDTOToScheduleConverter;
+import com.cyanelix.railwatch.converter.ScheduleToDTOConverter;
 import com.cyanelix.railwatch.domain.*;
 import com.cyanelix.railwatch.entity.Schedule;
 import com.cyanelix.railwatch.entity.User;
@@ -46,8 +46,8 @@ public class SchedulesControllerTest {
 
     @Before
     public void setup() {
-        conversionService.addConverter(new ScheduleDTOToEntityConverter(mock(UserService.class)));
-        conversionService.addConverter(new ScheduleEntityToDTOConverter());
+        conversionService.addConverter(new ScheduleDTOToScheduleConverter(mock(UserService.class)));
+        conversionService.addConverter(new ScheduleToDTOConverter());
     }
 
     @Test
@@ -92,7 +92,7 @@ public class SchedulesControllerTest {
                         DayRange.ALL,
                         Station.of("FOO"), Station.of("BAR"),
                         ScheduleState.ENABLED,
-                        new User(userId.get(), "foo", UserState.ENABLED))));
+                        new User(userId, "foo", UserState.ENABLED))));
 
         mockMvc.perform(get("/schedules"))
                 .andExpect(status().isOk())

@@ -15,14 +15,14 @@ public class ScheduleToDTOConverterTest {
     @Test
     public void scheduleWithUser_convert_dtoPopulatedCorrectly() {
         // Given...
-        User user = new User(UserId.generate().get(), NotificationTarget.of("foo").getTargetAddress(), UserState.ENABLED);
+        User user = new User(UserId.generate(), NotificationTarget.of("foo").getTargetAddress(), UserState.ENABLED);
 
         Schedule schedule = new Schedule(
                 LocalTime.NOON, LocalTime.MIDNIGHT, DayRange.ALL, Station.of("FOO"), Station.of("BAR"),
                 ScheduleState.ENABLED, user);
 
         // When...
-        ScheduleDTO dto = new ScheduleEntityToDTOConverter().convert(schedule);
+        ScheduleDTO dto = new ScheduleToDTOConverter().convert(schedule);
 
         // Then...
         assertThat(dto.getStartTime(), is("12:00"));
@@ -31,7 +31,7 @@ public class ScheduleToDTOConverterTest {
         assertThat(dto.getToStation(), is("BAR"));
         assertThat(dto.getDays(), is(new String[]{"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"}));
         assertThat(dto.getState(), is("ENABLED"));
-        assertThat(dto.getUserId(), is(user.getUserId()));
+        assertThat(dto.getUserId(), is(user.getUserId().get()));
     }
 
 }

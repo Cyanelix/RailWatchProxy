@@ -18,7 +18,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 
-public class ScheduleDTOToEntityConverterTest {
+public class ScheduleDTOToScheduleConverterTest {
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
@@ -26,7 +26,7 @@ public class ScheduleDTOToEntityConverterTest {
     private UserService userService;
 
     @InjectMocks
-    private ScheduleDTOToEntityConverter converter;
+    private ScheduleDTOToScheduleConverter converter;
 
     @Test
     public void dto_toSchedule() {
@@ -53,13 +53,11 @@ public class ScheduleDTOToEntityConverterTest {
         assertThat(schedule.getFromStation(), is(Station.of("FOO")));
         assertThat(schedule.getToStation(), is(Station.of("BAR")));
         assertThat(schedule.getDayRange(), is(DayRange.ALL));
-        assertThat(schedule.getUser().getUserId(), is(userId.get()));
+        assertThat(schedule.getUser().getUserId(), is(userId));
         assertThat(schedule.getUser().getNotificationTarget(), is("test"));
     }
 
-    // TODO: More coverage of error cases (what happens if user ID does not exist in DB?
-
     private User createUser(UserId userId, NotificationTarget notificationTarget) {
-        return new User(userId.get(), notificationTarget.getTargetAddress(), UserState.ENABLED);
+        return new User(userId, notificationTarget.getTargetAddress(), UserState.ENABLED);
     }
 }

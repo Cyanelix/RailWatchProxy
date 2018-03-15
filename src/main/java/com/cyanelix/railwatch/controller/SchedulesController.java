@@ -30,7 +30,7 @@ public class SchedulesController {
     @RequestMapping(method = RequestMethod.GET)
     public List<ScheduleDTO> get() {
         return scheduleService.getSchedules().stream()
-                .map(scheduleEntity -> conversionService.convert(scheduleEntity, ScheduleDTO.class))
+                .map(schedule -> conversionService.convert(schedule, ScheduleDTO.class))
                 .collect(Collectors.toList());
     }
 

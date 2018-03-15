@@ -13,13 +13,13 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 @Component
-public class ScheduleDTOToEntityConverter implements Converter<ScheduleDTO, Schedule> {
+public class ScheduleDTOToScheduleConverter implements Converter<ScheduleDTO, Schedule> {
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
     private final UserService userService;
 
     @Autowired
-    public ScheduleDTOToEntityConverter(UserService userService) {
+    public ScheduleDTOToScheduleConverter(UserService userService) {
         this.userService = userService;
     }
 

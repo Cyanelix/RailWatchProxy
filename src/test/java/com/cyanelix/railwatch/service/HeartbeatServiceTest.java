@@ -33,9 +33,6 @@ public class HeartbeatServiceTest {
     private HeartbeatRepository heartbeatRepository;
 
     @Mock
-    private ScheduleService scheduleService;
-
-    @Mock
     private UserService userService;
 
     @Mock
@@ -128,6 +125,6 @@ public class HeartbeatServiceTest {
     }
 
     private User createUser(NotificationTarget notificationTarget) {
-        return new User(UserId.generate().get(), notificationTarget.getTargetAddress(), UserState.ENABLED);
+        return new User(UserId.generate(), notificationTarget.getTargetAddress(), UserState.ENABLED);
     }
 }

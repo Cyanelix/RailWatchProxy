@@ -132,6 +132,6 @@ public class NotificationServiceTest {
     }
 
     private User createUser() {
-        return new User(UserId.generate().get(), NotificationTarget.of("notification-to").getTargetAddress(), UserState.ENABLED);
+        return new User(UserId.generate(), NotificationTarget.of("notification-to").getTargetAddress(), UserState.ENABLED);
     }
 }

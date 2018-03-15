@@ -63,14 +63,14 @@ public class HeartbeatIT {
     @Test
     public void enabledAndDisabledSchedulesWithNotificationTargetsThatDoAndDoNotExpire() {
         // Given...
-        User expiringDisabled = new User(UserId.generate().get(), "expiring-disabled", UserState.DISABLED);
-        User expiringEnabled = new User(UserId.generate().get(), "expiring-enabled", UserState.ENABLED);
-        User notExpiringDisabled = new User(UserId.generate().get(), "not-expiring-disabled", UserState.DISABLED);
-        User notExpiringEnabled = new User(UserId.generate().get(), "not-expiring-enabled", UserState.ENABLED);
-        User noHeartbeatDisabled = new User(UserId.generate().get(), "no-heartbeat-disabled", UserState.DISABLED);
-        User noHeartbeatEnabled = new User(UserId.generate().get(), "no-heartbeat-enabled", UserState.ENABLED);
-        User warningDisabled = new User(UserId.generate().get(), "warning-disabled", UserState.DISABLED);
-        User warningEnabled = new User(UserId.generate().get(), "warning-enabled", UserState.ENABLED);
+        User expiringDisabled = new User(UserId.generate(), "expiring-disabled", UserState.DISABLED);
+        User expiringEnabled = new User(UserId.generate(), "expiring-enabled", UserState.ENABLED);
+        User notExpiringDisabled = new User(UserId.generate(), "not-expiring-disabled", UserState.DISABLED);
+        User notExpiringEnabled = new User(UserId.generate(), "not-expiring-enabled", UserState.ENABLED);
+        User noHeartbeatDisabled = new User(UserId.generate(), "no-heartbeat-disabled", UserState.DISABLED);
+        User noHeartbeatEnabled = new User(UserId.generate(), "no-heartbeat-enabled", UserState.ENABLED);
+        User warningDisabled = new User(UserId.generate(), "warning-disabled", UserState.DISABLED);
+        User warningEnabled = new User(UserId.generate(), "warning-enabled", UserState.ENABLED);
         userRepository.save(Arrays.asList(expiringDisabled, expiringEnabled, notExpiringDisabled, notExpiringEnabled, noHeartbeatDisabled, noHeartbeatEnabled, warningDisabled, warningEnabled));
 
         Heartbeat expiringDisabledHeartbeat = new Heartbeat(NotificationTarget.of("expiring-disabled"), LocalDateTime.of(2016, 12, 22, 11, 59));

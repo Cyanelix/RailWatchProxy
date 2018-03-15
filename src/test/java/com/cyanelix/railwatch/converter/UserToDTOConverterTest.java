@@ -17,7 +17,7 @@ public class UserToDTOConverterTest {
         String notificationTarget = "notification-target";
         UserState userState = UserState.ENABLED;
 
-        User user = new User(userId.get(), notificationTarget, userState);
+        User user = new User(userId, notificationTarget, userState);
 
         // When...
         UserDTO userDTO = new UserEntityToDTOConverter().convert(user);

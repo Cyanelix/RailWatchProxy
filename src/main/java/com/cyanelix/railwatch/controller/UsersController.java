@@ -59,7 +59,7 @@ public class UsersController {
     public ResponseEntity<Void> create(@RequestBody @Valid UserDTO userDTO, UriComponentsBuilder uriComponentsBuilder) {
         User user = userService.createUser(NotificationTarget.of(userDTO.getNotificationTarget()));
 
-        UriComponents uriComponents = uriComponentsBuilder.path("/users/{id}").buildAndExpand(user.getUserId());
+        UriComponents uriComponents = uriComponentsBuilder.path("/users/{id}").buildAndExpand(user.getUserId().get());
 
         return ResponseEntity.created(uriComponents.toUri()).build();
     }

@@ -1,5 +1,6 @@
 package com.cyanelix.railwatch.entity;
 
+import com.cyanelix.railwatch.domain.UserId;
 import com.cyanelix.railwatch.domain.UserState;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -13,20 +14,20 @@ public final class User {
     private String id;
 
     @Indexed(unique = true)
-    private String userId;
+    private UserId userId;
 
     @Indexed(unique = true)
     private String notificationTarget;
 
     private UserState userState;
 
-    public User(String userId, String notificationTarget, UserState userState) {
+    public User(UserId userId, String notificationTarget, UserState userState) {
         this.userId = userId;
         this.notificationTarget = notificationTarget;
         this.userState = userState;
     }
 
-    public String getUserId() {
+    public UserId getUserId() {
         return userId;
     }
 

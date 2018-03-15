@@ -41,7 +41,7 @@ public class ScheduleRepositoryIT {
     @Test
     public void enabledAndDisabledSchedule_getByStateEnabled_returnsEnabled() {
         // Given...
-        User user = new User(UserId.generate().get(), "notification-target", UserState.ENABLED);
+        User user = new User(UserId.generate(), "notification-target", UserState.ENABLED);
         userRepository.save(user);
 
         Schedule enabledSchedule = new Schedule(LocalTime.NOON, LocalTime.MIDNIGHT, DayRange.ALL,
@@ -61,7 +61,7 @@ public class ScheduleRepositoryIT {
     @Test
     public void enabledAndDisabledSchedule_getByStateDisabled_returnsDisabled() {
         // Given...
-        User user = new User(UserId.generate().get(), "notification-target", UserState.ENABLED);
+        User user = new User(UserId.generate(), "notification-target", UserState.ENABLED);
         userRepository.save(user);
 
         Schedule enabledSchedule = new Schedule(LocalTime.NOON, LocalTime.MIDNIGHT, DayRange.ALL,
@@ -81,8 +81,8 @@ public class ScheduleRepositoryIT {
     @Test
     public void schedulesWithDifferentUsers_getByUser_returnsCorrectSchedule() {
         // Given...
-        User user1 = new User(UserId.generate().get(), "notification-target", UserState.ENABLED);
-        User user2 = new User(UserId.generate().get(), "notification-target-2", UserState.ENABLED);
+        User user1 = new User(UserId.generate(), "notification-target", UserState.ENABLED);
+        User user2 = new User(UserId.generate(), "notification-target-2", UserState.ENABLED);
         userRepository.save(Arrays.asList(user1, user2));
 
         Schedule schedule1 = new Schedule(LocalTime.NOON, LocalTime.MIDNIGHT, DayRange.ALL,
@@ -102,7 +102,7 @@ public class ScheduleRepositoryIT {
     @Test
     public void singleSchedule_getByNonExistentUser_throwsException() {
         // Given...
-        User user = new User(UserId.generate().get(), "notification-target", UserState.ENABLED);
+        User user = new User(UserId.generate(), "notification-target", UserState.ENABLED);
         userRepository.save(user);
 
         Schedule schedule = new Schedule(LocalTime.NOON, LocalTime.MIDNIGHT, DayRange.ALL,
@@ -110,7 +110,7 @@ public class ScheduleRepositoryIT {
 
         scheduleRepository.save(schedule);
 
-        User userToSearchBy = new User(UserId.generate().get(), "different-target", UserState.ENABLED);
+        User userToSearchBy = new User(UserId.generate(), "different-target", UserState.ENABLED);
 
         expectedException.expect(MappingException.class);
         expectedException.expectMessage("Cannot create a reference to an object with a NULL id.");

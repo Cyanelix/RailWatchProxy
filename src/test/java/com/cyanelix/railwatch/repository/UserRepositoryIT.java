@@ -15,6 +15,7 @@ import java.util.List;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
@@ -30,15 +31,30 @@ public class UserRepositoryIT {
         userRepository.deleteAll();
     }
 
+    @Test
+    public void saveUser_findByUserId_retrieved() {
+        // Given...
+        UserId userId = UserId.generate();
+        User user = new User(userId, "foo", UserState.ENABLED);
+        userRepository.save(user);
+
+        // When...
+        User retrieved = userRepository.findByUserId(userId);
+
+        // Then...
+        assertThat(retrieved, is(notNullValue()));
+        assertThat(retrieved.getNotificationTarget(), is("foo"));
+    }
+
     @Test(expected = DuplicateKeyException.class)
     public void saveUsersWithDifferentUserIdsDuplicateNotificationTargets_throwsException() {
         // Given...
         String notificationTarget = "foo";
 
-        User user = new User(UserId.generate().get(), notificationTarget, UserState.ENABLED);
+        User user = new User(UserId.generate(), notificationTarget, UserState.ENABLED);
         userRepository.save(user);
 
-        User duplicateUser = new User(UserId.generate().get(), notificationTarget, UserState.DISABLED);
+        User duplicateUser = new User(UserId.generate(), notificationTarget, UserState.DISABLED);
 
         // When...
         userRepository.save(duplicateUser);
@@ -49,10 +65,10 @@ public class UserRepositoryIT {
         // Given...
         UserId userId = UserId.generate();
 
-        User user = new User(userId.get(), "foo", UserState.ENABLED);
+        User user = new User(userId, "foo", UserState.ENABLED);
         userRepository.save(user);
 
-        User duplicateUser = new User(userId.get(), "bar", UserState.DISABLED);
+        User duplicateUser = new User(userId, "bar", UserState.DISABLED);
 
         // When...
         userRepository.save(duplicateUser);
@@ -61,10 +77,10 @@ public class UserRepositoryIT {
     @Test
     public void saveUsersWithUniqueUserIdsAndNotificationTargets_bothSavedSuccessfully() {
         // Given...
-        User user = new User(UserId.generate().get(), "foo", UserState.ENABLED);
+        User user = new User(UserId.generate(), "foo", UserState.ENABLED);
         userRepository.save(user);
 
-        User duplicateUser = new User(UserId.generate().get(), "bar", UserState.ENABLED);
+        User duplicateUser = new User(UserId.generate(), "bar", UserState.ENABLED);
 
         // When...
         userRepository.save(duplicateUser);
@@ -77,7 +93,7 @@ public class UserRepositoryIT {
     @Test
     public void nonExistentUser_findByUserId_returnsNull() {
         // When...
-        User returnedUser = userRepository.findByUserId("foo");
+        User returnedUser = userRepository.findByUserId(UserId.generate());
 
         // Then...
         assertThat(returnedUser, is(nullValue()));

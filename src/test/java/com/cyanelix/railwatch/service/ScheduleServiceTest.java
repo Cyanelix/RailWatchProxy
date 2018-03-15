@@ -155,6 +155,6 @@ public class ScheduleServiceTest {
     }
 
     private User createUser() {
-        return new User(UserId.generate().get(), NotificationTarget.of("notification-target").getTargetAddress(), UserState.ENABLED);
+        return new User(UserId.generate(), NotificationTarget.of("notification-target").getTargetAddress(), UserState.ENABLED);
     }
 }

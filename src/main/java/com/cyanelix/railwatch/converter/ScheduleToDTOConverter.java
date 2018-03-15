@@ -13,7 +13,7 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Component
-public class ScheduleEntityToDTOConverter implements Converter<Schedule, ScheduleDTO> {
+public class ScheduleToDTOConverter implements Converter<Schedule, ScheduleDTO> {
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
     @Override
@@ -26,7 +26,7 @@ public class ScheduleEntityToDTOConverter implements Converter<Schedule, Schedul
         scheduleDTO.setFromStation(schedule.getFromStation().getStationCode());
         scheduleDTO.setToStation(schedule.getToStation().getStationCode());
         scheduleDTO.setState(schedule.getState().name());
-        scheduleDTO.setUserId(schedule.getUser().getUserId());
+        scheduleDTO.setUserId(schedule.getUser().getUserId().get());
 
         return scheduleDTO;
     }
