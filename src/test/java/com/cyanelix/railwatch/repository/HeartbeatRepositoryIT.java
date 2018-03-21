@@ -37,9 +37,9 @@ public class HeartbeatRepositoryIT {
         heartbeatRepository.save(heartbeat);
 
         // Then...
-        List<Heartbeat> heartbeatEntities = heartbeatRepository.findAll();
-        assertThat(heartbeatEntities, hasSize(1));
-        assertThat(heartbeatEntities.get(0).getId(), not(isEmptyString()));
+        List<Heartbeat> heartbeats = heartbeatRepository.findAll();
+        assertThat(heartbeats, hasSize(1));
+        assertThat(heartbeats.get(0).getId(), not(isEmptyString()));
     }
 
     @Test

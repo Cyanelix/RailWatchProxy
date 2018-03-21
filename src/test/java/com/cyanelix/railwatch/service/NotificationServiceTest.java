@@ -131,6 +131,52 @@ public class NotificationServiceTest {
         assertThat(notificationRequest.getNotification().getBody(), is("A message"));
     }
 
+    @Test
+    public void sendNotificationSuccess_savesSentNotification() {
+        // Given...
+        given(sentNotificationRepository.findBySentDateTimeAfter(any())).willReturn(Collections.emptyList());
+
+        User user = createUser();
+        Schedule schedule = new Schedule(
+                LocalTime.of(9, 0), LocalTime.of(10, 0), DayRange.ALL,
+                Station.of("FOO"), Station.of("BAR"), ScheduleState.ENABLED, user);
+        List<TrainTime> trainTimes = Collections.singletonList(
+                new TrainTime.Builder(LocalTime.NOON)
+                        .withExpectedDepartureTime(LocalTime.NOON)
+                        .build());
+
+        given(firebaseClient.sendNotification(any())).willReturn(true);
+
+        // When...
+        notificationService.sendNotification(schedule, trainTimes);
+
+        // Then...
+        verify(sentNotificationRepository).save(any(SentNotification.class));
+    }
+
+    @Test
+    public void sendNotificationFails_doesNotSaveSentNotification() {
+        // Given...
+        given(sentNotificationRepository.findBySentDateTimeAfter(any())).willReturn(Collections.emptyList());
+
+        User user = createUser();
+        Schedule schedule = new Schedule(
+                LocalTime.of(9, 0), LocalTime.of(10, 0), DayRange.ALL,
+                Station.of("FOO"), Station.of("BAR"), ScheduleState.ENABLED, user);
+        List<TrainTime> trainTimes = Collections.singletonList(
+                new TrainTime.Builder(LocalTime.NOON)
+                        .withExpectedDepartureTime(LocalTime.NOON)
+                        .build());
+
+        given(firebaseClient.sendNotification(any())).willReturn(false);
+
+        // When...
+        notificationService.sendNotification(schedule, trainTimes);
+
+        // Then...
+        verify(sentNotificationRepository, never()).save(any(SentNotification.class));
+    }
+
     private User createUser() {
         return new User(UserId.generate(), NotificationTarget.of("notification-to").getTargetAddress(), UserState.ENABLED);
     }
