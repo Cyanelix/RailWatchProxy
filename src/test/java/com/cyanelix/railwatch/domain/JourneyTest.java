@@ -1,5 +1,6 @@
 package com.cyanelix.railwatch.domain;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
@@ -34,5 +35,10 @@ public class JourneyTest {
     public void nullTo_of_throwsException() {
         // When...
         Journey.of(Station.of("FOO"), null);
+    }
+
+    @Test
+    public void testEquals() {
+        EqualsVerifier.forClass(Journey.class).verify();
     }
 }
