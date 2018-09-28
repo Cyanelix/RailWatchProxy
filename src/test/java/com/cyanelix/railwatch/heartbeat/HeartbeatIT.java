@@ -27,7 +27,6 @@ import java.util.Arrays;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
@@ -71,7 +70,7 @@ public class HeartbeatIT {
         User noHeartbeatEnabled = new User(UserId.generate(), "no-heartbeat-enabled", UserState.ENABLED);
         User warningDisabled = new User(UserId.generate(), "warning-disabled", UserState.DISABLED);
         User warningEnabled = new User(UserId.generate(), "warning-enabled", UserState.ENABLED);
-        userRepository.save(Arrays.asList(expiringDisabled, expiringEnabled, notExpiringDisabled, notExpiringEnabled, noHeartbeatDisabled, noHeartbeatEnabled, warningDisabled, warningEnabled));
+        userRepository.saveAll(Arrays.asList(expiringDisabled, expiringEnabled, notExpiringDisabled, notExpiringEnabled, noHeartbeatDisabled, noHeartbeatEnabled, warningDisabled, warningEnabled));
 
         Heartbeat expiringDisabledHeartbeat = new Heartbeat(NotificationTarget.of("expiring-disabled"), LocalDateTime.of(2016, 12, 22, 11, 59));
         Heartbeat expiringEnabledHeartbeat = new Heartbeat(NotificationTarget.of("expiring-enabled"), LocalDateTime.of(2016, 12, 22, 11, 59));
@@ -79,7 +78,7 @@ public class HeartbeatIT {
         Heartbeat notExpiringEnabledHeartbeat = new Heartbeat(NotificationTarget.of("not-expiring-enabled"), LocalDateTime.of(2016, 12, 25, 12, 1));
         Heartbeat warningDisabledHeartbeat = new Heartbeat(NotificationTarget.of("warning-disabled"), LocalDateTime.of(2016, 12, 25, 11, 59));
         Heartbeat warningEnabledHeartbeat = new Heartbeat(NotificationTarget.of("warning-enabled"), LocalDateTime.of(2016, 12, 25, 11, 59));
-        heartbeatRepository.save(Arrays.asList(expiringDisabledHeartbeat, expiringEnabledHeartbeat, notExpiringDisabledHeartbeat,
+        heartbeatRepository.saveAll(Arrays.asList(expiringDisabledHeartbeat, expiringEnabledHeartbeat, notExpiringDisabledHeartbeat,
                 notExpiringEnabledHeartbeat, warningDisabledHeartbeat, warningEnabledHeartbeat));
 
         // When...

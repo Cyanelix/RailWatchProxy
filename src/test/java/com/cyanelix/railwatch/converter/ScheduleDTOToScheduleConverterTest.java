@@ -53,8 +53,6 @@ public class ScheduleDTOToScheduleConverterTest {
         assertThat(schedule.getFromStation(), is(Station.of("FOO")));
         assertThat(schedule.getToStation(), is(Station.of("BAR")));
         assertThat(schedule.getDayRange(), is(DayRange.ALL));
-        assertThat(schedule.getUser().getUserId(), is(userId));
-        assertThat(schedule.getUser().getNotificationTarget(), is("test"));
     }
 
     private User createUser(UserId userId, NotificationTarget notificationTarget) {

@@ -21,6 +21,14 @@ public final class User {
 
     private UserState userState;
 
+    public User() {
+        // Required by spring-data
+    }
+
+    public User(UserId userId) {
+        this.userId = userId;
+    }
+
     public User(UserId userId, String notificationTarget, UserState userState) {
         this.userId = userId;
         this.notificationTarget = notificationTarget;

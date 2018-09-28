@@ -1,5 +1,6 @@
 package com.cyanelix.railwatch.controller;
 
+import com.cyanelix.railwatch.domain.UserId;
 import com.cyanelix.railwatch.dto.ScheduleDTO;
 import com.cyanelix.railwatch.entity.Schedule;
 import com.cyanelix.railwatch.service.ScheduleService;
@@ -42,6 +43,6 @@ public class SchedulesController {
         }
 
         Schedule schedule = conversionService.convert(scheduleDTO, Schedule.class);
-        scheduleService.createSchedule(schedule);
+        scheduleService.createSchedule(schedule, UserId.of(scheduleDTO.getUserId()));
     }
 }

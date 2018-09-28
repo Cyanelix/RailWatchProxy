@@ -51,7 +51,7 @@ public class HeartbeatRepositoryIT {
                 NotificationTarget.of("bar"), LocalDateTime.of(2017, Month.JANUARY, 1, 12, 0));
 
         // When...
-        heartbeatRepository.save(Arrays.asList(matchingHeartbeat, nonMatchingHeartbeat));
+        heartbeatRepository.saveAll(Arrays.asList(matchingHeartbeat, nonMatchingHeartbeat));
 
         // Then...
         Heartbeat heartbeat =
@@ -70,7 +70,7 @@ public class HeartbeatRepositoryIT {
                 notificationTarget, LocalDateTime.of(2017, Month.JANUARY, 1, 12, 1));
 
         // When...
-        heartbeatRepository.save(Arrays.asList(earlierHeartbeat, laterHeartbeat));
+        heartbeatRepository.saveAll(Arrays.asList(earlierHeartbeat, laterHeartbeat));
 
         // Then...
         Heartbeat heartbeat =

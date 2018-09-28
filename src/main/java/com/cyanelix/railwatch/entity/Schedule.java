@@ -77,6 +77,10 @@ public final class Schedule {
         return user;
     }
 
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public String getNotificationTarget() {
         return user.getNotificationTarget();
     }

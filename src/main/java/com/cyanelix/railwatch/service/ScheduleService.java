@@ -27,17 +27,23 @@ public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
 
+    private final UserService userService;
+
     private final Clock clock;
 
     @Autowired
-    public ScheduleService(TrainTimesService trainTimesService, NotificationService notificationService, ScheduleRepository scheduleRepository, Clock clock) {
+    public ScheduleService(TrainTimesService trainTimesService, NotificationService notificationService, ScheduleRepository scheduleRepository, UserService userService, Clock clock) {
         this.trainTimesService = trainTimesService;
         this.notificationService = notificationService;
         this.scheduleRepository = scheduleRepository;
+        this.userService = userService;
         this.clock = clock;
     }
 
-    public void createSchedule(Schedule schedule) {
+    public void createSchedule(Schedule schedule, UserId userId) {
+        User user = userService.getUser(userId);
+        schedule.setUser(user);
+
         scheduleRepository.save(schedule);
     }
 

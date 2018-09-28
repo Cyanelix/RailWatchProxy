@@ -6,7 +6,6 @@ import com.cyanelix.railwatch.domain.*;
 import com.cyanelix.railwatch.entity.Schedule;
 import com.cyanelix.railwatch.entity.User;
 import com.cyanelix.railwatch.service.ScheduleService;
-import com.cyanelix.railwatch.service.UserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,8 +23,8 @@ import java.util.Collections;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -35,6 +34,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(SchedulesController.class)
 @RunWith(SpringRunner.class)
 public class SchedulesControllerTest {
+    private static final UserId USER_ID = UserId.of("123e4567-e89b-12d3-a456-426655440000");
+
     @MockBean
     private ScheduleService mockScheduleService;
 
@@ -46,7 +47,7 @@ public class SchedulesControllerTest {
 
     @Before
     public void setup() {
-        conversionService.addConverter(new ScheduleDTOToScheduleConverter(mock(UserService.class)));
+        conversionService.addConverter(new ScheduleDTOToScheduleConverter());
         conversionService.addConverter(new ScheduleToDTOConverter());
     }
 
@@ -55,11 +56,11 @@ public class SchedulesControllerTest {
         mockMvc.perform(
                 put("/schedules")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"startTime\":\"07:00\", \"endTime\":\"09:00\", \"days\":[\"MONDAY\", \"TUESDAY\"], \"state\":\"ENABLED\", \"userId\":\"123e4567-e89b-12d3-a456-426655440000\"}"))
+                        .content("{\"startTime\":\"07:00\", \"endTime\":\"09:00\", \"days\":[\"MONDAY\", \"TUESDAY\"], \"state\":\"ENABLED\", \"userId\":\"" + USER_ID.get() + "\"}"))
                 .andExpect(status().isCreated());
 
         ArgumentCaptor<Schedule> scheduleArgumentCaptor = ArgumentCaptor.forClass(Schedule.class);
-        verify(mockScheduleService).createSchedule(scheduleArgumentCaptor.capture());
+        verify(mockScheduleService).createSchedule(scheduleArgumentCaptor.capture(), eq(USER_ID));
 
         Schedule schedule = scheduleArgumentCaptor.getValue();
         assertThat(schedule.getStartTime().toString(), is("07:00"));
@@ -71,11 +72,11 @@ public class SchedulesControllerTest {
         mockMvc.perform(
                 put("/schedules")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"startTime\":\"07:00\", \"endTime\":\"09:00\", \"days\":[\"MONDAY\", \"TUESDAY\"], \"userId\":\"123e4567-e89b-12d3-a456-426655440000\"}"))
+                        .content("{\"startTime\":\"07:00\", \"endTime\":\"09:00\", \"days\":[\"MONDAY\", \"TUESDAY\"], \"userId\":\"" + USER_ID.get() + "\"}"))
                 .andExpect(status().isCreated());
 
         ArgumentCaptor<Schedule> scheduleArgumentCaptor = ArgumentCaptor.forClass(Schedule.class);
-        verify(mockScheduleService).createSchedule(scheduleArgumentCaptor.capture());
+        verify(mockScheduleService).createSchedule(scheduleArgumentCaptor.capture(), eq(USER_ID));
 
         Schedule schedule = scheduleArgumentCaptor.getValue();
         assertThat(schedule.getState(), is(ScheduleState.ENABLED));

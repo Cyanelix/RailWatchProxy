@@ -39,11 +39,14 @@ public class ScheduleServiceTest {
     @Mock
     private ScheduleRepository scheduleRepository;
 
+    @Mock
+    private UserService userService;
+
     private ScheduleService scheduleService;
 
     @Before
     public void setup() {
-        scheduleService = new ScheduleService(trainTimesService, notificationService, scheduleRepository, Clock.fixed(Instant.parse("2017-01-01T10:30:00Z"), ZoneId.systemDefault()));
+        scheduleService = new ScheduleService(trainTimesService, notificationService, scheduleRepository, userService, Clock.fixed(Instant.parse("2017-01-01T10:30:00Z"), ZoneId.systemDefault()));
     }
 
     @Test
@@ -51,11 +54,13 @@ public class ScheduleServiceTest {
         // Given...
         User user = createUser();
 
+        given(userService.getUser(user.getUserId())).willReturn(user);
+
         Schedule schedule = new Schedule(LocalTime.MIN, LocalTime.MAX, DayRange.ALL,
                 FOO_TO_BAR.getFrom(), FOO_TO_BAR.getTo(), ScheduleState.ENABLED, user);
 
         // When...
-        scheduleService.createSchedule(schedule);
+        scheduleService.createSchedule(schedule, user.getUserId());
 
         // Then...
         verify(scheduleRepository).save(schedule);

@@ -10,7 +10,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.data.mapping.model.MappingException;
+import org.springframework.data.mapping.MappingException;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.DayOfWeek;
@@ -49,7 +49,7 @@ public class ScheduleRepositoryIT {
         Schedule disabledSchedule = new Schedule(LocalTime.MIN, LocalTime.NOON, DayRange.of(DayOfWeek.MONDAY),
                 Station.of("BAZ"), Station.of("FOB"), ScheduleState.DISABLED, user);
 
-        scheduleRepository.save(Arrays.asList(enabledSchedule, disabledSchedule));
+        scheduleRepository.saveAll(Arrays.asList(enabledSchedule, disabledSchedule));
 
         // When...
         List<Schedule> scheduleEntities = scheduleRepository.findByStateIs(ScheduleState.ENABLED);
@@ -69,7 +69,7 @@ public class ScheduleRepositoryIT {
         Schedule disabledSchedule = new Schedule(LocalTime.MIN, LocalTime.NOON, DayRange.of(DayOfWeek.MONDAY),
                 Station.of("BAZ"), Station.of("FOB"), ScheduleState.DISABLED, user);
 
-        scheduleRepository.save(Arrays.asList(enabledSchedule, disabledSchedule));
+        scheduleRepository.saveAll(Arrays.asList(enabledSchedule, disabledSchedule));
 
         // When...
         List<Schedule> scheduleEntities = scheduleRepository.findByStateIs(ScheduleState.DISABLED);
@@ -83,14 +83,14 @@ public class ScheduleRepositoryIT {
         // Given...
         User user1 = new User(UserId.generate(), "notification-target", UserState.ENABLED);
         User user2 = new User(UserId.generate(), "notification-target-2", UserState.ENABLED);
-        userRepository.save(Arrays.asList(user1, user2));
+        userRepository.saveAll(Arrays.asList(user1, user2));
 
         Schedule schedule1 = new Schedule(LocalTime.NOON, LocalTime.MIDNIGHT, DayRange.ALL,
                 Station.of("FOO"), Station.of("BAR"), ScheduleState.ENABLED, user1);
         Schedule schedule2 = new Schedule(LocalTime.MIN, LocalTime.NOON, DayRange.of(DayOfWeek.MONDAY),
                 Station.of("BAZ"), Station.of("FOB"), ScheduleState.DISABLED, user2);
 
-        scheduleRepository.save(Arrays.asList(schedule1, schedule2));
+        scheduleRepository.saveAll(Arrays.asList(schedule1, schedule2));
 
         // When...
         List<Schedule> scheduleEntities = scheduleRepository.findByUser(user1);
