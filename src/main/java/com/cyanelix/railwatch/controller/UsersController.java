@@ -36,7 +36,7 @@ public class UsersController {
         this.conversionService = conversionService;
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "/{userId}")
+    @GetMapping(path = "/{userId}")
     public FullUserDetailsDTO getUser(@PathVariable("userId") String userId) {
         User user = userService.getUser(UserId.of(userId));
         if (user == null) {
@@ -54,7 +54,7 @@ public class UsersController {
         return new FullUserDetailsDTO(userDTO, scheduleDTOS);
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Void> create(@RequestBody @Valid UserDTO userDTO, UriComponentsBuilder uriComponentsBuilder) {
         User user = userService.createUser(NotificationTarget.of(userDTO.getNotificationTarget()));

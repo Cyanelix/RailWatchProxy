@@ -3,10 +3,8 @@ package com.cyanelix.railwatch.converter;
 import com.cyanelix.railwatch.domain.DayRange;
 import com.cyanelix.railwatch.domain.ScheduleState;
 import com.cyanelix.railwatch.domain.Station;
-import com.cyanelix.railwatch.domain.UserId;
 import com.cyanelix.railwatch.dto.ScheduleDTO;
 import com.cyanelix.railwatch.entity.Schedule;
-import com.cyanelix.railwatch.entity.User;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 

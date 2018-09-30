@@ -16,7 +16,7 @@ public class HeartbeatController {
         this.heartbeatService = heartbeatService;
     }
 
-    @RequestMapping(method = RequestMethod.PUT, path = "{deviceId}")
+    @PutMapping(path = "{deviceId}")
     @ResponseStatus(HttpStatus.CREATED)
     public void put(@PathVariable("deviceId") String deviceId) {
         heartbeatService.recordHeartbeat(NotificationTarget.of(deviceId));

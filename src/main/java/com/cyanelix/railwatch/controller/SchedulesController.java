@@ -28,14 +28,14 @@ public class SchedulesController {
         this.conversionService = conversionService;
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     public List<ScheduleDTO> get() {
         return scheduleService.getSchedules().stream()
                 .map(schedule -> conversionService.convert(schedule, ScheduleDTO.class))
                 .collect(Collectors.toList());
     }
 
-    @RequestMapping(method = RequestMethod.PUT)
+    @PutMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void put(@RequestBody ScheduleDTO scheduleDTO) {
         if (LOG.isDebugEnabled()) {
