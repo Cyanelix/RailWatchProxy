@@ -1,7 +1,9 @@
 package com.cyanelix.railwatch.service;
 
 import com.cyanelix.railwatch.domain.*;
-import com.cyanelix.railwatch.entity.SentNotificationEntity;
+import com.cyanelix.railwatch.entity.Schedule;
+import com.cyanelix.railwatch.entity.SentNotification;
+import com.cyanelix.railwatch.entity.User;
 import com.cyanelix.railwatch.firebase.client.FirebaseClient;
 import com.cyanelix.railwatch.firebase.client.entity.NotificationRequest;
 import com.cyanelix.railwatch.repository.SentNotificationRepository;
@@ -45,10 +47,10 @@ public class NotificationServiceTest {
         // Given...
         given(sentNotificationRepository.findBySentDateTimeAfter(any())).willReturn(Collections.emptyList());
 
-        Schedule schedule = Schedule.of(
+        User user = createUser();
+        Schedule schedule = new Schedule(
                 LocalTime.of(9, 0), LocalTime.of(10, 0), DayRange.ALL,
-                Journey.of(Station.of("FOO"), Station.of("BAR")), NotificationTarget.of("notification-to"),
-                ScheduleState.ENABLED);
+                Station.of("FOO"), Station.of("BAR"), ScheduleState.ENABLED, user);
         List<TrainTime> trainTimes = Collections.singletonList(
                 new TrainTime.Builder(LocalTime.NOON)
                         .withExpectedDepartureTime(LocalTime.NOON)
@@ -70,16 +72,17 @@ public class NotificationServiceTest {
     @Test
     public void doNotSendDuplicateNotification() {
         // Given...
-        Schedule schedule = Schedule.of(
-                null, null, DayRange.ALL, Journey.of(Station.of("FOO"), Station.of("BAR")),
-                NotificationTarget.of("notification-to"), ScheduleState.ENABLED);
+        User user = createUser();
+        Schedule schedule = new Schedule(
+                null, null, DayRange.ALL, Station.of("FOO"), Station.of("BAR"),
+                ScheduleState.ENABLED, user);
         List<TrainTime> trainTimes = Collections.singletonList(
                 new TrainTime.Builder(LocalTime.NOON)
                         .withExpectedDepartureTime(LocalTime.NOON)
                         .build());
 
-        SentNotificationEntity sentNotificationEntity = new SentNotificationEntity("notification-to", "RailWatch", "FOO -> BAR @ 12:00", "high", null);
-        given(sentNotificationRepository.findBySentDateTimeAfter(any())).willReturn(Collections.singletonList(sentNotificationEntity));
+        SentNotification sentNotification = new SentNotification("notification-to", "RailWatch", "FOO -> BAR @ 12:00", "high", null);
+        given(sentNotificationRepository.findBySentDateTimeAfter(any())).willReturn(Collections.singletonList(sentNotification));
 
         // When...
         notificationService.sendNotification(schedule, trainTimes);
@@ -91,17 +94,17 @@ public class NotificationServiceTest {
     @Test
     public void notificationSentPreviously_sendDifferentNotification() {
         // Given...
-        Schedule schedule = Schedule.of(
+        User user = createUser();
+        Schedule schedule = new Schedule(
                 LocalTime.of(9, 0), LocalTime.of(10, 0), DayRange.ALL,
-                Journey.of(Station.of("FOO"), Station.of("BAR")), NotificationTarget.of("notification-to"),
-                ScheduleState.ENABLED);
+                Station.of("FOO"), Station.of("BAR"), ScheduleState.ENABLED, user);
         List<TrainTime> trainTimes = Collections.singletonList(
                 new TrainTime.Builder(LocalTime.NOON)
                         .withExpectedDepartureTime(LocalTime.NOON)
                         .build());
 
-        SentNotificationEntity sentNotificationEntity = new SentNotificationEntity("notification-to", "RailWatch", "Different message body", "high", null);
-        given(sentNotificationRepository.findBySentDateTimeAfter(any())).willReturn(Collections.singletonList(sentNotificationEntity));
+        SentNotification sentNotification = new SentNotification("notification-to", "RailWatch", "Different message body", "high", null);
+        given(sentNotificationRepository.findBySentDateTimeAfter(any())).willReturn(Collections.singletonList(sentNotification));
 
         // When...
         notificationService.sendNotification(schedule, trainTimes);
@@ -126,5 +129,55 @@ public class NotificationServiceTest {
         assertThat(notificationRequest.getTo(), is("notification-to"));
         assertThat(notificationRequest.getNotification().getTitle(), is("RailWatch"));
         assertThat(notificationRequest.getNotification().getBody(), is("A message"));
+    }
+
+    @Test
+    public void sendNotificationSuccess_savesSentNotification() {
+        // Given...
+        given(sentNotificationRepository.findBySentDateTimeAfter(any())).willReturn(Collections.emptyList());
+
+        User user = createUser();
+        Schedule schedule = new Schedule(
+                LocalTime.of(9, 0), LocalTime.of(10, 0), DayRange.ALL,
+                Station.of("FOO"), Station.of("BAR"), ScheduleState.ENABLED, user);
+        List<TrainTime> trainTimes = Collections.singletonList(
+                new TrainTime.Builder(LocalTime.NOON)
+                        .withExpectedDepartureTime(LocalTime.NOON)
+                        .build());
+
+        given(firebaseClient.sendNotification(any())).willReturn(true);
+
+        // When...
+        notificationService.sendNotification(schedule, trainTimes);
+
+        // Then...
+        verify(sentNotificationRepository).save(any(SentNotification.class));
+    }
+
+    @Test
+    public void sendNotificationFails_doesNotSaveSentNotification() {
+        // Given...
+        given(sentNotificationRepository.findBySentDateTimeAfter(any())).willReturn(Collections.emptyList());
+
+        User user = createUser();
+        Schedule schedule = new Schedule(
+                LocalTime.of(9, 0), LocalTime.of(10, 0), DayRange.ALL,
+                Station.of("FOO"), Station.of("BAR"), ScheduleState.ENABLED, user);
+        List<TrainTime> trainTimes = Collections.singletonList(
+                new TrainTime.Builder(LocalTime.NOON)
+                        .withExpectedDepartureTime(LocalTime.NOON)
+                        .build());
+
+        given(firebaseClient.sendNotification(any())).willReturn(false);
+
+        // When...
+        notificationService.sendNotification(schedule, trainTimes);
+
+        // Then...
+        verify(sentNotificationRepository, never()).save(any(SentNotification.class));
+    }
+
+    private User createUser() {
+        return new User(UserId.generate(), NotificationTarget.of("notification-to").getTargetAddress(), UserState.ENABLED);
     }
 }

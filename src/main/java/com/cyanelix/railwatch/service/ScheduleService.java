@@ -1,9 +1,8 @@
 package com.cyanelix.railwatch.service;
 
-import com.cyanelix.railwatch.domain.NotificationTarget;
-import com.cyanelix.railwatch.domain.Schedule;
-import com.cyanelix.railwatch.domain.ScheduleState;
-import com.cyanelix.railwatch.entity.ScheduleEntity;
+import com.cyanelix.railwatch.domain.*;
+import com.cyanelix.railwatch.entity.Schedule;
+import com.cyanelix.railwatch.entity.User;
 import com.cyanelix.railwatch.repository.ScheduleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,45 +27,49 @@ public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
 
+    private final UserService userService;
+
     private final Clock clock;
 
     @Autowired
-    public ScheduleService(TrainTimesService trainTimesService, NotificationService notificationService, ScheduleRepository scheduleRepository, Clock clock) {
+    public ScheduleService(TrainTimesService trainTimesService, NotificationService notificationService, ScheduleRepository scheduleRepository, UserService userService, Clock clock) {
         this.trainTimesService = trainTimesService;
         this.notificationService = notificationService;
         this.scheduleRepository = scheduleRepository;
+        this.userService = userService;
         this.clock = clock;
     }
 
-    public void createSchedule(Schedule schedule) {
-        scheduleRepository.save(ScheduleEntity.of(schedule));
+    public void createSchedule(Schedule schedule, UserId userId) {
+        User user = userService.getUser(userId);
+        schedule.setUser(user);
+
+        scheduleRepository.save(schedule);
     }
 
     @Scheduled(fixedDelay = 30000)
     public void checkTimes() {
         LOG.debug("Checking times.");
         getActiveSchedules()
-                .forEach(schedule -> schedule.lookupAndNotifyTrainTimes(trainTimesService, notificationService));
-    }
-
-    private Stream<Schedule> getActiveSchedules() {
-        return getEnabledSchedules().filter(schedule -> schedule.isActive(LocalDateTime.now(clock)));
+                .forEach(this::lookupAndNotifyTrainTimes);
     }
 
     public Set<Schedule> getSchedules() {
         return scheduleRepository.findAll().parallelStream()
-                .map(Schedule::of)
                 .collect(Collectors.toSet());
     }
 
-    void disableSchedulesForNotificationTarget(NotificationTarget notificationTarget) {
-        List<ScheduleEntity> scheduleEntities = scheduleRepository.findByNotificationTarget(notificationTarget.getTargetAddress());
-        scheduleEntities.forEach(scheduleEntity -> scheduleEntity.setState(ScheduleState.DISABLED));
-        scheduleRepository.save(scheduleEntities);
+    public List<Schedule> getSchedulesForUser(User user) {
+        return scheduleRepository.findByUser(user);
     }
 
-    Stream<Schedule> getEnabledSchedules() {
+    private void lookupAndNotifyTrainTimes(Schedule schedule) {
+        List<TrainTime> trainTimes = trainTimesService.lookupTrainTimes(schedule.getFromStation(), schedule.getToStation());
+        notificationService.sendNotification(schedule, trainTimes);
+    }
+
+    private Stream<Schedule> getActiveSchedules() {
         return scheduleRepository.findByStateIs(ScheduleState.ENABLED).parallelStream()
-                .map(Schedule::of);
+                .filter(schedule -> schedule.isActive(LocalDateTime.now(clock)));
     }
 }

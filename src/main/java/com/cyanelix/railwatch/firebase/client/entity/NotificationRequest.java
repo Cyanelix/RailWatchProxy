@@ -1,7 +1,7 @@
 package com.cyanelix.railwatch.firebase.client.entity;
 
 import com.cyanelix.railwatch.domain.NotificationTarget;
-import com.cyanelix.railwatch.entity.SentNotificationEntity;
+import com.cyanelix.railwatch.entity.SentNotification;
 
 import java.util.Objects;
 
@@ -16,11 +16,11 @@ public class NotificationRequest {
         priority = "high";
     }
 
-    public static NotificationRequest of(SentNotificationEntity sentNotificationEntity) {
+    public static NotificationRequest of(SentNotification sentNotification) {
         return new NotificationRequest(
-                NotificationTarget.of(sentNotificationEntity.getTo()),
-                sentNotificationEntity.getTitle(),
-                sentNotificationEntity.getBody());
+                NotificationTarget.of(sentNotification.getTo()),
+                sentNotification.getTitle(),
+                sentNotification.getBody());
     }
 
     @Override

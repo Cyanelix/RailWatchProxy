@@ -1,9 +1,8 @@
 package com.cyanelix.railwatch.service;
 
-import com.cyanelix.railwatch.domain.NotificationTarget;
-import com.cyanelix.railwatch.domain.Schedule;
-import com.cyanelix.railwatch.domain.TrainTime;
-import com.cyanelix.railwatch.entity.SentNotificationEntity;
+import com.cyanelix.railwatch.domain.*;
+import com.cyanelix.railwatch.entity.Schedule;
+import com.cyanelix.railwatch.entity.SentNotification;
 import com.cyanelix.railwatch.firebase.client.FirebaseClient;
 import com.cyanelix.railwatch.firebase.client.entity.NotificationRequest;
 import com.cyanelix.railwatch.repository.SentNotificationRepository;
@@ -35,21 +34,19 @@ public class NotificationService {
 
     public void sendNotification(Schedule schedule, List<TrainTime> trainTimes) {
         String notificationMessage = buildNotificationMessage(schedule, trainTimes);
-        NotificationRequest notificationRequest = new NotificationRequest(schedule.getNotificationTarget(), "RailWatch", notificationMessage);
+        NotificationRequest notificationRequest = new NotificationRequest(NotificationTarget.of(schedule.getNotificationTarget()), "RailWatch", notificationMessage);
 
         if (isDuplicateRequest(notificationRequest)) {
             LOG.debug("Not sending duplicate notification.");
             return;
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Sending request for schedule {}", schedule.toString());
-        }
+        LOG.debug("Sending request for schedule {}", schedule);
 
         boolean success = firebaseClient.sendNotification(notificationRequest);
 
         if (success) {
-            sentNotificationRepository.save(SentNotificationEntity.of(notificationRequest, LocalDateTime.now(clock)));
+            sentNotificationRepository.save(SentNotification.of(notificationRequest, LocalDateTime.now(clock)));
         }
     }
 
@@ -69,7 +66,7 @@ public class NotificationService {
 
     private String buildNotificationMessage(Schedule schedule, List<TrainTime> trainTimes) {
         return trainTimes.parallelStream()
-                .map(trainTime -> String.format("%s @ %s", schedule.getJourney().toString(), trainTime.toString()))
+                .map(trainTime -> String.format("%s @ %s", Journey.of(schedule.getFromStation(), schedule.getToStation()).toString(), trainTime.toString()))
                 .collect(Collectors.joining("\n"));
     }
 }

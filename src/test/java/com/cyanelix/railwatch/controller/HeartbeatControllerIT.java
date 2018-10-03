@@ -1,6 +1,6 @@
 package com.cyanelix.railwatch.controller;
 
-import com.cyanelix.railwatch.entity.HeartbeatEntity;
+import com.cyanelix.railwatch.entity.Heartbeat;
 import com.cyanelix.railwatch.repository.HeartbeatRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -8,7 +8,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -22,7 +21,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@ActiveProfiles("it")
 public class HeartbeatControllerIT {
     @Autowired
     private MockMvc mockMvc;
@@ -40,7 +38,7 @@ public class HeartbeatControllerIT {
         mockMvc.perform(put("/heartbeat/device-id"))
                 .andExpect(status().isCreated());
 
-        List<HeartbeatEntity> heartbeatEntities = heartbeatRepository.findAll();
+        List<Heartbeat> heartbeatEntities = heartbeatRepository.findAll();
         assertThat(heartbeatEntities.size(), is(1));
     }
 }

@@ -12,8 +12,12 @@ import java.util.List;
 
 @Service
 public class TrainTimesService {
+    private final DarwinClient darwinClient;
+
     @Autowired
-    private DarwinClient darwinClient;
+    public TrainTimesService(DarwinClient darwinClient) {
+        this.darwinClient = darwinClient;
+    }
 
     public List<TrainTime> lookupTrainTimes(Station fromStation, Station toStation) {
         DeparturesBoardRequest departuresBoardRequest = new DeparturesBoardRequest(fromStation, toStation);

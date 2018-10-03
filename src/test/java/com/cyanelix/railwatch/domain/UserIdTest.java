@@ -1,5 +1,6 @@
 package com.cyanelix.railwatch.domain;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -32,5 +33,23 @@ public class UserIdTest {
 
         // When...
         UserId.of(invalidUUID);
+    }
+
+    @Test
+    public void equalsContract() {
+        EqualsVerifier.forClass(UserId.class).verify();
+    }
+
+    @Test
+    public void twoUserIdsWithSameUUID_equals_returnsTrue() {
+        // Given...
+        UserId userId1 = UserId.generate();
+        UserId userId2 = UserId.of(userId1.get());
+
+        // When...
+        boolean equals = userId1.equals(userId2);
+
+        // Then...
+        assertThat(equals, is(true));
     }
 }

@@ -5,10 +5,7 @@ import com.cyanelix.railwatch.domain.TrainTime;
 import com.cyanelix.railwatch.dto.TrainTimeDTO;
 import com.cyanelix.railwatch.service.TrainTimesService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,7 +20,7 @@ public class DeparturesController {
         this.trainTimesService = trainTimesService;
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     public List<TrainTimeDTO> get(@RequestParam("from") String fromStation, @RequestParam("to") String toStation) {
         List<TrainTime> trainTimes = trainTimesService.lookupTrainTimes(Station.of(fromStation), Station.of(toStation));
         return trainTimes.parallelStream()

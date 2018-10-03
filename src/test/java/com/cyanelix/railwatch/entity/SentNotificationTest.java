@@ -5,19 +5,18 @@ import com.cyanelix.railwatch.firebase.client.entity.NotificationRequest;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
-public class SentNotificationEntityTest {
+public class SentNotificationTest {
     @Test
     public void constructWithNotificationRequest_propertiesSetCorrectly() {
         // Given...
         NotificationRequest notificationRequest = new NotificationRequest(NotificationTarget.of("FOO"), "Title", "Body");
 
         // When...
-        SentNotificationEntity entity = SentNotificationEntity.of(notificationRequest, LocalDateTime.of(2017, 1, 1, 10, 0));
+        SentNotification entity = SentNotification.of(notificationRequest, LocalDateTime.of(2017, 1, 1, 10, 0));
 
         // Then...
         assertThat(entity.getTo(), is("FOO"));

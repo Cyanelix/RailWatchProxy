@@ -1,7 +1,10 @@
 package com.cyanelix.railwatch.service;
 
-import com.cyanelix.railwatch.domain.*;
-import com.cyanelix.railwatch.entity.HeartbeatEntity;
+import com.cyanelix.railwatch.domain.NotificationTarget;
+import com.cyanelix.railwatch.domain.UserId;
+import com.cyanelix.railwatch.domain.UserState;
+import com.cyanelix.railwatch.entity.Heartbeat;
+import com.cyanelix.railwatch.entity.User;
 import com.cyanelix.railwatch.repository.HeartbeatRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,14 +14,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.time.*;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.stream.Stream;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HeartbeatServiceTest {
@@ -26,7 +33,7 @@ public class HeartbeatServiceTest {
     private HeartbeatRepository heartbeatRepository;
 
     @Mock
-    private ScheduleService scheduleService;
+    private UserService userService;
 
     @Mock
     private NotificationService notificationService;
@@ -52,56 +59,30 @@ public class HeartbeatServiceTest {
         heartbeatService.recordHeartbeat(notificationTarget);
 
         // Then...
-        ArgumentCaptor<HeartbeatEntity> heartbeatEntityArgumentCaptor = ArgumentCaptor.forClass(HeartbeatEntity.class);
+        ArgumentCaptor<Heartbeat> heartbeatEntityArgumentCaptor = ArgumentCaptor.forClass(Heartbeat.class);
         verify(heartbeatRepository).save(heartbeatEntityArgumentCaptor.capture());
 
-        HeartbeatEntity heartbeatEntity = heartbeatEntityArgumentCaptor.getValue();
-        assertThat(heartbeatEntity.getNotificationTarget(), is(notificationTarget));
-        assertThat(heartbeatEntity.getDateTime(), is(LocalDateTime.of(2017, 1, 1, 12, 0, 0)));
-    }
-
-    @Test
-    public void givenNoHeartbeatsForTenDaysForTwoSchedulesWithSameNotificationTarget_onlyCallDisableSchedulesOnce() {
-        // Given...
-        NotificationTarget notificationTarget = NotificationTarget.of("foo");
-        Schedule schedule1 =
-                Schedule.of(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, Journey.of(Station.of("FOO"), Station.of("BAR")), notificationTarget, ScheduleState.ENABLED);
-        Schedule schedule2 =
-                Schedule.of(LocalTime.NOON, LocalTime.MAX, DayRange.ALL, Journey.of(Station.of("AAA"), Station.of("BBB")), notificationTarget, ScheduleState.ENABLED);
-        HeartbeatEntity disablableHeartbeat =
-                new HeartbeatEntity(notificationTarget, LocalDateTime.of(2016, 12, 22, 11, 59));
-
-        given(scheduleService.getEnabledSchedules()).willReturn(Stream.of(schedule1, schedule2), Stream.empty());
-        given(heartbeatRepository.findFirstByNotificationTargetEqualsOrderByDateTimeDesc(notificationTarget)).willReturn(disablableHeartbeat);
-
-        // When...
-        heartbeatService.checkHeartbeats();
-
-        // Then...
-        ArgumentCaptor<NotificationTarget> notificationTargetCaptor = ArgumentCaptor.forClass(NotificationTarget.class);
-        verify(scheduleService, times(1)).disableSchedulesForNotificationTarget(notificationTargetCaptor.capture());
-
-        NotificationTarget capturedNotificationTarget = notificationTargetCaptor.getValue();
-        assertThat(capturedNotificationTarget, is(notificationTarget));
+        Heartbeat heartbeat = heartbeatEntityArgumentCaptor.getValue();
+        assertThat(heartbeat.getNotificationTarget(), is(notificationTarget));
+        assertThat(heartbeat.getDateTime(), is(LocalDateTime.of(2017, 1, 1, 12, 0, 0)));
     }
 
     @Test
     public void givenAHeartbeatOneDayAgo_doNotDisable_doNotWarn() {
         // Given...
         NotificationTarget notificationTarget = NotificationTarget.of("foo");
-        Schedule schedule =
-                Schedule.of(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, Journey.of(Station.of("FOO"), Station.of("BAR")), notificationTarget, ScheduleState.ENABLED);
-        HeartbeatEntity oneDayOldHeartbeat =
-                new HeartbeatEntity(notificationTarget, LocalDateTime.of(2016, 12, 31, 12, 1));
+        User user = createUser(notificationTarget);
+        Heartbeat oneDayOldHeartbeat =
+                new Heartbeat(notificationTarget, LocalDateTime.of(2016, 12, 31, 12, 1));
 
-        given(scheduleService.getEnabledSchedules()).willReturn(Stream.of(schedule), Stream.of(schedule));
+        given(userService.getEnabledUsers()).willReturn(Stream.of(user), Stream.of(user));
         given(heartbeatRepository.findFirstByNotificationTargetEqualsOrderByDateTimeDesc(notificationTarget)).willReturn(oneDayOldHeartbeat);
 
         // When...
         heartbeatService.checkHeartbeats();
 
         // Then...
-        verify(scheduleService, never()).disableSchedulesForNotificationTarget(any());
+        verify(userService, never()).disableUserByNotificationTarget(any());
         verify(notificationService, never()).sendNotification(any(NotificationTarget.class), any());
     }
 
@@ -109,19 +90,18 @@ public class HeartbeatServiceTest {
     public void givenAHeartbeatSevenDaysAgo_doNotDisable_doWarn() {
         // Given...
         NotificationTarget notificationTarget = NotificationTarget.of("foo");
-        Schedule schedule =
-                Schedule.of(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, Journey.of(Station.of("FOO"), Station.of("BAR")), notificationTarget, ScheduleState.ENABLED);
-        HeartbeatEntity sevenDayOldHeartbeat =
-                new HeartbeatEntity(notificationTarget, LocalDateTime.of(2016, 12, 25, 11, 59));
+        User user = createUser(notificationTarget);
+        Heartbeat sevenDayOldHeartbeat =
+                new Heartbeat(notificationTarget, LocalDateTime.of(2016, 12, 25, 11, 59));
 
-        given(scheduleService.getEnabledSchedules()).willReturn(Stream.of(schedule), Stream.of(schedule));
+        given(userService.getEnabledUsers()).willReturn(Stream.of(user), Stream.of(user));
         given(heartbeatRepository.findFirstByNotificationTargetEqualsOrderByDateTimeDesc(notificationTarget)).willReturn(sevenDayOldHeartbeat);
 
         // When...
         heartbeatService.checkHeartbeats();
 
         // Then...
-        verify(scheduleService, never()).disableSchedulesForNotificationTarget(any());
+        verify(userService, never()).disableUserByNotificationTarget(any());
         verify(notificationService).sendNotification(notificationTarget, "Open the RailWatch app to keep your train time notifications coming!");
     }
 
@@ -129,19 +109,22 @@ public class HeartbeatServiceTest {
     public void givenAHeartbeatTenDaysAgo_doDisable_doNotWarn() {
         // Given...
         NotificationTarget notificationTarget = NotificationTarget.of("foo");
-        Schedule schedule =
-                Schedule.of(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, Journey.of(Station.of("FOO"), Station.of("BAR")), notificationTarget, ScheduleState.ENABLED);
-        HeartbeatEntity lessThanAWeekOldHeartbeat =
-                new HeartbeatEntity(notificationTarget, LocalDateTime.of(2016, 12, 22, 11, 59));
+        User user = createUser(notificationTarget);
+        Heartbeat overTenDaysAgoHeartbeat =
+                new Heartbeat(notificationTarget, LocalDateTime.of(2016, 12, 22, 11, 59));
 
-        given(scheduleService.getEnabledSchedules()).willReturn(Stream.of(schedule), Stream.empty());
-        given(heartbeatRepository.findFirstByNotificationTargetEqualsOrderByDateTimeDesc(notificationTarget)).willReturn(lessThanAWeekOldHeartbeat);
+        given(userService.getEnabledUsers()).willReturn(Stream.of(user), Stream.empty());
+        given(heartbeatRepository.findFirstByNotificationTargetEqualsOrderByDateTimeDesc(notificationTarget)).willReturn(overTenDaysAgoHeartbeat);
 
         // When...
         heartbeatService.checkHeartbeats();
 
         // Then...
-        verify(scheduleService).disableSchedulesForNotificationTarget(notificationTarget);
+        verify(userService).disableUserByNotificationTarget(notificationTarget);
         verify(notificationService, never()).sendNotification(any(NotificationTarget.class), any());
+    }
+
+    private User createUser(NotificationTarget notificationTarget) {
+        return new User(UserId.generate(), notificationTarget.getTargetAddress(), UserState.ENABLED);
     }
 }

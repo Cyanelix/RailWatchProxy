@@ -1,14 +1,15 @@
 package com.cyanelix.railwatch.heartbeat;
 
-import com.cyanelix.railwatch.domain.DayRange;
 import com.cyanelix.railwatch.domain.NotificationTarget;
-import com.cyanelix.railwatch.domain.ScheduleState;
-import com.cyanelix.railwatch.entity.HeartbeatEntity;
-import com.cyanelix.railwatch.entity.ScheduleEntity;
+import com.cyanelix.railwatch.domain.UserId;
+import com.cyanelix.railwatch.domain.UserState;
+import com.cyanelix.railwatch.entity.Heartbeat;
+import com.cyanelix.railwatch.entity.User;
 import com.cyanelix.railwatch.firebase.client.FirebaseClient;
 import com.cyanelix.railwatch.firebase.client.entity.NotificationRequest;
 import com.cyanelix.railwatch.repository.HeartbeatRepository;
 import com.cyanelix.railwatch.repository.ScheduleRepository;
+import com.cyanelix.railwatch.repository.UserRepository;
 import com.cyanelix.railwatch.service.HeartbeatService;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,21 +17,20 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.*;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
-import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@ActiveProfiles("it")
+@SpringBootTest
 public class HeartbeatIT {
     @MockBean
     private Clock clock;
@@ -43,6 +43,9 @@ public class HeartbeatIT {
 
     @Autowired
     private HeartbeatRepository heartbeatRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private HeartbeatService heartbeatService;
@@ -59,51 +62,42 @@ public class HeartbeatIT {
     @Test
     public void enabledAndDisabledSchedulesWithNotificationTargetsThatDoAndDoNotExpire() {
         // Given...
-        ScheduleEntity expiringDisabled = createSchedule("ST1", "expiring", ScheduleState.DISABLED);
-        ScheduleEntity expiringEnabled = createSchedule("ST2", "expiring", ScheduleState.ENABLED);
-        ScheduleEntity notExpiringDisabled = createSchedule("ST3", "not-expiring", ScheduleState.DISABLED);
-        ScheduleEntity notExpiringEnabled = createSchedule("ST4", "not-expiring", ScheduleState.ENABLED);
-        ScheduleEntity noHeartbeatDisabled = createSchedule("ST5", "no-heartbeat", ScheduleState.DISABLED);
-        ScheduleEntity noHeartbeatEnabled = createSchedule("ST5", "no-heartbeat", ScheduleState.ENABLED);
-        ScheduleEntity warningDisabled = createSchedule("ST6", "warning", ScheduleState.DISABLED);
-        ScheduleEntity warningEnabled = createSchedule("ST7", "warning", ScheduleState.ENABLED);
-        scheduleRepository.save(Arrays.asList(expiringDisabled, expiringEnabled, notExpiringDisabled, notExpiringEnabled, noHeartbeatDisabled, noHeartbeatEnabled, warningDisabled, warningEnabled));
+        User expiringDisabled = new User(UserId.generate(), "expiring-disabled", UserState.DISABLED);
+        User expiringEnabled = new User(UserId.generate(), "expiring-enabled", UserState.ENABLED);
+        User notExpiringDisabled = new User(UserId.generate(), "not-expiring-disabled", UserState.DISABLED);
+        User notExpiringEnabled = new User(UserId.generate(), "not-expiring-enabled", UserState.ENABLED);
+        User noHeartbeatDisabled = new User(UserId.generate(), "no-heartbeat-disabled", UserState.DISABLED);
+        User noHeartbeatEnabled = new User(UserId.generate(), "no-heartbeat-enabled", UserState.ENABLED);
+        User warningDisabled = new User(UserId.generate(), "warning-disabled", UserState.DISABLED);
+        User warningEnabled = new User(UserId.generate(), "warning-enabled", UserState.ENABLED);
+        userRepository.saveAll(Arrays.asList(expiringDisabled, expiringEnabled, notExpiringDisabled, notExpiringEnabled, noHeartbeatDisabled, noHeartbeatEnabled, warningDisabled, warningEnabled));
 
-        HeartbeatEntity expiringHeartbeat = new HeartbeatEntity(NotificationTarget.of("expiring"), LocalDateTime.of(2016, 12, 22, 11, 59));
-        HeartbeatEntity warningHeartbeat = new HeartbeatEntity(NotificationTarget.of("warning"), LocalDateTime.of(2016, 12, 25, 11, 59));
-        HeartbeatEntity notExpiringHeartbeat = new HeartbeatEntity(NotificationTarget.of("not-expiring"), LocalDateTime.of(2016, 12, 25, 12, 1));
-        heartbeatRepository.save(Arrays.asList(expiringHeartbeat, warningHeartbeat, notExpiringHeartbeat));
+        Heartbeat expiringDisabledHeartbeat = new Heartbeat(NotificationTarget.of("expiring-disabled"), LocalDateTime.of(2016, 12, 22, 11, 59));
+        Heartbeat expiringEnabledHeartbeat = new Heartbeat(NotificationTarget.of("expiring-enabled"), LocalDateTime.of(2016, 12, 22, 11, 59));
+        Heartbeat notExpiringDisabledHeartbeat = new Heartbeat(NotificationTarget.of("not-expiring-disabled"), LocalDateTime.of(2016, 12, 25, 12, 1));
+        Heartbeat notExpiringEnabledHeartbeat = new Heartbeat(NotificationTarget.of("not-expiring-enabled"), LocalDateTime.of(2016, 12, 25, 12, 1));
+        Heartbeat warningDisabledHeartbeat = new Heartbeat(NotificationTarget.of("warning-disabled"), LocalDateTime.of(2016, 12, 25, 11, 59));
+        Heartbeat warningEnabledHeartbeat = new Heartbeat(NotificationTarget.of("warning-enabled"), LocalDateTime.of(2016, 12, 25, 11, 59));
+        heartbeatRepository.saveAll(Arrays.asList(expiringDisabledHeartbeat, expiringEnabledHeartbeat, notExpiringDisabledHeartbeat,
+                notExpiringEnabledHeartbeat, warningDisabledHeartbeat, warningEnabledHeartbeat));
 
         // When...
         heartbeatService.checkHeartbeats();
 
         // Then...
-        List<ScheduleEntity> expiringSchedules = scheduleRepository.findByNotificationTarget("expiring");
-        expiringSchedules.forEach(scheduleEntity -> assertThat(scheduleEntity.getState(), is(ScheduleState.DISABLED)));
+        assertThat(userRepository.findByNotificationTarget("expiring-disabled").getUserState(), is(UserState.DISABLED));
+        assertThat(userRepository.findByNotificationTarget("expiring-enabled").getUserState(), is(UserState.DISABLED));
 
-        ScheduleEntity retrievedNoHeartbeatDisabled = scheduleRepository.findOne(noHeartbeatDisabled.getId());
-        assertThat(retrievedNoHeartbeatDisabled.getState(), is(ScheduleState.DISABLED));
+        assertThat(userRepository.findByNotificationTarget("not-expiring-disabled").getUserState(), is(UserState.DISABLED));
+        assertThat(userRepository.findByNotificationTarget("not-expiring-enabled").getUserState(), is(UserState.ENABLED));
 
-        ScheduleEntity retrievedNoHeartbeatEnabled = scheduleRepository.findOne(noHeartbeatEnabled.getId());
-        assertThat(retrievedNoHeartbeatEnabled.getState(), is(ScheduleState.ENABLED));
+        assertThat(userRepository.findByNotificationTarget("no-heartbeat-disabled").getUserState(), is(UserState.DISABLED));
+        assertThat(userRepository.findByNotificationTarget("no-heartbeat-enabled").getUserState(), is(UserState.ENABLED));
 
-        ScheduleEntity retrievedNotExpiringDisabled = scheduleRepository.findOne(notExpiringDisabled.getId());
-        assertThat(retrievedNotExpiringDisabled.getState(), is(ScheduleState.DISABLED));
-
-        ScheduleEntity retrievedNotExpiringEnabled = scheduleRepository.findOne(notExpiringEnabled.getId());
-        assertThat(retrievedNotExpiringEnabled.getState(), is(ScheduleState.ENABLED));
-
-        ScheduleEntity retrievedWarningDisabled = scheduleRepository.findOne(warningDisabled.getId());
-        assertThat(retrievedWarningDisabled.getState(), is(ScheduleState.DISABLED));
-
-        ScheduleEntity retrievedWarningEnabled = scheduleRepository.findOne(warningEnabled.getId());
-        assertThat(retrievedWarningEnabled.getState(), is(ScheduleState.ENABLED));
+        assertThat(userRepository.findByNotificationTarget("warning-disabled").getUserState(), is(UserState.DISABLED));
+        assertThat(userRepository.findByNotificationTarget("warning-enabled").getUserState(), is(UserState.ENABLED));
 
         verify(firebaseClient).sendNotification(
-                new NotificationRequest(NotificationTarget.of("warning"), "RailWatch", "Open the RailWatch app to keep your train time notifications coming!"));
-    }
-
-    private ScheduleEntity createSchedule(String fromStation, String notificationTarget, ScheduleState scheduleState) {
-        return new ScheduleEntity(LocalTime.MIN, LocalTime.MAX, DayRange.ALL, fromStation, "BAR", notificationTarget, scheduleState);
+                new NotificationRequest(NotificationTarget.of("warning-enabled"), "RailWatch", "Open the RailWatch app to keep your train time notifications coming!"));
     }
 }
