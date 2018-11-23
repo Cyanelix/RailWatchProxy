@@ -43,7 +43,7 @@ public class TrainTime {
     }
 
     public boolean isOnTime() {
-        return expectedDepartureTime != null && scheduledDepartureTime.equals(expectedDepartureTime);
+        return scheduledDepartureTime.equals(expectedDepartureTime);
     }
 
     public String toString() {
