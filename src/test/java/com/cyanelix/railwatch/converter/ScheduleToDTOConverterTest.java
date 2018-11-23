@@ -1,7 +1,7 @@
 package com.cyanelix.railwatch.converter;
 
 import com.cyanelix.railwatch.domain.*;
-import com.cyanelix.railwatch.dto.ScheduleDTO;
+import com.cyanelix.railwatch.dto.ScheduleRequestResponse;
 import com.cyanelix.railwatch.entity.Schedule;
 import com.cyanelix.railwatch.entity.User;
 import org.junit.Test;
@@ -22,7 +22,7 @@ public class ScheduleToDTOConverterTest {
                 ScheduleState.ENABLED, user);
 
         // When...
-        ScheduleDTO dto = new ScheduleToDTOConverter().convert(schedule);
+        ScheduleRequestResponse dto = new ScheduleToDTOConverter().convert(schedule);
 
         // Then...
         assertThat(dto.getStartTime(), is("12:00"));

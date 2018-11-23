@@ -1,6 +1,6 @@
 package com.cyanelix.railwatch.dto;
 
-public class ScheduleDTO {
+public class ScheduleRequestResponse {
     private String startTime;
     private String endTime;
     private String[] days;
@@ -9,7 +9,7 @@ public class ScheduleDTO {
     private String state;
     private String userId;
 
-    public ScheduleDTO() {
+    public ScheduleRequestResponse() {
         // Default constructor required for Jackson.
     }
 

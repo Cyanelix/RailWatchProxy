@@ -1,7 +1,7 @@
 package com.cyanelix.railwatch.controller;
 
 import com.cyanelix.railwatch.domain.UserId;
-import com.cyanelix.railwatch.dto.ScheduleDTO;
+import com.cyanelix.railwatch.dto.ScheduleRequestResponse;
 import com.cyanelix.railwatch.entity.Schedule;
 import com.cyanelix.railwatch.service.ScheduleService;
 import org.slf4j.Logger;
@@ -29,20 +29,20 @@ public class SchedulesController {
     }
 
     @GetMapping
-    public List<ScheduleDTO> get() {
+    public List<ScheduleRequestResponse> get() {
         return scheduleService.getSchedules().stream()
-                .map(schedule -> conversionService.convert(schedule, ScheduleDTO.class))
+                .map(schedule -> conversionService.convert(schedule, ScheduleRequestResponse.class))
                 .collect(Collectors.toList());
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void put(@RequestBody ScheduleDTO scheduleDTO) {
+    public void put(@RequestBody ScheduleRequestResponse scheduleRequestResponse) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug(String.format("Creating new schedule: %s -> %s @ %s -> %s", scheduleDTO.getFromStation(), scheduleDTO.getToStation(), scheduleDTO.getStartTime(), scheduleDTO.getEndTime()));
+            LOG.debug(String.format("Creating new schedule: %s -> %s @ %s -> %s", scheduleRequestResponse.getFromStation(), scheduleRequestResponse.getToStation(), scheduleRequestResponse.getStartTime(), scheduleRequestResponse.getEndTime()));
         }
 
-        Schedule schedule = conversionService.convert(scheduleDTO, Schedule.class);
-        scheduleService.createSchedule(schedule, UserId.of(scheduleDTO.getUserId()));
+        Schedule schedule = conversionService.convert(scheduleRequestResponse, Schedule.class);
+        scheduleService.createSchedule(schedule, UserId.of(scheduleRequestResponse.getUserId()));
     }
 }

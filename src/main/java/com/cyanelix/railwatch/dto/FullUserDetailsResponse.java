@@ -6,11 +6,11 @@ import java.util.List;
 public final class FullUserDetailsResponse {
     private final String userId;
     private final String notificationTarget;
-    private final List<ScheduleDTO> schedules;
+    private final List<ScheduleRequestResponse> schedules;
 
-    public FullUserDetailsResponse(UserDTO userDTO, List<ScheduleDTO> schedules) {
-        this.userId = userDTO.getUserId();
-        this.notificationTarget = userDTO.getNotificationTarget();
+    public FullUserDetailsResponse(UserRequestResponse userRequestResponse, List<ScheduleRequestResponse> schedules) {
+        this.userId = userRequestResponse.getUserId();
+        this.notificationTarget = userRequestResponse.getNotificationTarget();
         this.schedules = Collections.unmodifiableList(schedules);
     }
 
@@ -22,7 +22,7 @@ public final class FullUserDetailsResponse {
         return notificationTarget;
     }
 
-    public List<ScheduleDTO> getSchedules() {
+    public List<ScheduleRequestResponse> getSchedules() {
         return schedules;
     }
 }

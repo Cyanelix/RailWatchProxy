@@ -2,13 +2,13 @@ package com.cyanelix.railwatch.dto;
 
 import javax.validation.constraints.NotBlank;
 
-public class UserDTO {
+public class UserRequestResponse {
     private String userId;
 
     @NotBlank
     private String notificationTarget;
 
-    public UserDTO() {
+    public UserRequestResponse() {
         // Default constructor required for Jackson.
     }
 

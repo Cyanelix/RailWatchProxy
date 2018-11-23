@@ -4,8 +4,8 @@ import com.cyanelix.railwatch.controller.exception.ResourceNotFoundException;
 import com.cyanelix.railwatch.domain.NotificationTarget;
 import com.cyanelix.railwatch.domain.UserId;
 import com.cyanelix.railwatch.dto.FullUserDetailsResponse;
-import com.cyanelix.railwatch.dto.ScheduleDTO;
-import com.cyanelix.railwatch.dto.UserDTO;
+import com.cyanelix.railwatch.dto.ScheduleRequestResponse;
+import com.cyanelix.railwatch.dto.UserRequestResponse;
 import com.cyanelix.railwatch.entity.Schedule;
 import com.cyanelix.railwatch.entity.User;
 import com.cyanelix.railwatch.service.ScheduleService;
@@ -43,21 +43,21 @@ public class UsersController {
             throw new ResourceNotFoundException();
         }
 
-        UserDTO userDTO = conversionService.convert(user, UserDTO.class);
+        UserRequestResponse userRequestResponse = conversionService.convert(user, UserRequestResponse.class);
 
         List<Schedule> schedules = scheduleService.getSchedulesForUser(user);
 
-        List<ScheduleDTO> scheduleDTOS = schedules.stream()
-                .map(schedule -> conversionService.convert(schedule, ScheduleDTO.class))
+        List<ScheduleRequestResponse> scheduleRequestResponses = schedules.stream()
+                .map(schedule -> conversionService.convert(schedule, ScheduleRequestResponse.class))
                 .collect(Collectors.toList());
 
-        return new FullUserDetailsResponse(userDTO, scheduleDTOS);
+        return new FullUserDetailsResponse(userRequestResponse, scheduleRequestResponses);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Void> create(@RequestBody @Valid UserDTO userDTO, UriComponentsBuilder uriComponentsBuilder) {
-        User user = userService.createUser(NotificationTarget.of(userDTO.getNotificationTarget()));
+    public ResponseEntity<Void> create(@RequestBody @Valid UserRequestResponse userRequestResponse, UriComponentsBuilder uriComponentsBuilder) {
+        User user = userService.createUser(NotificationTarget.of(userRequestResponse.getNotificationTarget()));
 
         UriComponents uriComponents = uriComponentsBuilder.path("/users/{id}").buildAndExpand(user.getUserId().get());
 

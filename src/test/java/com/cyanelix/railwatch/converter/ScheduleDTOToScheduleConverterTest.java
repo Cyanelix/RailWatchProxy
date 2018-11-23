@@ -1,7 +1,7 @@
 package com.cyanelix.railwatch.converter;
 
 import com.cyanelix.railwatch.domain.*;
-import com.cyanelix.railwatch.dto.ScheduleDTO;
+import com.cyanelix.railwatch.dto.ScheduleRequestResponse;
 import com.cyanelix.railwatch.entity.Schedule;
 import com.cyanelix.railwatch.entity.User;
 import com.cyanelix.railwatch.service.UserService;
@@ -36,16 +36,16 @@ public class ScheduleDTOToScheduleConverterTest {
         User user = createUser(userId, NotificationTarget.of("test"));
         given(userService.getUser(userId)).willReturn(user);
 
-        ScheduleDTO scheduleDTO = new ScheduleDTO();
-        scheduleDTO.setStartTime("12:00");
-        scheduleDTO.setEndTime("00:00");
-        scheduleDTO.setFromStation("FOO");
-        scheduleDTO.setToStation("BAR");
-        scheduleDTO.setUserId(userId.get());
-        scheduleDTO.setDays(new String[] {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"});
+        ScheduleRequestResponse scheduleRequestResponse = new ScheduleRequestResponse();
+        scheduleRequestResponse.setStartTime("12:00");
+        scheduleRequestResponse.setEndTime("00:00");
+        scheduleRequestResponse.setFromStation("FOO");
+        scheduleRequestResponse.setToStation("BAR");
+        scheduleRequestResponse.setUserId(userId.get());
+        scheduleRequestResponse.setDays(new String[] {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"});
 
         // When...
-        Schedule schedule = converter.convert(scheduleDTO);
+        Schedule schedule = converter.convert(scheduleRequestResponse);
 
         // Then...
         assertThat(schedule.getStartTime(), is(LocalTime.NOON));
