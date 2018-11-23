@@ -3,7 +3,7 @@ package com.cyanelix.railwatch.controller;
 import com.cyanelix.railwatch.controller.exception.ResourceNotFoundException;
 import com.cyanelix.railwatch.domain.NotificationTarget;
 import com.cyanelix.railwatch.domain.UserId;
-import com.cyanelix.railwatch.dto.FullUserDetailsDTO;
+import com.cyanelix.railwatch.dto.FullUserDetailsResponse;
 import com.cyanelix.railwatch.dto.ScheduleDTO;
 import com.cyanelix.railwatch.dto.UserDTO;
 import com.cyanelix.railwatch.entity.Schedule;
@@ -37,7 +37,7 @@ public class UsersController {
     }
 
     @GetMapping(path = "/{userId}")
-    public FullUserDetailsDTO getUser(@PathVariable("userId") String userId) {
+    public FullUserDetailsResponse getUser(@PathVariable("userId") String userId) {
         User user = userService.getUser(UserId.of(userId));
         if (user == null) {
             throw new ResourceNotFoundException();
@@ -51,7 +51,7 @@ public class UsersController {
                 .map(schedule -> conversionService.convert(schedule, ScheduleDTO.class))
                 .collect(Collectors.toList());
 
-        return new FullUserDetailsDTO(userDTO, scheduleDTOS);
+        return new FullUserDetailsResponse(userDTO, scheduleDTOS);
     }
 
     @PostMapping
